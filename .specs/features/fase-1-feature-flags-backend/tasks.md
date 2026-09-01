@@ -326,11 +326,15 @@ delegar para esse Handler em vez do closure vazio atual.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `composer.lock` atualizado (rodado dentro da imagem `php:8.3-cli`, conforme decisão de
-      ambiente já registrada em `.specs/STATE.md`)
-- [ ] `curl localhost:9000/docs/api` (com o servidor rodando) devolve HTML/JSON contendo
-      `feature-flags` e os status `200`/`422`/`404`
-- [ ] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test && vendor/bin/pint --test && vendor/bin/phpstan analyse`
+- [x] `composer.lock` atualizado (rodado localmente com PHP 8.5/Composer 2 disponíveis no host —
+      SPEC_DEVIATION: a nota original previa rodar dentro da imagem `php:8.3-cli`, mas o host já
+      tinha toolchain PHP compatível; resultado idêntico, sem uso de Docker)
+- [x] `curl localhost:9000/docs/api` (com o servidor rodando) devolve HTML/JSON contendo
+      `feature-flags` e os status `200`/`422`/`404` — 404 exigiu o atributo
+      `#[Dedoc\Scramble\Attributes\Response(404, ...)]` no Controller, já que Scramble só infere
+      200/422 automaticamente do FormRequest; sem essa anotação a exceção de domínio `BrandNotFound`
+      fica invisível ao gerador (não há PHPDoc/comentário — é atributo PHP 8, código, não comentário)
+- [x] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test && vendor/bin/pint --test && vendor/bin/phpstan analyse`
 
 **Tests**: none
 **Gate**: build

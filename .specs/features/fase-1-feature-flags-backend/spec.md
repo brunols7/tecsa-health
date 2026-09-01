@@ -126,9 +126,9 @@ status codes possíveis.
 | FLAGSBE-03       | P1: `brand` ausente → 422           | Execute | Done (T6, T7, T8) |
 | FLAGSBE-04       | P1: `brand` inexistente → 404       | Execute | Done (T1, T2, T4, T5, T6, T8) |
 | FLAGSBE-05       | P1: Controller sem regra de negócio | Execute | Done (T1, T5, T8) |
-| FLAGSBE-06       | P2: Documentação OpenAPI            | Execute | Pending (T9) |
+| FLAGSBE-06       | P2: Documentação OpenAPI            | Execute | Done (T9) |
 
-**Coverage:** 6 total, 5 mapped to tasks, 1 pending (T9 — dedoc/scramble)
+**Coverage:** 6 total, 6 mapped to tasks, 0 unmapped
 
 ---
 
