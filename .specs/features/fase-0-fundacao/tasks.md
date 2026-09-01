@@ -718,8 +718,8 @@ adicionar `mobile/.env` explicitamente se não estiver coberto.
 
 **Done when**:
 
-- [ ] Todas as subpastas de `core/` existem
-- [ ] `tsconfig.json` já resolve o alias `@/` para `src/` (configurar se o template do Expo não
+- [x] Todas as subpastas de `core/` existem
+- [x] `tsconfig.json` já resolve o alias `@/` para `src/` (configurar se o template do Expo não
       trouxer isso por padrão)
 
 **Tests**: none
