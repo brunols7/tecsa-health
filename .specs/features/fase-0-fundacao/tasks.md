@@ -1065,7 +1065,7 @@ trade-off e consequências.
 
 **Done when**:
 
-- [ ] ADR segue o formato padrão (Contexto/Decisão/Consequências) e cita explicitamente a
+- [x] ADR segue o formato padrão (Contexto/Decisão/Consequências) e cita explicitamente a
       alternativa rejeitada (nginx+php-fpm) e por quê
 
 **Tests**: none
