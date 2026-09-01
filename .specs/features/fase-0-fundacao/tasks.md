@@ -913,13 +913,13 @@ comentário também conta) e confirma exit code ≠0, depois remove e confirma e
 
 **Done when**:
 
-- [ ] Teste cobre: import de `brands/*` (pego pelo ESLint, verificado indiretamente rodando
+- [x] Teste cobre: import de `brands/*` (pego pelo ESLint, verificado indiretamente rodando
       `npm run lint` dentro do teste via `child_process`), string de marca em comentário (pego pelo
       grep script), e o caso limpo (sem violação) passando os dois
-- [ ] `npm test` já executa o `pretest` (via script `"test": "jest"` com `pretest` hook nativo do
+- [x] `npm test` já executa o `pretest` (via script `"test": "jest"` com `pretest` hook nativo do
       npm, que roda automaticamente antes de `npm test`)
-- [ ] Gate check passa: `npm test -- checkBrandBoundary`
-- [ ] Test count: 3 testes passam
+- [x] Gate check passa: `npm test -- checkBrandBoundary`
+- [x] Test count: 3 testes passam
 
 **Tests**: integration
 **Gate**: quick
