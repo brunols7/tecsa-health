@@ -165,18 +165,34 @@ um `QueryClient` novo com `retry: false` nas queries (evita retries lentos em te
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `apiGet` monta a query string a partir de `params`, devolve `unknown` (JSON cru, sem parse)
-- [ ] Resposta não-2xx lança `ApiError` com `status` e, se o corpo seguir o envelope do backend,
+- [x] `apiGet` monta a query string a partir de `params`, devolve `unknown` (JSON cru, sem parse)
+- [x] Resposta não-2xx lança `ApiError` com `status` e, se o corpo seguir o envelope do backend,
       `code`
-- [ ] Teste unitário cobre: sucesso (mock de `fetch` global), erro 4xx/5xx vira `ApiError`, erro de
+- [x] Teste unitário cobre: sucesso (mock de `fetch` global), erro 4xx/5xx vira `ApiError`, erro de
       rede (rejeição de `fetch`) propaga como erro
-- [ ] Gate check passes: `npm test`
-- [ ] Test count: 3 tests novos em `src/core/api/__tests__/http.test.ts`
+- [x] Gate check passes: `npm test`
+- [x] Test count: 3 tests novos em `src/core/api/__tests__/http.test.ts`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(mobile): add typed HTTP client`
+
+**Status**: ✅ Complete — `apiGet(path, params?)` sem generic `<T>` (o generic do design.md não é
+referenciado no tipo de retorno, que já é `Promise<unknown>`; mantido sem `<T>` morto). Query string
+montada manualmente (`encodeURIComponent` + join), sem depender de `URL`/`URLSearchParams` globais
+— não polyfilled por padrão no Hermes/RN deste projeto. `npm test`: 9 passed (3 novos), lint e
+boundary check limpos.
+
+*Check A:*
+
+| Done-when criterion | file:line + assertion | Spec-defined outcome | Covered? |
+| --- | --- | --- | --- |
+| `apiGet` devolve `unknown` sem parse | `http.test.ts:16-19` `await apiGet(...)`; `expect(result).toEqual({ aiActionsEnabled: true })` | JSON cru devolvido tal qual | ✅ Yes |
+| Resposta não-2xx lança `ApiError` com `status`/`code` | `http.test.ts:24-30` `.rejects.toMatchObject({ status: 404, code: 'PATIENT_NOT_FOUND' })` + `.rejects.toBeInstanceOf(ApiError)` | status e code do envelope propagados | ✅ Yes |
+| Erro de rede propaga | `http.test.ts:35` `.rejects.toThrow('Network request failed')` | erro original propaga, não é engolido | ✅ Yes |
+
+*Check C:* os 3 testes mapeiam 1:1 para os 3 casos do "Done when" — nenhum teste especulativo, todos mantidos.
 
 ---
 
