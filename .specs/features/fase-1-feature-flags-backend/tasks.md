@@ -234,15 +234,15 @@ delegar para esse Handler em vez do closure vazio atual.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `bootstrap/app.php` continua expondo `health: '/up'` sem alteração — regressão verificada
+- [x] `bootstrap/app.php` continua expondo `health: '/up'` sem alteração — regressão verificada
       manualmente com `curl -f localhost:9000/up` (AD-011, healthcheck do Docker depende disso)
-- [ ] Envelope de erro validado por teste Feature dedicado (pode ser o mesmo arquivo de T8, mas o
+- [x] Envelope de erro validado por teste Feature dedicado (pode ser o mesmo arquivo de T8, mas o
       teste específico de 404/422 precisa existir antes ou junto de T8 — se `FeatureFlagController`
       ainda não existir, este teste usa uma rota de teste temporária lançando `BrandNotFound`
       diretamente, substituída pelo teste real em T8)
-- [ ] `ValidationException` continua devolvendo 422 (comportamento Laravel padrão), mas com o corpo
+- [x] `ValidationException` continua devolvendo 422 (comportamento Laravel padrão), mas com o corpo
       no formato do envelope custom, não o formato default do Laravel
-- [ ] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
+- [x] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
 
 **Tests**: integration
 **Gate**: full
