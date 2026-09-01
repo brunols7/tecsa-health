@@ -392,8 +392,8 @@ forward" per tasks.md)
 
 **Done when**:
 
-- [ ] `php artisan migrate` cria as duas tabelas sem erro num banco de teste
-- [ ] `users.brand_id` é FK para `brands.id`
+- [x] `php artisan migrate` cria as duas tabelas sem erro num banco de teste
+- [x] `users.brand_id` é FK para `brands.id`
 
 **Tests**: none
 **Gate**: build
