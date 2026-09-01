@@ -421,9 +421,9 @@ forward" per tasks.md)
 
 **Done when**:
 
-- [ ] `php artisan migrate` cria as tabelas com os dois índices compostos confirmados via
+- [x] `php artisan migrate` cria as tabelas com os dois índices compostos confirmados via
       `\DB::select` ou `php artisan db:show --table=patients` em teste manual
-- [ ] Nenhuma coluna `status` derivado existe em `biomarkers`
+- [x] Nenhuma coluna `status` derivado existe em `biomarkers`
 
 **Tests**: none
 **Gate**: build
