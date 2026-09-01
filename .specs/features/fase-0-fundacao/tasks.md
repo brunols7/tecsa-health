@@ -882,7 +882,7 @@ spec.
 
 **Done when**:
 
-- [ ] `npm run lint` sobre um arquivo fixture temporário em `core/` que importa de `@/brands/x`
+- [x] `npm run lint` sobre um arquivo fixture temporário em `core/` que importa de `@/brands/x`
       reporta erro (não warning) com a mensagem esperada; removendo a fixture, lint passa limpo
 
 **Tests**: none (a verificação da regra em si acontece via o teste do script de T27, que também
