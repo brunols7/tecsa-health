@@ -1,10 +1,5 @@
 import type { Brand } from '@/core/theme/brand.types';
 
-/**
- * vita-plus — identidade bem-estar e leve. Fundo areia claro, acento
- * coral/laranja suave, raios de borda grandes (pill em botões), tipografia
- * sans humanista com peso mais leve.
- */
 export const theme: Pick<
   Brand,
   'colors' | 'typography' | 'radii' | 'spacing'

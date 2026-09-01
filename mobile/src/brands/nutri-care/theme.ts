@@ -1,10 +1,5 @@
 import type { Brand } from '@/core/theme/brand.types';
 
-/**
- * nutri-care — identidade clínica e sóbria. Fundo neutro frio, acento teal
- * profundo (não pastel), raios de borda pequenos (sensação de prontuário),
- * tipografia sans grotesca de peso médio.
- */
 export const theme: Pick<
   Brand,
   'colors' | 'typography' | 'radii' | 'spacing'
