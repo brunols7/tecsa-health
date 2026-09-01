@@ -108,6 +108,15 @@
   único lugar autorizado a importar de `brands/` fora do próprio `brands/index.ts`. Ver AD-005 para o
   fechamento do gap no guard-rail.
 
+- **AD-013** (status: active) — TanStack Query + `persistQueryClient`/MMKV antecipados da Fase 2
+  para a Fase 1 (`mobile/src/core/offline/queryClient.ts`, `storage.ts`). Rationale: o `useFlag`
+  desta fase já precisa persistir o último valor conhecido de flag entre sessões (CLAUDE.md §5.7);
+  escrever um cache MMKV artesanal só para isso seria descartado assim que a Fase 2 (carteira de
+  pacientes) chegasse. `queryClient` é o `QueryClient` único do projeto a partir de agora —
+  qualquer feature futura que precise de estado de servidor reusa esse módulo, não cria outro.
+  `createTestQueryClient()` (sem persistência, sem tocar MMKV) é o padrão oficial de teste para
+  qualquer hook de query.
+
 ## Handoff
 
 - **Feature**: `fase-0-fundacao` (`.specs/features/fase-0-fundacao/`)
