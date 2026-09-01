@@ -293,17 +293,17 @@ delegar para esse Handler em vez do closure vazio atual.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `curl -f localhost:9000/up` continua respondendo 200 (regressão de `bootstrap/app.php`,
+- [x] `curl -f localhost:9000/up` continua respondendo 200 (regressão de `bootstrap/app.php`,
       verificado manualmente)
-- [ ] `GET /api/v1/feature-flags?brand=nutri-care` responde 200 com o mapa correto (Feature test)
-- [ ] `GET /api/v1/feature-flags?brand=<marca-sem-flags>` responde 200 com `{}` (Feature test)
-- [ ] `GET /api/v1/feature-flags` (sem `brand`) responde 422 no envelope padrão (Feature test)
-- [ ] `GET /api/v1/feature-flags?brand=inexistente` responde 404 no envelope padrão, código
+- [x] `GET /api/v1/feature-flags?brand=nutri-care` responde 200 com o mapa correto (Feature test)
+- [x] `GET /api/v1/feature-flags?brand=<marca-sem-flags>` responde 200 com `{}` (Feature test)
+- [x] `GET /api/v1/feature-flags` (sem `brand`) responde 422 no envelope padrão (Feature test)
+- [x] `GET /api/v1/feature-flags?brand=inexistente` responde 404 no envelope padrão, código
       `BRAND_NOT_FOUND` (Feature test)
-- [ ] Controller não importa Eloquent, `DB::`, nem contém `if` de negócio (verificado por
+- [x] Controller não importa Eloquent, `DB::`, nem contém `if` de negócio (verificado por
       `bash scripts/check-layer-boundary.sh`)
-- [ ] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
-- [ ] Test count: 4 tests novos em `tests/Feature/Api/V1/FeatureFlagControllerTest.php`
+- [x] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
+- [x] Test count: 4 tests novos em `tests/Feature/Api/V1/FeatureFlagControllerTest.php`
 
 **Tests**: integration
 **Gate**: full
