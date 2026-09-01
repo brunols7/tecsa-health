@@ -118,11 +118,11 @@ T8 → T9
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `findBySlug` retorna `null` quando não encontra, entidade `Brand` quando encontra
-- [ ] `DomainServiceProviderTest` ganha um caso novo (`BrandRepository` resolve para
+- [x] `findBySlug` retorna `null` quando não encontra, entidade `Brand` quando encontra
+- [x] `DomainServiceProviderTest` ganha um caso novo (`BrandRepository` resolve para
       `EloquentBrandRepository`) — segue o padrão exato do teste existente para `FeatureFlagRepository`
-- [ ] Gate check passes: `php artisan test --testsuite=Unit`
-- [ ] Test count: 2 tests pass em `DomainServiceProviderTest` (1 existente + 1 novo), sem deleção
+- [x] Gate check passes: `php artisan test --testsuite=Unit`
+- [x] Test count: 2 tests pass em `DomainServiceProviderTest` (1 existente + 1 novo), sem deleção
 
 **Tests**: unit
 **Gate**: quick
