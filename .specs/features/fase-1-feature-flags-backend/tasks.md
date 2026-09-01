@@ -263,9 +263,9 @@ delegar para esse Handler em vez do closure vazio atual.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `authorize()` retorna `true` (sem auth real no projeto — CLAUDE.md §15)
-- [ ] `rules()` retorna `['brand' => ['required', 'string']]`
-- [ ] Nenhuma lógica de negócio dentro do FormRequest (só forma, não existência da marca)
+- [x] `authorize()` retorna `true` (sem auth real no projeto — CLAUDE.md §15)
+- [x] `rules()` retorna `['brand' => ['required', 'string']]`
+- [x] Nenhuma lógica de negócio dentro do FormRequest (só forma, não existência da marca)
 
 **Tests**: none
 **Gate**: build
