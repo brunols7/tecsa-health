@@ -1,12 +1,5 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
-// app.config.ts é avaliado pelo Expo CLI diretamente via `require` do Node,
-// fora do bundler Metro: extensionless imports e o alias "@/" de
-// tsconfig.json não resolvem nesse contexto (o Node exige extensão
-// explícita para ESM/.ts, e não conhece paths de tsconfig). Por isso este
-// arquivo não importa `resolveBrand` de `src/brands` — mantém, em vez
-// disso, um descritor mínimo e auto-contido, com os mesmos `id` usados no
-// registry de `src/brands/index.ts` (fonte de verdade em runtime do app).
 const KNOWN_BRAND_IDS = ['nutri-care', 'vita-plus'] as const;
 type BrandId = (typeof KNOWN_BRAND_IDS)[number];
 
@@ -24,14 +17,14 @@ const BRAND_BUILD_CONFIG: Record<BrandId, BrandBuildConfig> = {
     bundleId: 'health.tecsa.nutricare',
     icon: './src/brands/nutri-care/assets/logo.png',
     splashImage: './src/brands/nutri-care/assets/splash-icon.png',
-    splashBackgroundColor: '#FBF6EE',
+    splashBackgroundColor: '#F2F5F7',
   },
   'vita-plus': {
     displayName: 'VitaPlus',
     bundleId: 'health.tecsa.vitaplus',
     icon: './src/brands/vita-plus/assets/logo.png',
     splashImage: './src/brands/vita-plus/assets/splash-icon.png',
-    splashBackgroundColor: '#0B1210',
+    splashBackgroundColor: '#FBF3E9',
   },
 };
 
@@ -51,14 +44,8 @@ if (!isKnownBrandId(rawBrandId)) {
 const brandId = rawBrandId;
 const build = BRAND_BUILD_CONFIG[brandId];
 
-// URL base da API consumida por core/api (Fase 2). Em device físico,
-// "localhost" não alcança a máquina host — aponte para o IP da máquina na
-// rede local, ex: http://192.168.0.10:9000 (ver mobile/.env.example).
 const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? '';
 
-// A tela de splash nativa não é uma chave de topo neste SDK — é opção do
-// plugin "expo-splash-screen" (ver app.json). Substitui a entrada existente
-// do plugin pela variante por marca, preservando os demais plugins.
 function withBrandedSplash(
   plugins: NonNullable<ExpoConfig['plugins']>,
   build: BrandBuildConfig,

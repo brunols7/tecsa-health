@@ -2,10 +2,6 @@
 const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
 
-// Fronteira de marca (CLAUDE.md §11.1): nada em src/core/**/* pode importar
-// de brands/*. ESLint 9 do template Expo usa flat config em vez de
-// .eslintrc.js — a regra abaixo é a tradução direta do override do
-// CLAUDE.md para esse formato, com o mesmo efeito mecânico.
 const brandBoundaryConfig = {
   files: ['src/core/**/*'],
   rules: {
@@ -14,7 +10,7 @@ const brandBoundaryConfig = {
       {
         patterns: [
           {
-            group: ['**/brands/*', '@/brands/*'],
+            group: ['**/brands/*', '@/brands/*', '**/brands', '@/brands'],
             message: 'core/ não pode conhecer marca. Use useTheme() ou useFlag().',
           },
         ],

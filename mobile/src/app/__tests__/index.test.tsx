@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react-native';
 
+import { resolveBrand } from '@/brands';
 import { BrandProvider } from '@/core/theme/BrandProvider';
 
 import BrandProofScreen from '../index';
@@ -13,16 +14,10 @@ function flattenStyle(style: unknown): FlatStyle {
   return (style ?? {}) as FlatStyle;
 }
 
-/**
- * Teste mínimo exigido por CLAUDE.md §10: renderiza a mesma tela com as
- * duas marcas e confirma que os tokens aplicados (cor de acento, raio)
- * diferem — prova de que o desacoplamento core/marca é real, não só de
- * tipo.
- */
 describe('BrandProofScreen', () => {
   it('renderiza sem erro nas duas marcas e aplica cor de acento e raio distintos', async () => {
     const nutriCare = await render(
-      <BrandProvider brandId="nutri-care">
+      <BrandProvider brand={resolveBrand('nutri-care')}>
         <BrandProofScreen />
       </BrandProvider>,
     );
@@ -33,7 +28,7 @@ describe('BrandProofScreen', () => {
     await nutriCare.unmount();
 
     const vitaPlus = await render(
-      <BrandProvider brandId="vita-plus">
+      <BrandProvider brand={resolveBrand('vita-plus')}>
         <BrandProofScreen />
       </BrandProvider>,
     );
