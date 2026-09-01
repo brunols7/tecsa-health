@@ -209,17 +209,30 @@ boundary check limpos.
 - Skill: NONE
 
 **Done when**:
-- [ ] Schema aceita payload completo (`{ aiActionsEnabled: true, offlineBanner: false }`)
-- [ ] Schema aceita payload parcial (`{}`, só uma key)
-- [ ] Schema rejeita payload com tipo errado (`{ aiActionsEnabled: "true" }`) — `.safeParse` retorna
+- [x] Schema aceita payload completo (`{ aiActionsEnabled: true, offlineBanner: false }`)
+- [x] Schema aceita payload parcial (`{}`, só uma key)
+- [x] Schema rejeita payload com tipo errado (`{ aiActionsEnabled: "true" }`) — `.safeParse` retorna
       `success: false`
-- [ ] Gate check passes: `npm test`
-- [ ] Test count: 3 tests novos em `src/core/api/schemas/__tests__/feature-flags.test.ts`
+- [x] Gate check passes: `npm test`
+- [x] Test count: 3 tests novos em `src/core/api/schemas/__tests__/feature-flags.test.ts`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(mobile): add feature flags zod schema`
+
+**Status**: ✅ Complete — schema nomeia as mesmas duas keys de `FeatureFlags`
+(`core/theme/brand.types.ts`), `.partial()` conforme design.md. `npm test`: 12 passed (3 novos).
+
+*Check A:*
+
+| Done-when criterion | file:line + assertion | Spec-defined outcome | Covered? |
+| --- | --- | --- | --- |
+| Aceita payload completo | `feature-flags.test.ts:5-9` `safeParse({aiActionsEnabled:true,offlineBanner:false})`; `expect(result.success).toBe(true)` + `expect(result.data).toEqual(...)` | `success: true`, dado preservado | ✅ Yes |
+| Aceita payload parcial (`{}` e uma key) | `feature-flags.test.ts:12-19` dois `safeParse` (`{}` e `{aiActionsEnabled:true}`), ambos `success: true` | `.partial()` — nenhuma key obrigatória | ✅ Yes |
+| Rejeita tipo errado | `feature-flags.test.ts:22-25` `safeParse({aiActionsEnabled:'true'})`; `expect(result.success).toBe(false)` | `success: false` | ✅ Yes |
+
+*Check C:* os 3 testes mapeiam 1:1 para os 3 casos do "Done when" — nenhum teste especulativo.
 
 ---
 
