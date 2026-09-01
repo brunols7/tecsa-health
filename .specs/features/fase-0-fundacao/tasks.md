@@ -578,9 +578,9 @@ vazia; por fim inicia `php artisan serve --host=0.0.0.0 --port=9000`.
 
 **Done when**:
 
-- [ ] Script é idempotente: rodar duas vezes seguidas não duplica seed nem falha em `migrate` já
+- [x] Script é idempotente: rodar duas vezes seguidas não duplica seed nem falha em `migrate` já
       aplicada
-- [ ] Script nunca escreve um valor de configuração hardcoded — só lê de `.env`/variáveis já
+- [x] Script nunca escreve um valor de configuração hardcoded — só lê de `.env`/variáveis já
       injetadas pelo compose
 
 **Tests**: none
