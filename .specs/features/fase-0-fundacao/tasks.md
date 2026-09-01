@@ -692,8 +692,8 @@ adicionar `mobile/.env` explicitamente se não estiver coberto.
 
 **Done when**:
 
-- [ ] `mobile/.env.example` versionado, com placeholder, sem valor real
-- [ ] `git check-ignore mobile/.env` retorna o caminho
+- [x] `mobile/.env.example` versionado, com placeholder, sem valor real
+- [x] `git check-ignore mobile/.env` retorna o caminho
 
 **Tests**: none
 **Gate**: build
