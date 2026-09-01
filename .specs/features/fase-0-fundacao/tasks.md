@@ -362,10 +362,10 @@ forward" per tasks.md)
 
 **Done when**:
 
-- [ ] `app(FeatureFlagRepository::class)` resolve para uma instância de
+- [x] `app(FeatureFlagRepository::class)` resolve para uma instância de
       `EloquentFeatureFlagRepository` — testado sem precisar de tabela real
-- [ ] Gate check passa: `php artisan test --filter=DomainServiceProvider`
-- [ ] Test count: 1 teste passa
+- [x] Gate check passa: `php artisan test --filter=DomainServiceProvider`
+- [x] Test count: 1 teste passa
 
 **Tests**: unit
 **Gate**: quick
