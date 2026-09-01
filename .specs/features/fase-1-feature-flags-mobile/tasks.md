@@ -133,16 +133,22 @@ testes existentes, 0 falhas (T1 não adiciona teste, conforme Test Coverage Matr
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `queryClient` é uma instância única de `QueryClient`, persistida via `persistQueryClient` na
+- [x] `queryClient` é uma instância única de `QueryClient`, persistida via `persistQueryClient` na
       importação do módulo
-- [ ] `createTestQueryClient()` devolve um `QueryClient` novo, sem qualquer persistência, sem tocar
+- [x] `createTestQueryClient()` devolve um `QueryClient` novo, sem qualquer persistência, sem tocar
       MMKV
-- [ ] `npx tsc --noEmit` limpo
+- [x] `npx tsc --noEmit` limpo
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(mobile): add persisted QueryClient singleton`
+
+**Status**: ✅ Complete — `persistQueryClient` (de `@tanstack/query-persist-client-core`, o pacote
+onde a função realmente vive; `@tanstack/react-query` reexporta os hooks, não essa função) chamado
+no import do módulo, ligando `queryClient` ao `mmkvPersister` de T1. `createTestQueryClient()` cria
+um `QueryClient` novo com `retry: false` nas queries (evita retries lentos em teste) e nunca importa
+`storage.ts`/MMKV. Gate build limpo: 6 testes existentes, 0 falhas.
 
 ---
 
