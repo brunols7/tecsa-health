@@ -8,6 +8,10 @@ export function useColorScheme() {
   const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
+    // Guarda de hidratação para renderização estática web: um único
+    // re-render após o mount é o padrão esperado aqui, não um efeito em
+    // cascata.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHasHydrated(true);
   }, []);
 
