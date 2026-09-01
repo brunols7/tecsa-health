@@ -201,14 +201,14 @@ mapeia `FeatureFlagRepository::allForBrand()` para `[key => enabled]`.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] Dependências injetadas via construtor `private readonly`, nenhum `app()->make()`/`resolve()`
-- [ ] Lança `BrandNotFound` quando `BrandRepository::findBySlug` retorna `null`
-- [ ] Devolve `[]` quando a marca existe mas `allForBrand` devolve array vazio
-- [ ] Devolve o mapa `key => enabled` correto quando há flags
-- [ ] Teste unitário usa fakes/mocks em memória para as duas interfaces (Mockery, seguindo o padrão
+- [x] Dependências injetadas via construtor `private readonly`, nenhum `app()->make()`/`resolve()`
+- [x] Lança `BrandNotFound` quando `BrandRepository::findBySlug` retorna `null`
+- [x] Devolve `[]` quando a marca existe mas `allForBrand` devolve array vazio
+- [x] Devolve o mapa `key => enabled` correto quando há flags
+- [x] Teste unitário usa fakes/mocks em memória para as duas interfaces (Mockery, seguindo o padrão
       já usado no projeto — `mockery/mockery` já é dependência), sem tocar banco
-- [ ] Gate check passes: `php artisan test --testsuite=Unit`
-- [ ] Test count: 3 tests novos em `FeatureFlagServiceTest` (happy path, brand not found, brand
+- [x] Gate check passes: `php artisan test --testsuite=Unit`
+- [x] Test count: 3 tests novos em `FeatureFlagServiceTest` (happy path, brand not found, brand
       sem flags)
 
 **Tests**: unit
