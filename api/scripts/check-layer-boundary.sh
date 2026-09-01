@@ -12,6 +12,9 @@ BASE_DIR="${1:-app}"
 ! grep -rqE "DB::|Models\\\\" "$BASE_DIR/Application/" 2>/dev/null \
     || { echo "Service conhece Eloquent"; exit 1; }
 
+! grep -rqE "DB::|Models\\\\" "$BASE_DIR/Http/Controllers/" 2>/dev/null \
+    || { echo "Controller conhece Eloquent"; exit 1; }
+
 ! grep -rqE '\$request->all\(\)|request\(\)->all\(\)' "$BASE_DIR/Http/Controllers/" 2>/dev/null \
     || { echo "all() no controller"; exit 1; }
 

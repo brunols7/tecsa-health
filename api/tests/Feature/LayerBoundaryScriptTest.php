@@ -59,6 +59,20 @@ class LayerBoundaryScriptTest extends TestCase
         $this->assertScriptExitCode(0);
     }
 
+    public function test_fails_when_controller_uses_db_facade_or_eloquent_models(): void
+    {
+        $this->assertScriptExitCode(0);
+
+        $violationFile = $this->fixtureBase.'/Http/Controllers/Bad.php';
+        file_put_contents($violationFile, "<?php\n\nDB::table('patients')->get();\n");
+
+        $this->assertScriptExitCode(1);
+
+        unlink($violationFile);
+
+        $this->assertScriptExitCode(0);
+    }
+
     public function test_fails_when_controller_uses_request_all(): void
     {
         $this->assertScriptExitCode(0);

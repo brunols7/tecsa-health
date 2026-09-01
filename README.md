@@ -45,8 +45,11 @@ roda as migrations, semeia o banco (mínimo 5.000 pacientes distribuídos entre 
 ele estiver vazio, e sobe a API na porta **9000**. Confirme com:
 
 ```bash
-curl http://localhost:9000/api/v1/feature-flags
+curl -f http://localhost:9000/up
 ```
+
+(`/api/v1/feature-flags` só existe a partir da Fase 1 — `/up` é o health check padrão do Laravel 11
+e é o que a Fase 0 garante.)
 
 Para derrubar tudo e recomeçar do zero (inclusive o volume do banco):
 
