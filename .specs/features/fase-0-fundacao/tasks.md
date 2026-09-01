@@ -481,9 +481,9 @@ menos um `state()` em `BiomarkerFactory` para gerar valor fora de `[ref_min, ref
 
 **Done when**:
 
-- [ ] `Patient::factory()->make()` e `Biomarker::factory()->outOfRange()->make()` funcionam sem
+- [x] `Patient::factory()->make()` e `Biomarker::factory()->outOfRange()->make()` funcionam sem
       tocar o banco
-- [ ] `vendor/bin/phpstan analyse` limpo
+- [x] `vendor/bin/phpstan analyse` limpo
 
 **Tests**: none
 **Gate**: build
