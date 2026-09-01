@@ -2,6 +2,31 @@
 
 ## Decisions
 
+- **AD-013** (status: active) — `docker-compose.yml`, serviço `api` ganha bind mount
+  `./api/.env:/app/.env` (arquivo real do host, não cópia); `api/docker/entrypoint.sh` troca o gate
+  `[ ! -f .env ]` por `[ ! -s .env ]` (existe E não está vazio) para não pular a cópia de
+  `.env.example` num clone novo em que o bind mount cria um arquivo vazio. Rationale: reportado pelo
+  usuário — `GET /docs/api` devolvia 500 mesmo com `/up` e `/api/v1/feature-flags` respondendo 200.
+  Causa raiz em `storage/logs/laravel.log`: `MissingAppKeyException`. Cadeia completa: (1)
+  `.dockerignore` exclui `.env` do build (correto, por segurança), então o `entrypoint.sh` recriava
+  um `.env` do zero a partir de `.env.example` dentro do container, com `APP_KEY=` vazio; (2)
+  `env_file: api/.env` do compose só injeta as variáveis do host como env do processo, nunca escreve
+  o arquivo `.env` real dentro do container — então `config('app.key')` via env já resolvia pro valor
+  real do host, o que fazia o regex de `php artisan key:generate` (que substitui
+  `APP_KEY={valor-atual-do-config}` no arquivo) não bater contra o `APP_KEY=` vazio do arquivo,
+  falhando silenciosamente (Laravel retorna exit 0 mesmo falhando aqui, então `set -e` do
+  entrypoint não pegava); (3) o `php artisan serve`, ao detectar um `.env` presente, descarta as
+  variáveis herdadas do processo pai (exceto uma allowlist pequena — `PATH`, `APP_ENV` etc., ver
+  `Illuminate\Foundation\Console\ServeCommand::$passthroughVariables`) e força o processo servidor a
+  reler o `.env` **do arquivo em disco** — então a app servida via `php artisan serve` só via mesmo o
+  `APP_KEY=` vazio do arquivo, nunca o valor real injetado via `env_file`. `/up` e
+  `/api/v1/feature-flags` não quebravam porque essas rotas não passam por middleware que resolve o
+  `Encrypter` (`EncryptCookies`/sessão, restrito ao grupo `web`); `/docs/api` (UI HTML do Scramble)
+  passa, e quebrava. O bind mount elimina o split-brain: o arquivo `.env` dentro do container passa a
+  ser literalmente o `api/.env` do host, que já tem uma chave real — sem depender do
+  `key:generate` bugado nesse cenário. Verificado ao vivo:
+  `docker compose exec api grep '^APP_KEY=' .env` mostra a chave real, `curl localhost:9000/docs/api`
+  → 200.
 - **AD-012** (status: active) — `docker-compose.yml`, serviço `api` ganha volume nomeado
   `tecsa_api_vendor:/app/vendor`; `api/docker/entrypoint.sh` troca o gate de instalação de
   `[ ! -d vendor ]` para `[ ! -f vendor/autoload.php ]` e envolve `composer install` num retry loop
