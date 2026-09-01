@@ -145,13 +145,13 @@ implementação Eloquent.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `allForBrand` devolve array vazio quando a marca não tem flags (não `null`, não exceção)
-- [ ] `allForBrand` devolve todas as `FeatureFlag` entities da marca, mapeadas corretamente
-- [ ] `FeatureFlagRepositoryTest` ganha 2 casos novos: marca com flags (assert count + valores),
+- [x] `allForBrand` devolve array vazio quando a marca não tem flags (não `null`, não exceção)
+- [x] `allForBrand` devolve todas as `FeatureFlag` entities da marca, mapeadas corretamente
+- [x] `FeatureFlagRepositoryTest` ganha 2 casos novos: marca com flags (assert count + valores),
       marca sem flags (assert array vazio) — usa `BrandSeeder`/`FeatureFlagSeeder` como o teste
       existente já faz
-- [ ] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
-- [ ] Test count: 3 tests pass em `FeatureFlagRepositoryTest` (1 existente + 2 novos)
+- [x] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
+- [x] Test count: 3 tests pass em `FeatureFlagRepositoryTest` (1 existente + 2 novos)
 
 **Tests**: integration
 **Gate**: full
