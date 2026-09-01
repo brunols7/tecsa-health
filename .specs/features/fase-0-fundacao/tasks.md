@@ -451,9 +451,9 @@ forward" per tasks.md)
 
 **Done when**:
 
-- [ ] `php artisan migrate` cria as duas tabelas restantes; as seis tabelas do modelo de dados
+- [x] `php artisan migrate` cria as duas tabelas restantes; as seis tabelas do modelo de dados
       existem no total
-- [ ] Índice único `(brand_id, key)` em `feature_flags` confirmado
+- [x] Índice único `(brand_id, key)` em `feature_flags` confirmado
 
 **Tests**: none
 **Gate**: build

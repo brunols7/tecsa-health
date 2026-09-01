@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Eloquent\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -14,6 +15,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 final class FeatureFlag extends Model
 {
+    use HasUuids;
+
+    public $timestamps = false;
+
     protected $table = 'feature_flags';
 
     protected $fillable = [
