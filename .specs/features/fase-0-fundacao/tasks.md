@@ -745,8 +745,8 @@ chaves semânticas, typography, radii, spacing, assets, copy, defaults).
 
 **Done when**:
 
-- [ ] `npx tsc --noEmit` passa (tipo sozinho, sem implementação ainda, não quebra nada)
-- [ ] Tipo exportado contém as onze chaves de `colors` listadas em CLAUDE.md §5.2
+- [x] `npx tsc --noEmit` passa (tipo sozinho, sem implementação ainda, não quebra nada)
+- [x] Tipo exportado contém as onze chaves de `colors` listadas em CLAUDE.md §5.2
 
 **Tests**: none
 **Gate**: build
