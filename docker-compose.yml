@@ -24,6 +24,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/up"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 90s
 
 volumes:
   tecsa_db_data:

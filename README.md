@@ -36,13 +36,23 @@ getifaddr en0` no macOS ou `ip addr` no Linux).
 ### 2. Subir o backend
 
 ```bash
-docker compose up
+docker compose up -d --wait
 ```
 
 Sem nenhum passo manual adicional, isso sobe o Postgres com healthcheck, espera o banco ficar
 saudável, roda `composer install` se o `vendor/` não existir, gera a `APP_KEY` se estiver vazia,
 roda as migrations, semeia o banco (mínimo 5.000 pacientes distribuídos entre as duas marcas) se
-ele estiver vazio, e sobe a API na porta **9000**. Confirme com:
+ele estiver vazio, e sobe a API na porta **9000**.
+
+Use sempre `--wait`: o serviço `api` tem healthcheck próprio (`curl -f http://localhost:9000/up`),
+e `--wait` bloqueia o comando até esse healthcheck reportar saudável, não só até o container
+iniciar. Sem `--wait` (ou rodando `docker compose up` em foreground e testando antes da linha
+`Server running on [http://0.0.0.0:9000]` aparecer no log), um `curl` imediato pode acertar a porta
+antes do `composer install`/migrations/seed terminarem e cair em `Connection reset by peer` — não é
+erro do backend, é corrida entre o comando e o entrypoint ainda rodando. Num clone limpo (sem cache
+de imagem), a primeira subida pode levar até ~1-2 minutos por causa do `composer install`.
+
+Confirme com:
 
 ```bash
 curl -f http://localhost:9000/up
