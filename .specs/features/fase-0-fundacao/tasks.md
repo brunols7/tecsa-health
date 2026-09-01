@@ -1038,7 +1038,7 @@ fronteira manualmente.
 
 **Done when**:
 
-- [ ] Seguir o README do zero (clone limpo) leva a `docker compose up` funcionando e
+- [x] Seguir o README do zero (clone limpo) leva a `docker compose up` funcionando e
       `npx expo start` funcionando, sem passo não documentado
 
 **Tests**: none
