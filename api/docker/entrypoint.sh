@@ -7,8 +7,17 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
-if [ ! -d vendor ]; then
-    composer install --no-interaction --prefer-dist
+if [ ! -f vendor/autoload.php ]; then
+    COMPOSER_ATTEMPTS=0
+    until composer install --no-interaction --prefer-dist --no-progress; do
+        COMPOSER_ATTEMPTS=$((COMPOSER_ATTEMPTS + 1))
+        if [ "$COMPOSER_ATTEMPTS" -ge 6 ]; then
+            echo "composer install failed after 6 attempts" >&2
+            exit 1
+        fi
+        echo "composer install failed (attempt $COMPOSER_ATTEMPTS/6), retrying..." >&2
+        sleep 10
+    done
 fi
 
 APP_KEY_VALUE=$(grep -E '^APP_KEY=' .env | cut -d '=' -f2- || true)
