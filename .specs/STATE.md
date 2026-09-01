@@ -2,6 +2,23 @@
 
 ## Decisions
 
+- **AD-012** (status: active) — `docker-compose.yml`, serviço `api` ganha volume nomeado
+  `tecsa_api_vendor:/app/vendor`; `api/docker/entrypoint.sh` troca o gate de instalação de
+  `[ ! -d vendor ]` para `[ ! -f vendor/autoload.php ]` e envolve `composer install` num retry loop
+  (6 tentativas, 10s de backoff). Rationale: reportado ao vivo pelo usuário rodando
+  `docker compose up -d --wait` pela primeira vez nesta máquina — `composer install` dentro do
+  container falhava reproduzivelmente com `HTTP/2 504` ao baixar zipballs de
+  `api.github.com/repos/.../zipball/...` (confirmado isolando a causa: `curl` direto desse endpoint
+  específico, de dentro de um container, deu 504 em ~11s, enquanto `codeload.github.com` e
+  `api.github.com` raiz responderam normalmente — não é um problema do projeto, é a rota de geração
+  de zipball do GitHub sendo lenta/instável sem token OAuth). Sem volume, todo `docker compose up`
+  refaz a instalação completa de ~116 pacotes do zero, multiplicando a exposição a esse endpoint
+  flaky a cada restart; o volume faz isso acontecer só uma vez (até um `down -v`). O retry loop cobre
+  o caso em que a instalação inicial ainda pega o 504 no meio do lote. Verificado ao vivo: 3ª
+  tentativa completou com sucesso e `curl localhost:9000/api/v1/feature-flags?brand=nutri-care`
+  respondeu 200 com o mapa correto. Confirmado que nada externo (cron, launchd, outro processo)
+  estava derrubando o container — o `exited(100)` das tentativas anteriores era só o próprio
+  `entrypoint.sh` (`set -euo pipefail`) propagando a falha do `composer install`.
 - **AD-001** (status: active) — Servidor HTTP do container `api` na Fase 0: `php artisan serve` em
   imagem `php:8.3-cli`, não nginx+php-fpm. Rationale: reprodutibilidade do ambiente de dev pesa mais
   que fidelidade de produção nesta fase; documentado em `docs/adr/0001-servidor-http-embutido.md`.
