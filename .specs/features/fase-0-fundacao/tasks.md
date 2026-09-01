@@ -269,14 +269,14 @@ violação.
 
 **Done when**:
 
-- [ ] `LayerBoundaryScriptTest` cria um arquivo fixture temporário com `use Illuminate\Support\Str;`
+- [x] `LayerBoundaryScriptTest` cria um arquivo fixture temporário com `use Illuminate\Support\Str;`
       dentro de uma cópia isolada de `Domain/` (ou aponta o script para um diretório de fixture via
       arg), roda o script, assert exit code ≠0; remove a fixture, assert exit code 0
-- [ ] Teste equivalente para `DB::`/`Models\` em `Application/` e para `$request->all()` em
+- [x] Teste equivalente para `DB::`/`Models\` em `Application/` e para `$request->all()` em
       `Http/Controllers/`
-- [ ] `composer test` já roda o script antes da suíte Pest
-- [ ] Gate check passa: `php artisan test --filter=LayerBoundaryScript`
-- [ ] Test count: 3 testes passam (uma cobertura por tipo de violação), nenhuma deleção silenciosa
+- [x] `composer test` já roda o script antes da suíte Pest
+- [x] Gate check passa: `php artisan test --filter=LayerBoundaryScript`
+- [x] Test count: 3 testes passam (uma cobertura por tipo de violação), nenhuma deleção silenciosa
 
 **Tests**: integration
 **Gate**: quick
