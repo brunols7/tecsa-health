@@ -634,10 +634,10 @@ confirmar o critério de saída da fase para o backend.
 
 **Done when**:
 
-- [ ] `curl -f http://localhost:9000/up` retorna 200
-- [ ] `docker compose exec api php artisan tinker --execute="echo App\Infrastructure\Persistence\Eloquent\Models\Patient::count();"`
+- [x] `curl -f http://localhost:9000/up` retorna 200
+- [x] `docker compose exec api php artisan tinker --execute="echo App\Infrastructure\Persistence\Eloquent\Models\Patient::count();"`
       retorna ≥ 5000
-- [ ] Postgres acessível em `localhost:5433` a partir do host
+- [x] Postgres acessível em `localhost:5433` a partir do host
 
 **Tests**: none
 **Gate**: build
