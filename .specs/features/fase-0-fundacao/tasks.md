@@ -978,9 +978,9 @@ executáveis via CLI; não há framework de teste de config do Expo estabelecido
 
 **Done when**:
 
-- [ ] Tela renderiza sem erro dentro de um `BrandProvider` de teste com `nutri-care` e com
+- [x] Tela renderiza sem erro dentro de um `BrandProvider` de teste com `nutri-care` e com
       `vita-plus`
-- [ ] `grep -E "#[0-9a-fA-F]{3,6}" mobile/app/index.tsx` não retorna nada (nenhuma cor literal)
+- [x] `grep -E "#[0-9a-fA-F]{3,6}" mobile/app/index.tsx` não retorna nada (nenhuma cor literal)
 
 **Tests**: none (teste de renderização real fica em T30, que já cobre a tela com as duas marcas —
 "merge forward")

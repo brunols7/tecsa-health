@@ -1,98 +1,65 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { Image, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useTheme } from '@/core/theme/useTheme';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+/**
+ * Tela de prova da fronteira de marca (CLAUDE.md §5.2): tudo aqui vem de
+ * `useTheme()`. Nenhum literal de cor, raio ou fonte — a única exceção
+ * permitida é "transparent". Ver CLAUDE.md §2.1 e §5.2.
+ */
+export default function BrandProofScreen() {
+  const { colors, radii, typography, spacing, assets, displayName, copy } = useTheme();
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      <ScrollView contentContainerStyle={{ padding: spacing(4), gap: spacing(4) }}>
+        <View style={{ alignItems: 'center', gap: spacing(3) }}>
+          <Image
+            source={assets.logo}
+            style={{ width: spacing(16), height: spacing(16) }}
+            resizeMode="contain"
+          />
+          <Text
+            style={{
+              color: colors.textPrimary,
+              fontFamily: typography.fontFamily.bold,
+              fontSize: typography.scale.display,
+            }}
+          >
+            {displayName}
+          </Text>
+        </View>
+
+        <View
+          testID="brand-proof-accent-block"
+          style={{
+            backgroundColor: colors.accent,
+            borderRadius: radii.md,
+            padding: spacing(4),
+          }}
+        >
+          <Text
+            style={{
+              color: colors.accentContrast,
+              fontFamily: typography.fontFamily.medium,
+              fontSize: typography.scale.md,
+            }}
+          >
+            {copy.aiDisclaimer}
+          </Text>
+        </View>
+
+        <Text
+          style={{
+            color: colors.textSecondary,
+            fontFamily: typography.fontFamily.regular,
+            fontSize: typography.scale.sm,
+          }}
+        >
+          {copy.patientsTitle}
+        </Text>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
-});
