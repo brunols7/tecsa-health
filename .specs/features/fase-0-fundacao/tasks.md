@@ -332,9 +332,9 @@ Model, `$fillable` explícito, tabela `feature_flags`) e
 
 **Done when**:
 
-- [ ] `EloquentFeatureFlagRepository implements FeatureFlagRepository` compila e o método devolve a
+- [x] `EloquentFeatureFlagRepository implements FeatureFlagRepository` compila e o método devolve a
       entidade de domínio (nunca o Model Eloquent) ao chamador
-- [ ] `vendor/bin/phpstan analyse` limpo
+- [x] `vendor/bin/phpstan analyse` limpo
 
 **Tests**: none (comportamento de query real é testado em T13, quando a tabela existe — "merge
 forward" per tasks.md)
