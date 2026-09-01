@@ -828,8 +828,8 @@ lança erro claro (`Marca desconhecida: ${id}`) se `id` não for `nutri-care` ne
 
 **Done when**:
 
-- [ ] `resolveBrand('nutri-care')` e `resolveBrand('vita-plus')` retornam os objetos corretos
-- [ ] `resolveBrand('inexistente')` lança erro com a mensagem esperada
+- [x] `resolveBrand('nutri-care')` e `resolveBrand('vita-plus')` retornam os objetos corretos
+- [x] `resolveBrand('inexistente')` lança erro com a mensagem esperada
 
 **Tests**: none
 **Gate**: build
