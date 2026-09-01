@@ -855,8 +855,8 @@ T28 — e chama `resolveBrand`) e `mobile/src/core/theme/useTheme.ts` (hook que 
 
 **Done when**:
 
-- [ ] `useTheme()` fora de um `BrandProvider` lança erro claro (não retorna `undefined` silencioso)
-- [ ] `npx tsc --noEmit` limpo
+- [x] `useTheme()` fora de um `BrandProvider` lança erro claro (não retorna `undefined` silencioso)
+- [x] `npx tsc --noEmit` limpo
 
 **Tests**: none
 **Gate**: build
