@@ -663,9 +663,9 @@ confirmar `tsconfig.json` com `"strict": true`.
 
 **Done when**:
 
-- [ ] `npx expo --version` roda dentro de `mobile/`
-- [ ] `tsconfig.json` tem `"strict": true`
-- [ ] `npx tsc --noEmit` passa limpo no projeto recém-criado
+- [x] `npx expo --version` roda dentro de `mobile/`
+- [x] `tsconfig.json` tem `"strict": true`
+- [x] `npx tsc --noEmit` passa limpo no projeto recém-criado
 
 **Tests**: none
 **Gate**: build
