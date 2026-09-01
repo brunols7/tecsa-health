@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "promote_threshold": 2,
+  "window_days": 45,
+  "quarantine_threshold": 2,
+  "next_id": 6,
+  "lessons": [
+    {
+      "id": "L-001",
+      "key": "surviving_mutant::um registry cujo unico comportamento e lancar erro em id desconhecido precisa de teste unitario direto do caminho de erro compile time only na matriz de cobertura nao cobre o throw",
+      "text": "Um registry cujo unico comportamento e lancar erro em id desconhecido precisa de teste unitario direto do caminho de erro; 'compile-time only' na matriz de cobertura nao cobre o throw.",
+      "signal": "surviving_mutant",
+      "scope": "mobile",
+      "status": "candidate",
+      "features": [
+        "fase-0-fundacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "M2 mobile/src/brands/index.ts:19 (mobile)"
+      ],
+      "created": "2026-09-01T19:33:50Z",
+      "last_seen": "2026-09-01T19:33:50Z"
+    },
+    {
+      "id": "L-002",
+      "key": "ac_gap::um provider de contexto so esta entregue quando montado na raiz da aplicacao teste que instancia o provider manualmente nao prova que o app real o monta",
+      "text": "Um Provider de contexto so esta entregue quando montado na raiz da aplicacao; teste que instancia o Provider manualmente nao prova que o app real o monta.",
+      "signal": "ac_gap",
+      "scope": "mobile",
+      "status": "candidate",
+      "features": [
+        "fase-0-fundacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "FNDMOB-11 mobile/src/app/_layout.tsx:10 (mobile)"
+      ],
+      "created": "2026-09-01T19:33:51Z",
+      "last_seen": "2026-09-01T19:33:51Z"
+    },
+    {
+      "id": "L-003",
+      "key": "ac_gap::padrao de no restricted imports com sufixo nao casa o import bare do diretorio sempre inclua a forma sem sufixo no mesmo group",
+      "text": "Padrao de no-restricted-imports com sufixo /* nao casa o import bare do diretorio; sempre inclua a forma sem sufixo no mesmo group.",
+      "signal": "ac_gap",
+      "scope": "mobile",
+      "status": "candidate",
+      "features": [
+        "fase-0-fundacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "FNDMOB-01 mobile/eslint.config.js:18 (mobile)"
+      ],
+      "created": "2026-09-01T19:33:51Z",
+      "last_seen": "2026-09-01T19:33:51Z"
+    },
+    {
+      "id": "L-004",
+      "key": "spec_deviation::quando um desvio duplica uma fonte de verdade valide os valores duplicados contra o original na mesma task a duplicacao aqui ja nasceu divergente",
+      "text": "Quando um desvio duplica uma fonte de verdade, valide os valores duplicados contra o original na mesma task; a duplicacao aqui ja nasceu divergente.",
+      "signal": "spec_deviation",
+      "scope": "mobile",
+      "status": "candidate",
+      "features": [
+        "fase-0-fundacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "mobile/app.config.ts:33 (mobile)"
+      ],
+      "created": "2026-09-01T19:33:51Z",
+      "last_seen": "2026-09-01T19:33:51Z"
+    },
+    {
+      "id": "L-005",
+      "key": "ac_gap::script de fronteira deve varrer todos os diretorios citados na ac um diretorio ainda vazio hoje vira violacao silenciosa na fase seguinte",
+      "text": "Script de fronteira deve varrer todos os diretorios citados na AC; um diretorio ainda vazio hoje vira violacao silenciosa na fase seguinte.",
+      "signal": "ac_gap",
+      "scope": "api",
+      "status": "candidate",
+      "features": [
+        "fase-0-fundacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "FNDBE-02 api/scripts/check-layer-boundary.sh:12 (api)"
+      ],
+      "created": "2026-09-01T19:33:51Z",
+      "last_seen": "2026-09-01T19:33:51Z"
+    }
+  ]
+}

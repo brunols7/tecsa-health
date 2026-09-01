@@ -1,0 +1,51 @@
+# LESSONS - auto-maintained by scripts/lessons.py
+
+> Machine-owned. Do NOT hand-edit. Changes are overwritten on the next `lessons.py` write.
+> Canonical state lives in `.specs/lessons.json`. Edit lessons only via the script.
+> promote_threshold=2 distinct features · window_days=45 · quarantine_threshold=2
+
+## Confirmed (load these at Specify/Design)
+
+Corroborated across multiple features. Safe to apply as guidance.
+
+_none_
+
+## Candidates (under observation - do NOT load as guidance yet)
+
+Seen once or not yet corroborated. Tracked, not trusted.
+
+### L-001 - Um registry cujo unico comportamento e lancar erro em id desconhecido precisa de teste unitario direto do caminho de erro; 'compile-time only' na matriz de cobertura nao cobre o throw.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `mobile` · harmful: 0
+- features: fase-0-fundacao
+- evidence: M2 mobile/src/brands/index.ts:19 (mobile)
+- last seen: 2026-09-01T19:33:50Z
+
+### L-002 - Um Provider de contexto so esta entregue quando montado na raiz da aplicacao; teste que instancia o Provider manualmente nao prova que o app real o monta.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `mobile` · harmful: 0
+- features: fase-0-fundacao
+- evidence: FNDMOB-11 mobile/src/app/_layout.tsx:10 (mobile)
+- last seen: 2026-09-01T19:33:51Z
+
+### L-003 - Padrao de no-restricted-imports com sufixo /* nao casa o import bare do diretorio; sempre inclua a forma sem sufixo no mesmo group.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `mobile` · harmful: 0
+- features: fase-0-fundacao
+- evidence: FNDMOB-01 mobile/eslint.config.js:18 (mobile)
+- last seen: 2026-09-01T19:33:51Z
+
+### L-004 - Quando um desvio duplica uma fonte de verdade, valide os valores duplicados contra o original na mesma task; a duplicacao aqui ja nasceu divergente.
+- signal: `spec_deviation` · recurrence: 1 feature(s) · scope: `mobile` · harmful: 0
+- features: fase-0-fundacao
+- evidence: mobile/app.config.ts:33 (mobile)
+- last seen: 2026-09-01T19:33:51Z
+
+### L-005 - Script de fronteira deve varrer todos os diretorios citados na AC; um diretorio ainda vazio hoje vira violacao silenciosa na fase seguinte.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `api` · harmful: 0
+- features: fase-0-fundacao
+- evidence: FNDBE-02 api/scripts/check-layer-boundary.sh:12 (api)
+- last seen: 2026-09-01T19:33:51Z
+
+## Quarantined (failed when applied - ignore)
+
+A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
+
+_none_

@@ -1,0 +1,6 @@
+# Plano de desenvolvimento é material de apoio temporário, não faz parte do repositório
+docs/plano-de-desenvolvimento.md
+
+# Bookkeeping local de ferramentas (Claude Code) — não é conteúdo do projeto
+.agents/
+.claude/worktrees/
