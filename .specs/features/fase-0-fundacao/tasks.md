@@ -303,8 +303,8 @@ violação.
 
 **Done when**:
 
-- [ ] `grep -c "Illuminate" api/app/Domain/FeatureFlag/*.php` = 0
-- [ ] `vendor/bin/phpstan analyse` continua limpo com os novos arquivos
+- [x] `grep -c "Illuminate" api/app/Domain/FeatureFlag/*.php` = 0
+- [x] `vendor/bin/phpstan analyse` continua limpo com os novos arquivos
 
 **Tests**: none
 **Gate**: build
