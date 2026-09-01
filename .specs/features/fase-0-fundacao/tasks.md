@@ -1008,10 +1008,10 @@ teste mínimo de mobile explicitamente exigido por CLAUDE.md §10.
 
 **Done when**:
 
-- [ ] Teste passa comparando `colors.accent` e `radii.md` renderizados nas duas marcas, confirmando
+- [x] Teste passa comparando `colors.accent` e `radii.md` renderizados nas duas marcas, confirmando
       que diferem
-- [ ] Gate check passa: `npm test -- index.test`
-- [ ] Test count: 1 teste passa (com múltiplas assertions internas)
+- [x] Gate check passa: `npm test -- index.test`
+- [x] Test count: 1 teste passa (com múltiplas assertions internas)
 
 **Tests**: unit
 **Gate**: quick
