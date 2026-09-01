@@ -250,16 +250,30 @@ boundary check limpos.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `fetchFeatureFlags` chama `apiGet` com o path e `brand` corretos
-- [ ] Resposta válida é parseada e devolvida como `FeatureFlagsResponse`
-- [ ] Resposta que falha o `.parse()` (schema) propaga o erro do zod, não engole silenciosamente
-- [ ] Gate check passes: `npm test`
-- [ ] Test count: 2 tests novos em `src/core/api/__tests__/feature-flags.test.ts` (mock de `apiGet`)
+- [x] `fetchFeatureFlags` chama `apiGet` com o path e `brand` corretos
+- [x] Resposta válida é parseada e devolvida como `FeatureFlagsResponse`
+- [x] Resposta que falha o `.parse()` (schema) propaga o erro do zod, não engole silenciosamente
+- [x] Gate check passes: `npm test`
+- [x] Test count: 2 tests novos em `src/core/api/__tests__/feature-flags.test.ts` (mock de `apiGet`)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(mobile): add fetchFeatureFlags typed fetch function`
+
+**Status**: ✅ Complete — `jest.mock('@/core/api/http')` isola `fetchFeatureFlags` de rede real.
+`npm test`: 14 passed (2 novos).
+
+*Check A:*
+
+| Done-when criterion | file:line + assertion | Spec-defined outcome | Covered? |
+| --- | --- | --- | --- |
+| Chama `apiGet` com path e `brand` corretos | `feature-flags.test.ts:16-18` `expect(mockedApiGet).toHaveBeenCalledWith('/api/v1/feature-flags', {brand:'demo-brand'})` | path/params exatos do design.md | ✅ Yes |
+| Resposta válida parseada e devolvida | `feature-flags.test.ts:19` `expect(result).toEqual({aiActionsEnabled:true,offlineBanner:false})` | dado validado devolvido intacto | ✅ Yes |
+| `.parse()` que falha propaga erro do zod | `feature-flags.test.ts:22-25` `mockedApiGet.mockResolvedValue({aiActionsEnabled:'not-a-boolean'})`; `.rejects.toThrow()` | erro propaga, não é engolido | ✅ Yes |
+
+*Check C:* os 2 testes mapeiam 1:1 para os 2 casos do "Done when" (o 3º item, "resposta válida
+parseada", é coberto pela mesma asserção do 1º teste — nenhum teste especulativo).
 
 ---
 
