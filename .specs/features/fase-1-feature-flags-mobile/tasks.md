@@ -292,18 +292,50 @@ parseada", é coberto pela mesma asserção do 1º teste — nenhum teste especu
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Chave de cache inclui `brand.id` — duas marcas nunca compartilham entrada de cache (edge case
+- [x] Chave de cache inclui `brand.id` — duas marcas nunca compartilham entrada de cache (edge case
       do spec)
-- [ ] Teste com `QueryClientProvider` + `createTestQueryClient()` cobre: sucesso popula `data`,
+- [x] Teste com `QueryClientProvider` + `createTestQueryClient()` cobre: sucesso popula `data`,
       falha de rede deixa `data` undefined (sem cache anterior), cache anterior via `setQueryData`
       simulando MMKV restaurado é preservado quando o fetch novo falha
-- [ ] Gate check passes: `npm test`
-- [ ] Test count: 3 tests novos em `src/core/flags/__tests__/useFeatureFlagsQuery.test.tsx`
+- [x] Gate check passes: `npm test`
+- [x] Test count: 3 tests novos em `src/core/flags/__tests__/useFeatureFlagsQuery.test.tsx`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(mobile): add useFeatureFlagsQuery hook`
+
+**Status**: ✅ Complete — `brand` lido de `useTheme()` (nunca de `@/brands`, respeitando a fronteira
+de marca). Testes usam um fixture `Brand` construído inline no teste (não importado de
+`src/brands`, proibido dentro de `src/core/**` por `eslint.config.js`), com `BrandProvider` +
+`QueryClientProvider(createTestQueryClient())`.
+
+**Achado durante a task (fora do escopo do "Where" original, necessário para o gate passar):**
+importar `createTestQueryClient` de `core/offline/queryClient.ts` também executa, a nível de
+módulo, o `new QueryClient()` + `persistQueryClient(...)` do `queryClient` real (o arquivo tem os
+dois exports juntos, por design), o que importa `storage.ts` e tenta carregar o módulo nativo
+`react-native-mmkv` — inexistente sob Jest, quebrando a suíte inteira com "Failed to get
+NitroModules". Adicionado `mobile/__mocks__/react-native-mmkv.ts` (mock manual reconhecido
+automaticamente pelo Jest para pacotes de `node_modules`, sem precisar de `jest.mock()` em cada
+teste) com uma implementação em memória (`Map`) de `createMMKV`. Isso é o que viabiliza
+`createTestQueryClient()` como "padrão oficial de teste" (nota de risco do design.md) — sem o mock,
+nenhum hook de query seria testável. `npm test`: 17 passed (3 novos). Aviso benigno do Jest ("worker
+process has failed to exit gracefully") aparece após a suíte, ligado a um listener interno do
+`persistQueryClient` do módulo real que não é encerrado entre arquivos de teste; não afeta o
+resultado (exit code 0, 17/17).
+
+*Check A:*
+
+| Done-when criterion | file:line + assertion | Spec-defined outcome | Covered? |
+| --- | --- | --- | --- |
+| Chave de cache inclui `brand.id` | `useFeatureFlagsQuery.test.tsx:83-86,93-97` `queryClient.setQueryData(['feature-flags', fakeBrand.id], {...})` seguido de `expect(result.current.data).toEqual({...})` — só bate se o hook usar a mesma chave | cache por marca, nunca compartilhado | ✅ Yes |
+| Sucesso popula `data` | `useFeatureFlagsQuery.test.tsx:58-61` `expect(result.current.data).toEqual({aiActionsEnabled:true,offlineBanner:false})` | valor de rede no `data` | ✅ Yes |
+| Falha sem cache anterior → `data` undefined | `useFeatureFlagsQuery.test.tsx:75-77` `expect(result.current.data).toBeUndefined()` | nenhum dado, sem crash | ✅ Yes |
+| Cache anterior preservado quando fetch novo falha | `useFeatureFlagsQuery.test.tsx:95-97` `expect(result.current.data).toEqual({aiActionsEnabled:true,offlineBanner:true})` | valor persistido mantido | ✅ Yes |
+
+*Check C:* os 3 testes mapeiam 1:1 para os 3 casos do "Done when" (a cobertura de `brand.id` na
+chave é um efeito colateral verificável do 3º teste, não um 4º teste separado) — nenhum teste
+especulativo.
 
 ---
 
