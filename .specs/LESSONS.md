@@ -56,6 +56,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: mobile/src/core/flags/__tests__/useFeatureFlagsQuery.test.tsx:60 (FLAGSMOB-05) (mobile-query)
 - last seen: 2026-09-01T23:19:28Z
 
+### L-008 - When an element is made to render independently of a state variable, assert it for every value of that state, not only the one the fix targeted
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `mobile-ui` · harmful: 0
+- features: fase-1-feature-flags-mobile
+- evidence: mobile/src/core/ui/BiometricGateScreen.tsx:114 (mutation 4, FLAGSMOB-09) (mobile-ui)
+- last seen: 2026-09-01T23:29:47Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

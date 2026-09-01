@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 8,
+  "next_id": 9,
   "lessons": [
     {
       "id": "L-001",
@@ -130,6 +130,24 @@
       ],
       "created": "2026-09-01T23:19:28Z",
       "last_seen": "2026-09-01T23:19:28Z"
+    },
+    {
+      "id": "L-008",
+      "key": "surviving_mutant::when an element is made to render independently of a state variable assert it for every value of that state not only the one the fix targeted",
+      "text": "When an element is made to render independently of a state variable, assert it for every value of that state, not only the one the fix targeted",
+      "signal": "surviving_mutant",
+      "scope": "mobile-ui",
+      "status": "candidate",
+      "features": [
+        "fase-1-feature-flags-mobile"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "mobile/src/core/ui/BiometricGateScreen.tsx:114 (mutation 4, FLAGSMOB-09) (mobile-ui)"
+      ],
+      "created": "2026-09-01T23:29:47Z",
+      "last_seen": "2026-09-01T23:29:47Z"
     }
   ]
 }
