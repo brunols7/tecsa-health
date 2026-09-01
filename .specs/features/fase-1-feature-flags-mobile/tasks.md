@@ -353,18 +353,37 @@ useTheme().defaults[key]`.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Enquanto a query está `pending`, retorna `defaults[key]` da marca ativa (AC1)
-- [ ] Quando a query resolve com valor para `key`, retorna o valor de rede, mesmo diferente do
+- [x] Enquanto a query está `pending`, retorna `defaults[key]` da marca ativa (AC1)
+- [x] Quando a query resolve com valor para `key`, retorna o valor de rede, mesmo diferente do
       default (AC2)
-- [ ] Quando a query resolve mas `key` está ausente do payload, retorna `defaults[key]` (AC3, nunca
+- [x] Quando a query resolve mas `key` está ausente do payload, retorna `defaults[key]` (AC3, nunca
       `undefined`)
-- [ ] Gate check passes: `npm test`
-- [ ] Test count: 3 tests novos em `src/core/flags/__tests__/useFlag.test.tsx`, um por AC acima
+- [x] Gate check passes: `npm test`
+- [x] Test count: 3 tests novos em `src/core/flags/__tests__/useFlag.test.tsx`, um por AC acima
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(mobile): add useFlag public hook`
+
+**Status**: ✅ Complete — `useFlag` é a composição fina descrita no design.md (`data?.[key] ??
+defaults[key]`), único ponto de consumo de flags (FLAGSMOB-06 — nenhum outro arquivo em `core/`
+lê `useFeatureFlagsQuery`/cache diretamente fora deste hook). `npm test`: 20 passed (3 novos).
+
+O teste de AC3 (`key` ausente) usa `offlineBanner` como sonda: o payload mockado
+(`{ offlineBanner: false }`) difere do default (`true`) especificamente para provar que a query já
+resolveu antes de checar `aiActionsEnabled` (ausente do payload) — sem essa sonda, "pending" e
+"resolvido com key ausente" seriam indistinguíveis, já que os dois caem no mesmo valor de default.
+
+*Check A:*
+
+| Done-when criterion | file:line + assertion | Spec-defined outcome | Covered? |
+| --- | --- | --- | --- |
+| AC1: pending → default da marca | `useFlag.test.tsx:60-64` `mockedFetchFeatureFlags.mockReturnValue(new Promise(() => {}))`; `expect(result.current).toBe(fakeBrand.defaults.aiActionsEnabled)` | default enquanto não resolve | ✅ Yes |
+| AC2: resolvido → valor de rede, mesmo diferente do default | `useFlag.test.tsx:67-73` `mockResolvedValue({aiActionsEnabled:true,...})`; `waitFor(() => expect(result.current).toBe(true))` + `expect(fakeBrand.defaults.aiActionsEnabled).toBe(false)` (prova que o valor difere do default) | valor de rede prevalece | ✅ Yes |
+| AC3: key ausente → default, nunca `undefined` | `useFlag.test.tsx:76-94` sonda `offlineBanner` resolve para `false` (confirma resolução), depois `aiActionsEnabled` (ausente) → `expect(aiActionsResult.current).toBe(fakeBrand.defaults.aiActionsEnabled)` | default, nunca `undefined` | ✅ Yes |
+
+*Check C:* os 3 testes mapeiam 1:1 para AC1/AC2/AC3 — nenhum teste especulativo, todos mantidos.
 
 ---
 
