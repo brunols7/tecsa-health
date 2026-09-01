@@ -128,24 +128,29 @@ describe('BiometricGateScreen', () => {
     }
   });
 
-  it('exibe o texto do aviso quando presente, independente do status', async () => {
-    const { getByText } = await render(
-      <BrandProvider brand={fakeBrandA}>
-        <BiometricGateScreen
-          status="unlocked"
-          reason="no_credential_available"
-          warning="Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo."
-          onRetry={jest.fn()}
-        />
-      </BrandProvider>,
-    );
+  it.each(['checking', 'locked', 'unlocked'] as const)(
+    'exibe o texto do aviso quando presente, com status "%s"',
+    async (status) => {
+      const { getByText, unmount } = await render(
+        <BrandProvider brand={fakeBrandA}>
+          <BiometricGateScreen
+            status={status}
+            reason={status === 'unlocked' ? 'no_credential_available' : undefined}
+            warning="Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo."
+            onRetry={jest.fn()}
+          />
+        </BrandProvider>,
+      );
 
-    expect(
-      getByText(
-        'Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo.',
-      ),
-    ).toBeTruthy();
-  });
+      expect(
+        getByText(
+          'Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo.',
+        ),
+      ).toBeTruthy();
+
+      await unmount();
+    },
+  );
 
   it('não exibe botão Continuar quando não há aviso', async () => {
     const { queryByText } = await render(
