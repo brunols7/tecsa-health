@@ -166,12 +166,12 @@ a infraestrutura do zero.
 | FLAGSMOB-03      | P1: key ausente no payload → default              | Execute | Complete (T7) |
 | FLAGSMOB-04      | P1: offline → último valor persistido             | Execute | Complete (T6) |
 | FLAGSMOB-05      | P1: flag alterada no banco reflete após reabrir   | Execute | Complete (T6) |
-| FLAGSMOB-06      | P2: gate bloqueia conteúdo até resolver           | Design | Pending |
-| FLAGSMOB-07      | P2: sucesso biométrico libera navegação           | Design | Pending |
-| FLAGSMOB-08      | P2: falha biométrica → retry, sem crash           | Design | Pending |
-| FLAGSMOB-09      | P2: sem biometria cadastrada → aviso + credencial SO | Design | Pending |
-| FLAGSMOB-10      | P2: sem nenhuma credencial → libera com aviso     | Design | Pending |
-| FLAGSMOB-11      | P2: sem hardware biométrico → mesmo caminho do aviso | Design | Pending |
+| FLAGSMOB-06      | P2: gate bloqueia conteúdo até resolver           | Execute | Pending (T10) |
+| FLAGSMOB-07      | P2: sucesso biométrico libera navegação           | Execute | Complete (T8) |
+| FLAGSMOB-08      | P2: falha biométrica → retry, sem crash           | Execute | Complete (T8) |
+| FLAGSMOB-09      | P2: sem biometria cadastrada → aviso + credencial SO | Execute | Complete (T8) |
+| FLAGSMOB-10      | P2: sem nenhuma credencial → libera com aviso     | Execute | Complete (T8) |
+| FLAGSMOB-11      | P2: sem hardware biométrico → mesmo caminho do aviso | Execute | Complete (T8) |
 | FLAGSMOB-12      | P3: QueryClient persistido único                  | Execute | Complete (T1, T2) |
 | FLAGSMOB-13      | P3: substituível em ambiente de teste             | Execute | Complete (T2, T6, T7) |
 

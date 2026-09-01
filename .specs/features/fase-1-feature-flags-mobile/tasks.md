@@ -402,26 +402,48 @@ context.md (biometria → credencial de device → `passcode_not_set` → libera
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `hasHardwareAsync() && isEnrolledAsync()` ambos `true` → `authenticateAsync()` sem fallback de
+- [x] `hasHardwareAsync() && isEnrolledAsync()` ambos `true` → `authenticateAsync()` sem fallback de
       device; sucesso → `{ status: 'unlocked', reason: 'biometric' }` (AC2); falha ou cancelamento →
       `{ status: 'locked', retryable: true }` (AC3, edge case de cancelamento)
-- [ ] Hardware ausente OU não cadastrado → `authenticateAsync({ disableDeviceFallback: false })`;
+- [x] Hardware ausente OU não cadastrado → `authenticateAsync({ disableDeviceFallback: false })`;
       sucesso → `unlocked/device_credential` (AC4); erro `passcode_not_set` →
       `unlocked/no_credential_available` (AC5); outra falha/cancelamento → `locked` com retry (AC6
       trata ausência de hardware pelo mesmo caminho)
-- [ ] Nenhum erro de `expo-local-authentication` propaga como exceção não tratada — todo `catch`
+- [x] Nenhum erro de `expo-local-authentication` propaga como exceção não tratada — todo `catch`
       resolve para um dos estados acima (AC7)
-- [ ] `retry()` reseta o estado para `checking` e reexecuta o fluxo
-- [ ] Teste mocka `expo-local-authentication` (`hasHardwareAsync`, `isEnrolledAsync`,
+- [x] `retry()` reseta o estado para `checking` e reexecuta o fluxo
+- [x] Teste mocka `expo-local-authentication` (`hasHardwareAsync`, `isEnrolledAsync`,
       `authenticateAsync`) para cada um dos 5 ramos (biometria OK, falha biométrica, device
       credential OK, passcode_not_set, cancelamento)
-- [ ] Gate check passes: `npm test`
-- [ ] Test count: 5 tests novos em `src/core/auth/__tests__/useBiometricGate.test.tsx`
+- [x] Gate check passes: `npm test`
+- [x] Test count: 5 tests novos em `src/core/auth/__tests__/useBiometricGate.test.tsx`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(mobile): add useBiometricGate hook`
+
+**Status**: ✅ Complete — `BiometricGateResult` é um union discriminado real (não uma intersecção de
+union com objeto), necessário para que `asserts x is T` narrowing funcione corretamente nos testes
+sem recorrer a `as`. Warning de "sem biometria cadastrada" e de "sem credencial nenhuma" nascem no
+hook (não em `brands/*`, que não tem essas chaves de copy) — são strings de UI genéricas, não nome
+de marca, permitidas em `core/`. `npm test`: 25 passed (5 novos). `eslint-disable-next-line
+react-hooks/set-state-in-effect` no `useEffect` de disparo segue o precedente já existente em
+`src/hooks/use-color-scheme.web.ts` — o setState em cascata após o round-trip assíncrono com o SO é
+o propósito do gate, não um efeito derivável.
+
+*Check A:*
+
+| Done-when criterion | file:line + assertion | Spec-defined outcome | Covered? |
+| --- | --- | --- | --- |
+| Biometria OK → unlocked/biometric (AC2) | `useBiometricGate.test.tsx:44,50-53` `expect(result.current.reason).toBe('biometric')` + `expect(mockedAuthenticateAsync).toHaveBeenCalledWith({disableDeviceFallback:true})` | unlocked, reason biometric | ✅ Yes |
+| Falha biométrica → locked+retry, retry recupera | `useBiometricGate.test.tsx:68-77` `expect(afterFailure.retryable).toBe(true)`; após `retry()`, `expect(afterRetry.reason).toBe('biometric')` | locked/retryable, retry reexecuta | ✅ Yes |
+| Sem hardware/cadastro → aviso + device fallback (AC4/AC6) | `useBiometricGate.test.tsx:89-94` `expect(result.current.warning).toBe('Este dispositivo não tem biometria cadastrada...')` | unlocked/device_credential, aviso visível | ✅ Yes |
+| passcode_not_set → libera com aviso de segurança (AC5) | `useBiometricGate.test.tsx:106-110` `expect(result.current.warning).toBe('Acesso liberado sem verificação...')` | unlocked/no_credential_available | ✅ Yes |
+| Cancelamento tratado como falha (edge case) | `useBiometricGate.test.tsx:122-123` `expect(afterFailure.retryable).toBe(true)` (via `assertLocked`) | locked, mesmo caminho do item 3 | ✅ Yes |
+| Nunca lança exceção não tratada (AC7) | implementação: `try/catch` em `useBiometricGate.ts:29,63` | nunca crash | ⚠️ Spec-precision gap — garantido por estrutura de código, sem teste dedicado de promise rejeitada (fora do orçamento de 5 testes da task) |
+
+*Check C:* os 5 testes mapeiam 1:1 para AC2/AC3+retry/AC4+AC6/AC5/edge-case-cancelamento — nenhum teste especulativo.
 
 ---
 
