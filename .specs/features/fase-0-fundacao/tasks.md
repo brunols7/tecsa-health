@@ -607,8 +607,8 @@ porta `5433:5432`, variáveis via `env_file: api/.env`) e `api` (build de `api/D
 
 **Done when**:
 
-- [ ] `docker compose config` valida sem erro
-- [ ] Nenhuma credencial de banco ou `APP_KEY` está escrita diretamente no `docker-compose.yml`
+- [x] `docker compose config` valida sem erro
+- [x] Nenhuma credencial de banco ou `APP_KEY` está escrita diretamente no `docker-compose.yml`
       (tudo via `env_file`)
 
 **Tests**: none
