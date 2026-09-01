@@ -947,10 +947,10 @@ ausente — literal de código, não `.env` obrigatório, per design.md), valida
 
 **Done when**:
 
-- [ ] `APP_BRAND=vita-plus npx expo config --json | jq .extra.brandId` retorna `"vita-plus"`
-- [ ] Sem `APP_BRAND` definido, retorna `"nutri-care"`
-- [ ] `APP_BRAND=inexistente npx expo config` falha com mensagem clara
-- [ ] Nenhuma URL fixa (`localhost:9000` como literal) aparece em `app.config.ts` fora de comentário
+- [x] `APP_BRAND=vita-plus npx expo config --json | jq .extra.brandId` retorna `"vita-plus"`
+- [x] Sem `APP_BRAND` definido, retorna `"nutri-care"`
+- [x] `APP_BRAND=inexistente npx expo config` falha com mensagem clara
+- [x] Nenhuma URL fixa (`localhost:9000` como literal) aparece em `app.config.ts` fora de comentário
       de exemplo
 
 **Tests**: none (comportamento coberto pelas checagens manuais de `expo config --json` acima,
