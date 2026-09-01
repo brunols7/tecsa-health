@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { Text as MockText } from 'react-native';
 
 import { useBiometricGate } from '@/core/auth/useBiometricGate';
@@ -47,5 +47,27 @@ describe('TabLayout', () => {
     const { queryByText } = await render(<TabLayout />);
 
     expect(queryByText('AppTabsStub')).toBeTruthy();
+  });
+
+  it('mantém o aviso de segurança visível e só libera AppTabs após o usuário confirmar', async () => {
+    mockedUseBiometricGate.mockReturnValue({
+      status: 'unlocked',
+      reason: 'no_credential_available',
+      warning: 'Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo.',
+      retry: jest.fn(),
+    });
+
+    const { queryByText, getByText } = await render(<TabLayout />);
+
+    expect(queryByText('AppTabsStub')).toBeNull();
+    expect(
+      getByText(
+        'Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo.',
+      ),
+    ).toBeTruthy();
+
+    fireEvent.press(getByText('Continuar'));
+
+    await waitFor(() => expect(queryByText('AppTabsStub')).toBeTruthy());
   });
 });

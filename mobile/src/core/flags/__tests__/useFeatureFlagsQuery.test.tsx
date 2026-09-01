@@ -96,4 +96,24 @@ describe('useFeatureFlagsQuery', () => {
 
     expect(result.current.data).toEqual({ aiActionsEnabled: true, offlineBanner: true });
   });
+
+  it('substitui o valor persistido pelo novo valor de rede quando a flag mudou no banco', async () => {
+    mockedFetchFeatureFlags.mockResolvedValue({ aiActionsEnabled: true, offlineBanner: false });
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(['feature-flags', fakeBrand.id], {
+      aiActionsEnabled: false,
+      offlineBanner: false,
+    });
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <BrandProvider brand={fakeBrand}>{children}</BrandProvider>
+      </QueryClientProvider>
+    );
+
+    const { result } = await renderHook(() => useFeatureFlagsQuery(), { wrapper });
+
+    await waitFor(() =>
+      expect(result.current.data).toEqual({ aiActionsEnabled: true, offlineBanner: false }),
+    );
+  });
 });

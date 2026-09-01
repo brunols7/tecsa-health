@@ -124,4 +124,15 @@ describe('useBiometricGate', () => {
     assertLocked(result.current);
     expect(result.current.retryable).toBe(true);
   });
+
+  it('erro inesperado do módulo nativo nunca escapa como exceção não tratada', async () => {
+    mockedHasHardwareAsync.mockRejectedValue(new Error('sensor indisponível'));
+
+    const { result } = await renderHook(() => useBiometricGate());
+
+    await waitFor(() => expect(result.current.status).toBe('locked'));
+
+    assertLocked(result.current);
+    expect(result.current.retryable).toBe(true);
+  });
 });

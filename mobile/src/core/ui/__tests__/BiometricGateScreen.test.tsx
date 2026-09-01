@@ -127,4 +127,52 @@ describe('BiometricGateScreen', () => {
       await unmount();
     }
   });
+
+  it('exibe o texto do aviso quando presente, independente do status', async () => {
+    const { getByText } = await render(
+      <BrandProvider brand={fakeBrandA}>
+        <BiometricGateScreen
+          status="unlocked"
+          reason="no_credential_available"
+          warning="Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo."
+          onRetry={jest.fn()}
+        />
+      </BrandProvider>,
+    );
+
+    expect(
+      getByText(
+        'Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo.',
+      ),
+    ).toBeTruthy();
+  });
+
+  it('não exibe botão Continuar quando não há aviso', async () => {
+    const { queryByText } = await render(
+      <BrandProvider brand={fakeBrandA}>
+        <BiometricGateScreen status="unlocked" reason="biometric" onRetry={jest.fn()} />
+      </BrandProvider>,
+    );
+
+    expect(queryByText('Continuar')).toBeNull();
+  });
+
+  it('exibe botão Continuar quando unlocked com aviso, e dispara onContinue ao pressionar', async () => {
+    const onContinue = jest.fn();
+    const { getByText } = await render(
+      <BrandProvider brand={fakeBrandA}>
+        <BiometricGateScreen
+          status="unlocked"
+          reason="device_credential"
+          warning="aviso de device credential"
+          onRetry={jest.fn()}
+          onContinue={onContinue}
+        />
+      </BrandProvider>,
+    );
+
+    fireEvent.press(getByText('Continuar'));
+
+    expect(onContinue).toHaveBeenCalledTimes(1);
+  });
 });

@@ -30,7 +30,7 @@ export function useBiometricGate(): BiometricGateResult {
       const hasHardware = await LocalAuthentication.hasHardwareAsync();
       const enrolled = hasHardware && (await LocalAuthentication.isEnrolledAsync());
 
-      if (hasHardware && enrolled) {
+      if (enrolled) {
         const result = await LocalAuthentication.authenticateAsync({
           disableDeviceFallback: true,
         });
@@ -66,10 +66,7 @@ export function useBiometricGate(): BiometricGateResult {
   }, []);
 
   useEffect(() => {
-    // Resultado da checagem biométrica só existe depois de um round-trip async
-    // com o SO; o setState em cascata aqui é o próprio propósito do gate, não
-    // um efeito derivável de outro estado.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- gate result only exists after an async round-trip with the OS
     void executeGate();
   }, [executeGate]);
 

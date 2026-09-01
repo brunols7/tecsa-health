@@ -9,9 +9,16 @@ type BiometricGateScreenProps = {
   reason?: Extract<BiometricGateResult, { status: 'unlocked' }>['reason'];
   warning?: string;
   onRetry: () => void;
+  onContinue?: () => void;
 };
 
-export function BiometricGateScreen({ status, reason, warning, onRetry }: BiometricGateScreenProps) {
+export function BiometricGateScreen({
+  status,
+  reason,
+  warning,
+  onRetry,
+  onContinue,
+}: BiometricGateScreenProps) {
   const { colors, radii, typography, spacing } = useTheme();
 
   return (
@@ -93,29 +100,50 @@ export function BiometricGateScreen({ status, reason, warning, onRetry }: Biomet
         )}
 
         {status === 'unlocked' && (
-          <>
+          <Text
+            style={{
+              color: colors.textPrimary,
+              fontFamily: typography.fontFamily.bold,
+              fontSize: typography.scale.lg,
+            }}
+          >
+            {reason === 'biometric' ? 'Identidade confirmada' : 'Acesso liberado'}
+          </Text>
+        )}
+
+        {warning !== undefined && (
+          <Text
+            style={{
+              color: colors.warning,
+              fontFamily: typography.fontFamily.medium,
+              fontSize: typography.scale.sm,
+              textAlign: 'center',
+            }}
+          >
+            {warning}
+          </Text>
+        )}
+
+        {status === 'unlocked' && warning !== undefined && onContinue !== undefined && (
+          <Pressable
+            onPress={onContinue}
+            style={{
+              backgroundColor: colors.accent,
+              borderRadius: radii.md,
+              paddingVertical: spacing(3),
+              paddingHorizontal: spacing(6),
+            }}
+          >
             <Text
               style={{
-                color: colors.textPrimary,
-                fontFamily: typography.fontFamily.bold,
-                fontSize: typography.scale.lg,
+                color: colors.accentContrast,
+                fontFamily: typography.fontFamily.medium,
+                fontSize: typography.scale.md,
               }}
             >
-              {reason === 'biometric' ? 'Identidade confirmada' : 'Acesso liberado'}
+              Continuar
             </Text>
-            {warning !== undefined && (
-              <Text
-                style={{
-                  color: colors.warning,
-                  fontFamily: typography.fontFamily.medium,
-                  fontSize: typography.scale.sm,
-                  textAlign: 'center',
-                }}
-              >
-                {warning}
-              </Text>
-            )}
-          </>
+          </Pressable>
         )}
       </View>
     </SafeAreaView>
