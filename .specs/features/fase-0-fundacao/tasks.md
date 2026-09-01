@@ -178,9 +178,9 @@ diagrama consolidado em **Phase Execution Map**.
 
 **Done when**:
 
-- [ ] `api/.env.example` versionado contém todas as chaves acima, nenhuma com valor real
-- [ ] `git check-ignore api/.env` retorna o caminho (confirma que está ignorado)
-- [ ] `grep -c "ANTHROPIC_API_KEY=" api/.env.example` = 1 e o valor após `=` está vazio
+- [x] `api/.env.example` versionado contém todas as chaves acima, nenhuma com valor real
+- [x] `git check-ignore api/.env` retorna o caminho (confirma que está ignorado)
+- [x] `grep -c "ANTHROPIC_API_KEY=" api/.env.example` = 1 e o valor após `=` está vazio
 
 **Tests**: none
 **Gate**: build
