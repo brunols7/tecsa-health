@@ -208,8 +208,8 @@ adiciona subpastas)
 
 **Done when**:
 
-- [ ] Todas as pastas listadas acima existem
-- [ ] Nenhuma pasta nova quebra o autoload PSR-4 já configurado pelo Laravel (`composer dump-autoload`
+- [x] Todas as pastas listadas acima existem
+- [x] Nenhuma pasta nova quebra o autoload PSR-4 já configurado pelo Laravel (`composer dump-autoload`
       roda sem erro)
 
 **Tests**: none
