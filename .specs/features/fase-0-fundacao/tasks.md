@@ -236,9 +236,9 @@ passam limpos sobre o skeleton criado até aqui.
 
 **Done when**:
 
-- [ ] `vendor/bin/pint --test` sai com código 0
-- [ ] `vendor/bin/phpstan analyse` sai com código 0 no nível 6
-- [ ] `composer.json` ganha os scripts `"lint": "pint --test"` e `"stan": "phpstan analyse"`
+- [x] `vendor/bin/pint --test` sai com código 0
+- [x] `vendor/bin/phpstan analyse` sai com código 0 no nível 6
+- [x] `composer.json` ganha os scripts `"lint": "pint --test"` e `"stan": "phpstan analyse"`
 
 **Tests**: none
 **Gate**: build
