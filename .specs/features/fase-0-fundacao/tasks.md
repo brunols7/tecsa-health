@@ -799,10 +799,10 @@ coral, raios grandes/pill, tipografia sans humanista, copy calorosa).
 
 **Done when**:
 
-- [ ] Objeto exportado satisfaz `Brand` sem propriedade opcional faltando
-- [ ] Pelo menos `colors.accent`, `radii.md` e `typography.fontFamily.regular` diferem dos valores
+- [x] Objeto exportado satisfaz `Brand` sem propriedade opcional faltando
+- [x] Pelo menos `colors.accent`, `radii.md` e `typography.fontFamily.regular` diferem dos valores
       de `nutri-care` (checagem manual/diff nesta task)
-- [ ] Assets placeholder existem em `mobile/src/brands/vita-plus/assets/`
+- [x] Assets placeholder existem em `mobile/src/brands/vita-plus/assets/`
 
 **Tests**: none
 **Gate**: build
