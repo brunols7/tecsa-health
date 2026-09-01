@@ -510,23 +510,44 @@ existente) e passa a renderizar `BiometricGateScreen` (com `onRetry`) enquanto
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `AppTabs` nunca renderiza antes de `status === 'unlocked'` (AC1) — verificado por teste que
+- [x] `AppTabs` nunca renderiza antes de `status === 'unlocked'` (AC1) — verificado por teste que
       mocka `useBiometricGate` retornando `checking`/`locked` e afirma que `AppTabs` não está na
       árvore
-- [ ] `AppTabs` renderiza assim que `status === 'unlocked'` (AC2/AC4/AC5), sem tela intermediária
-- [ ] Fetch de flags (via `useFeatureFlagsQuery`, indiretamente por qualquer consumidor futuro) roda
+- [x] `AppTabs` renderiza assim que `status === 'unlocked'` (AC2/AC4/AC5), sem tela intermediária
+- [x] Fetch de flags (via `useFeatureFlagsQuery`, indiretamente por qualquer consumidor futuro) roda
       independente do gate — não é bloqueado pelo `QueryClientProvider` estar "atrás" do gate
-- [ ] `index.test.tsx` existente continua passando sem modificação de expectativa (só precisa do
+- [x] `index.test.tsx` existente continua passando sem modificação de expectativa (só precisa do
       `QueryClientProvider` no wrapper de teste, se `useTheme`/`BrandProvider` sozinhos não bastarem
       mais para renderizar a árvore completa)
-- [ ] Gate check passes: `npx tsc --noEmit && npm run pretest && npm test`
-- [ ] Test count: 2 tests novos em `src/app/__tests__/_layout.test.tsx`, todos os testes existentes
+- [x] Gate check passes: `npx tsc --noEmit && npm run pretest && npm test`
+- [x] Test count: 2 tests novos em `src/app/__tests__/_layout.test.tsx`, todos os testes existentes
       (contagem atual do projeto) continuam passando
 
 **Tests**: unit
 **Gate**: build
 
 **Commit**: `feat(mobile): wire biometric gate and QueryClientProvider at app root`
+
+**Status**: ✅ Complete — `QueryClientProvider` envolve `BrandProvider` (ordem existente preservada
+por dentro); `GatedContent` decide entre `BiometricGateScreen` e `AppTabs` com base em
+`useBiometricGate().status`, sem grupo de rotas `(protected)/` novo, conforme decisão registrada em
+design.md. `index.test.tsx` passou sem nenhuma modificação — testa `app/index.tsx`
+(`BrandProofScreen`), que não depende de `_layout.tsx`/gate/`queryClient`. `AnimatedSplashOverlay`
+mockado no teste de `_layout` porque `react-native-reanimated`/`react-native-worklets` não têm setup
+nativo sob Jest neste projeto (achado novo, não coberto por T1-T9); a asserção é sobre o wiring do
+gate, não sobre a animação de splash. Gate build (`tsc --noEmit && pretest && test`) limpo: 31
+passed, 0 failed (20 preexistentes T1-T7 + 5 T8 + 4 T9 + 2 T10).
+
+*Check A:*
+
+| Done-when criterion | file:line + assertion | Spec-defined outcome | Covered? |
+| --- | --- | --- | --- |
+| AppTabs nunca renderiza antes de unlocked (AC1) | `_layout.test.tsx:29-39` `expect(queryByText('AppTabsStub')).toBeNull()` com gate em `checking` | AppTabs ausente enquanto gate não resolve | ✅ Yes |
+| AppTabs renderiza assim que unlocked (AC2/AC4/AC5) | `_layout.test.tsx:41-52` `expect(queryByText('AppTabsStub')).toBeTruthy()` com gate em `unlocked` | AppTabs presente, sem tela intermediária | ✅ Yes |
+| Fetch de flags independente do gate | implementação: `_layout.tsx:33-40` — `QueryClientProvider` é ancestral de `GatedContent`, nunca dentro do `if` do gate | fetch não bloqueado pelo gate | ⚠️ Garantia estrutural (árvore de componentes), sem teste dinâmico dedicado |
+| `index.test.tsx` continua passando sem modificação | execução completa da suíte: `PASS src/app/__tests__/index.test.tsx` | sem regressão | ✅ Yes |
+
+*Check C:* os 2 testes novos mapeiam 1:1 para AC1 e AC2/AC4/AC5 — nenhum teste especulativo.
 
 ---
 

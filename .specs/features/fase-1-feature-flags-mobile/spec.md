@@ -166,7 +166,7 @@ a infraestrutura do zero.
 | FLAGSMOB-03      | P1: key ausente no payload → default              | Execute | Complete (T7) |
 | FLAGSMOB-04      | P1: offline → último valor persistido             | Execute | Complete (T6) |
 | FLAGSMOB-05      | P1: flag alterada no banco reflete após reabrir   | Execute | Complete (T6) |
-| FLAGSMOB-06      | P2: gate bloqueia conteúdo até resolver           | Execute | Pending (T10) |
+| FLAGSMOB-06      | P2: gate bloqueia conteúdo até resolver           | Execute | Complete (T10) |
 | FLAGSMOB-07      | P2: sucesso biométrico libera navegação           | Execute | Complete (T8) |
 | FLAGSMOB-08      | P2: falha biométrica → retry, sem crash           | Execute | Complete (T8) |
 | FLAGSMOB-09      | P2: sem biometria cadastrada → aviso + credencial SO | Execute | Complete (T8) |
@@ -175,7 +175,7 @@ a infraestrutura do zero.
 | FLAGSMOB-12      | P3: QueryClient persistido único                  | Execute | Complete (T1, T2) |
 | FLAGSMOB-13      | P3: substituível em ambiente de teste             | Execute | Complete (T2, T6, T7) |
 
-**Coverage:** 13 total, 7 mapped and complete (T1-T7 batch), 6 pending (T8-T10 batch, biometric gate)
+**Coverage:** 13 total, 13 mapped and complete (7 from T1-T7, 6 from T8-T10)
 
 ---
 
