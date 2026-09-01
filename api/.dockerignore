@@ -1,0 +1,7 @@
+.env
+.env.testing
+vendor
+node_modules
+.git
+.phpunit.cache
+storage/logs/*.log

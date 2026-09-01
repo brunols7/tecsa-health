@@ -548,8 +548,8 @@ forward" — agora a tabela existe).
 
 **Done when**:
 
-- [ ] `docker build -t tecsa-api api/` completa sem erro
-- [ ] `docker run --rm tecsa-api php -m` lista `pdo_pgsql`, `bcmath`, `intl`
+- [x] `docker build -t tecsa-api api/` completa sem erro
+- [x] `docker run --rm tecsa-api php -m` lista `pdo_pgsql`, `bcmath`, `intl`
 
 **Tests**: none
 **Gate**: build
