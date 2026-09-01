@@ -772,8 +772,8 @@ acento teal profundo, raios pequenos, tipografia sans grotesca, copy direta).
 
 **Done when**:
 
-- [ ] Objeto exportado satisfaz `Brand` sem propriedade opcional faltando (`tsc --noEmit` confirma)
-- [ ] Assets placeholder (logo, splash icon) existem em `mobile/src/brands/nutri-care/assets/`
+- [x] Objeto exportado satisfaz `Brand` sem propriedade opcional faltando (`tsc --noEmit` confirma)
+- [x] Assets placeholder (logo, splash icon) existem em `mobile/src/brands/nutri-care/assets/`
 
 **Tests**: none
 **Gate**: build
