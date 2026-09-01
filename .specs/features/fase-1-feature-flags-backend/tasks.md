@@ -174,10 +174,10 @@ PHP (`\RuntimeException`), com mensagem incluindo o slug.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] Classe `final`, estende `\RuntimeException`, sem import de `Illuminate\`
-- [ ] Construtor recebe `string $slug`, monta mensagem determinística (ex.: `"Brand not found:
+- [x] Classe `final`, estende `\RuntimeException`, sem import de `Illuminate\`
+- [x] Construtor recebe `string $slug`, monta mensagem determinística (ex.: `"Brand not found:
       {$slug}"`)
-- [ ] `bash scripts/check-layer-boundary.sh` continua passando
+- [x] `bash scripts/check-layer-boundary.sh` continua passando
 
 **Tests**: none
 **Gate**: build
