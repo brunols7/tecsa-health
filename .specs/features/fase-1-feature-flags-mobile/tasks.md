@@ -461,17 +461,36 @@ de retry), usando tokens e copy da marca ativa.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Nenhum literal de cor/raio/tamanho de fonte — tudo via `useTheme()`
-- [ ] Renderiza sem erro nas duas marcas, para cada `status`/`reason` possível (segue o padrão de
+- [x] Nenhum literal de cor/raio/tamanho de fonte — tudo via `useTheme()`
+- [x] Renderiza sem erro nas duas marcas, para cada `status`/`reason` possível (segue o padrão de
       `index.test.tsx` — comparar tokens aplicados entre marcas)
-- [ ] Botão de retry só aparece quando `status === 'locked'`
-- [ ] Gate check passes: `npm test`
-- [ ] Test count: 4 tests novos em `src/core/ui/__tests__/BiometricGateScreen.test.tsx`
+- [x] Botão de retry só aparece quando `status === 'locked'`
+- [x] Gate check passes: `npm test`
+- [x] Test count: 4 tests novos em `src/core/ui/__tests__/BiometricGateScreen.test.tsx`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(mobile): add BiometricGateScreen component`
+
+**Status**: ✅ Complete — componente puro recebendo `status`/`reason`/`warning`/`onRetry` como props
+(sem chamar `useBiometricGate()` sozinho), mapeando os quatro estados de UI do CLAUDE.md §5.5 para
+este contexto: verificando (status checking), bloqueado com retry (locked), e os dois avisos antes
+de liberar (unlocked com `warning` de device_credential/no_credential_available). Teste usa um
+fixture `Brand` construído inline (não `resolveBrand` de `@/brands`), pela mesma razão já registrada
+no Achado de T6: a regra de fronteira de marca bloqueia `@/brands` em qualquer arquivo sob
+`src/core/**`, incluindo testes.
+
+*Check A:*
+
+| Done-when criterion | file:line + assertion | Spec-defined outcome | Covered? |
+| --- | --- | --- | --- |
+| Nenhum literal de cor/raio/fonte | implementação: `BiometricGateScreen.tsx` — todo valor de estilo lê `colors.*`/`radii.*`/`typography.*`/`spacing()` | zero literais (CLAUDE §5.2) | ⚠️ Garantia por inspeção de código, sem teste dedicado de varredura de literais (mesmo padrão de `BrandProofScreen`) |
+| Renderiza nas duas marcas com tokens distintos | `BiometricGateScreen.test.tsx:66-89` `expect(brandAStyle.backgroundColor).not.toBe(brandBStyle.backgroundColor)` + raio | tokens aplicados diferem por marca | ✅ Yes |
+| Retry só aparece quando locked | `BiometricGateScreen.test.tsx:91-98` (ausente em checking) + `:101-112` (presente e dispara `onRetry` em locked) | botão condicional ao status | ✅ Yes |
+| Renderiza sem erro para cada status/reason | `BiometricGateScreen.test.tsx:114-129` loop sobre as 5 combinações, `render`+`unmount` sem throw | nenhum crash em nenhuma combinação | ✅ Yes |
+
+*Check C:* os 4 testes mapeiam 1:1 para os 4 critérios do "Done when" — nenhum teste especulativo.
 
 ---
 
