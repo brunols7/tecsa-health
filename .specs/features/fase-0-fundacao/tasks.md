@@ -514,16 +514,16 @@ forward" — agora a tabela existe).
 
 **Done when**:
 
-- [ ] `PatientSeederTest` roda `PatientSeeder` com contagem reduzida (ex. 20) em banco de teste
+- [x] `PatientSeederTest` roda `PatientSeeder` com contagem reduzida (ex. 20) em banco de teste
       (`RefreshDatabase`), confirma distribuição entre as duas marcas, confirma que rodar duas vezes
       seguidas a partir de banco limpo produz a mesma contagem final (determinismo), confirma que
       pelo menos um biomarcador está fora de `[ref_min, ref_max]`
-- [ ] `FeatureFlagRepositoryTest` semeia uma flag via `FeatureFlagSeeder`, chama
+- [x] `FeatureFlagRepositoryTest` semeia uma flag via `FeatureFlagSeeder`, chama
       `EloquentFeatureFlagRepository::findByKeyAndBrand()` e confirma que a entidade de domínio
       retornada bate com o valor semeado
-- [ ] Gate check passa: `php artisan test --filter=PatientSeeder` e
+- [x] Gate check passa: `php artisan test --filter=PatientSeeder` e
       `php artisan test --filter=FeatureFlagRepository`
-- [ ] Test count: 4 testes passam (distribuição, determinismo, fora de faixa, repository query)
+- [x] Test count: 4 testes passam (distribuição, determinismo, fora de faixa, repository query)
 
 **Tests**: integration
 **Gate**: full
