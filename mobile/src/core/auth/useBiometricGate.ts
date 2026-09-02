@@ -53,7 +53,9 @@ export function useBiometricGate(): BiometricGateResult {
         return;
       }
 
-      if (deviceResult.error === 'passcode_not_set') {
+      // 'passcode_not_set' is iOS's code for "no device credential"; Android's
+      // KeyguardManager#isDeviceSecure() check reports the same condition as 'not_enrolled'.
+      if (deviceResult.error === 'passcode_not_set' || deviceResult.error === 'not_enrolled') {
         setWarning(NO_CREDENTIAL_AVAILABLE_WARNING);
         setState({ status: 'unlocked', reason: 'no_credential_available' });
         return;

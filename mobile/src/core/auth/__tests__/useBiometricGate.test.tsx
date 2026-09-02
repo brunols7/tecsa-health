@@ -112,6 +112,22 @@ describe('useBiometricGate', () => {
     );
   });
 
+  it('sem nenhuma credencial configurada (not_enrolled, código do Android) libera com aviso de segurança', async () => {
+    mockedHasHardwareAsync.mockResolvedValue(false);
+    mockedIsEnrolledAsync.mockResolvedValue(false);
+    mockedAuthenticateAsync.mockResolvedValue({ success: false, error: 'not_enrolled' });
+
+    const { result } = await renderHook(() => useBiometricGate());
+
+    await waitFor(() => expect(result.current.status).toBe('unlocked'));
+
+    assertUnlocked(result.current);
+    expect(result.current.reason).toBe('no_credential_available');
+    expect(result.current.warning).toBe(
+      'Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo.',
+    );
+  });
+
   it('cancelamento do prompt biométrico é tratado como falha, não como sucesso nem sem-credencial', async () => {
     mockedHasHardwareAsync.mockResolvedValue(true);
     mockedIsEnrolledAsync.mockResolvedValue(true);
