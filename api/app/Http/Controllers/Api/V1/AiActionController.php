@@ -8,6 +8,7 @@ use App\Application\AiAction\AiActionService;
 use App\Domain\AiAction\AiActionStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DecideAiActionRequest;
+use App\Http\Requests\GenerateAiActionsRequest;
 use App\Http\Resources\AiActionResource;
 use Dedoc\Scramble\Attributes\Response as DocResponse;
 use Illuminate\Http\JsonResponse;
@@ -23,9 +24,9 @@ final class AiActionController extends Controller
     #[DocResponse(429, description: 'Rate limit exceeded')]
     #[DocResponse(502, description: 'Llm provider unavailable')]
     #[DocResponse(503, description: 'Ai actions disabled')]
-    public function generate(string $patientId): JsonResponse
+    public function generate(GenerateAiActionsRequest $request, string $patientId): JsonResponse
     {
-        $result = $this->aiActions->generate($patientId);
+        $result = $this->aiActions->generate($patientId, $request->wantsRefresh());
 
         return response()->json(
             AiActionResource::collection($result->actions)->resolve(),

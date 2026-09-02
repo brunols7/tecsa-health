@@ -97,6 +97,55 @@ class AiActionControllerTest extends TestCase
         $this->assertSame(1, $fake->timesCalled());
     }
 
+    public function test_post_with_refresh_calls_llm_again_and_appends_to_existing_actions(): void
+    {
+        $brand = $this->brand();
+        $patient = $this->patientWithBiomarker($brand);
+        $fake = $this->bindFakeLlm();
+        $fake->respondWith($this->suggestion());
+
+        $first = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions");
+        $first->assertStatus(201);
+        $firstIds = collect($first->json())->pluck('id')->all();
+
+        $fake->respondWith(new AiSuggestion(
+            riskLevel: 'low',
+            summary: 'Nova sugestão.',
+            actions: [
+                new AiSuggestedAction(
+                    title: 'Aumentar ingestão de fibras',
+                    rationale: 'Complementa a primeira sugestão.',
+                    biomarkers: ['glucose'],
+                    priority: 'low',
+                ),
+            ],
+        ));
+
+        $refreshed = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions", ['refresh' => true]);
+        $refreshed->assertStatus(201);
+        $refreshed->assertJsonCount(2);
+
+        $refreshedIds = collect($refreshed->json())->pluck('id')->all();
+        $this->assertEquals($firstIds, array_intersect($firstIds, $refreshedIds));
+        $this->assertSame(2, $fake->timesCalled());
+        $this->assertSame(2, AiActionModel::query()->where('patient_id', $patient->id)->count());
+    }
+
+    public function test_post_without_refresh_still_hits_cache_and_never_appends(): void
+    {
+        $brand = $this->brand();
+        $patient = $this->patientWithBiomarker($brand);
+        $fake = $this->bindFakeLlm();
+        $fake->respondWith($this->suggestion());
+
+        $this->postJson("/api/v1/patients/{$patient->id}/ai-actions")->assertStatus(201);
+
+        $second = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions", ['refresh' => false]);
+        $second->assertStatus(200);
+        $second->assertJsonCount(1);
+        $this->assertSame(1, $fake->timesCalled());
+    }
+
     public function test_post_returns_404_when_patient_does_not_exist(): void
     {
         $this->bindFakeLlm();
