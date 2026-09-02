@@ -265,15 +265,15 @@ cor-por-status, adaptado para prioridade via `useTheme().colors`
 
 **Done when**:
 
-- [ ] Ação `pending` renderiza botões "Aceitar" e "Descartar"
-- [ ] Tocar "Aceitar" desabilita os 2 botões até a mutation resolver, depois mostra "Aceita" sem
+- [x] Ação `pending` renderiza botões "Aceitar" e "Descartar"
+- [x] Tocar "Aceitar" desabilita os 2 botões até a mutation resolver, depois mostra "Aceita" sem
       botões
-- [ ] Tocar "Descartar" segue o mesmo fluxo com "Descartada"
-- [ ] Erro da mutation reabilita os 2 botões e mostra mensagem só neste card
-- [ ] Ação já `accepted`/`dismissed` (vinda do `GET`) renderiza direto o indicador final, sem botões
-- [ ] Nenhum literal de cor/raio/fonte — tudo via `useTheme()`
-- [ ] Gate check passa: `npm run pretest && npx tsc --noEmit && npm test -- AiActionCard`
-- [ ] Test count: 6+ testes passam
+- [x] Tocar "Descartar" segue o mesmo fluxo com "Descartada"
+- [x] Erro da mutation reabilita os 2 botões e mostra mensagem só neste card
+- [x] Ação já `accepted`/`dismissed` (vinda do `GET`) renderiza direto o indicador final, sem botões
+- [x] Nenhum literal de cor/raio/fonte — tudo via `useTheme()`
+- [x] Gate check passa: `npm run pretest && npx tsc --noEmit && npm test -- AiActionCard`
+- [x] Test count: 6+ testes passam (7 passam)
 
 **Tests**: component
 **Gate**: full
