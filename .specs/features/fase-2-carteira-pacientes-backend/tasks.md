@@ -132,14 +132,20 @@ float $refMin, float $refMax): self`; entidade `Biomarker` com `status` calculad
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `BiomarkerStatus::from()` retorna `Low` quando `value < refMin`, `High` quando `value >
+- [x] `BiomarkerStatus::from()` retorna `Low` quando `value < refMin`, `High` quando `value >
       refMax`, `Normal` quando `refMin <= value <= refMax` (limites inclusos)
-- [ ] `BiomarkerStatusTest` cobre os 5 casos: abaixo, exatamente `refMin`, dentro, exatamente
+- [x] `BiomarkerStatusTest` cobre os 5 casos: abaixo, exatamente `refMin`, dentro, exatamente
       `refMax`, acima
-- [ ] `Biomarker` é `final class`, `readonly` por construtor, sem import de `Illuminate\`
-- [ ] `bash scripts/check-layer-boundary.sh` continua passando (Domain sem Laravel)
-- [ ] Gate check passes: `php artisan test --testsuite=Unit --filter=BiomarkerStatusTest`
-- [ ] Test count: 5 tests novos em `BiomarkerStatusTest`
+- [x] `Biomarker` é `final class`, `readonly` por construtor, sem import de `Illuminate\`
+- [x] `bash scripts/check-layer-boundary.sh` continua passando (Domain sem Laravel)
+- [x] Gate check passes: `php artisan test --testsuite=Unit --filter=BiomarkerStatusTest`
+- [x] Test count: 5 tests novos em `BiomarkerStatusTest`
+
+**SPEC_DEVIATION**: `BiomarkerStatus` implementado como enum puro (não `: string`), não backed
+enum. PHP proíbe redeclarar `from()`/`tryFrom()` num enum backed (`Cannot redeclare` — erro fatal
+confirmado ao vivo); só enum puro permite um `from()` estático com assinatura própria. Serialização
+para string usa método `value(): string` em vez da propriedade `->value` do backed enum — Phase 4
+(`BiomarkerResource`, T11) deve chamar `$this->status->value()`.
 
 **Tests**: unit
 **Gate**: quick
