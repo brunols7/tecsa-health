@@ -119,7 +119,68 @@
 
 ## Handoff
 
-- **Current**: `fase-2-carteira-pacientes-backend` executado e **verificado PASS** nesta sessão, na
+- **Current**: `fase-3-acoes-ia-backend` **executada e verificada PASS** nesta sessão, na branch
+  `feat/ia-acoes` (criada a partir de `main`). Todas as 17 tasks (T1-T17) implementadas via 3
+  sub-agentes de batch (Fase 1 = T1-T6, Fase 2+3 = T7-T12, Fase 4 = T13-T17), cada task com seu
+  próprio commit atômico — 17 commits `5356164`..`f05c3c6`. Verifier independente rodou depois:
+  primeira rodada (iteração 1/3) devolveu **FAIL** — sensor de mutação achou 1 mutante sobrevivente
+  (`EloquentAiActionRepository::findByPatientAndHash` sem o `where('patient_id', ...)` deixava a
+  suíte inteira verde, ou seja, o Edge Case "cache nunca cross-patient" do spec não tinha teste
+  cobrindo). Fix aplicado (commit `fc8badf`: novo teste
+  `test_find_by_patient_and_hash_never_returns_another_patients_rows`) e Verifier re-rodou
+  (iteração 2/3): **PASS** — 23/23 ACs com evidência `file:line`, 4/4 mutações mortas, gate completo
+  limpo (143 testes/366 assertions, layer-boundary, Pint, PHPStan nível 6). Único gap remanescente,
+  não-bloqueante: AIBE-05 (valor do timeout de 15s do `LlmClient` não tem asserção própria — só o
+  efeito HTTP `502`/`AI_UNAVAILABLE` é testado), registrado como spec-precision gap em
+  `validation.md` e como lição (`L-015`). `design.md` desta feature, que tinha ficado fora do
+  primeiro commit, foi commitado junto do fix (`fc8badf`). Relatório completo:
+  `.specs/features/fase-3-acoes-ia-backend/validation.md`. Duas outras lições novas gravadas
+  (`L-013` mutante sobrevivente, `L-014` gap de AC) além de `L-015`.
+  **Deviations achados pelos batch workers, ambos incorporados sem task separada** (glue code que
+  nenhuma task anterior possuía explicitamente): (1) `LlmClient::class → AnthropicClient::class`
+  nunca tinha sido registrado em `DomainServiceProvider` (T7 só bindou `AiActionRepository`) — sem
+  isso nenhuma rota de `ai-actions` resolvia `AiActionService`, incluindo `GET`/`PATCH` que nem
+  tocam o LLM; corrigido no commit de T17. (2) `AiActionController` usava
+  `JsonResource::collection(...)->response()` (envelope `{"data": [...]}`), trocado para
+  `response()->json(...->resolve())` — array plano, igual ao padrão já usado em
+  `PatientController::biomarkers`.
+  **Ambiente desta sessão**: Postgres de teste efêmero subido manualmente via
+  `docker run -d --name tecsa_test_db -p 5434:5432 postgres:16-alpine` (container solto, fora do
+  `docker-compose.yml`, mesmo padrão já registrado em sessões anteriores — não persiste depois de
+  `docker rm`).
+  **Próximo passo**: usuário decide se roda `fase-3-acoes-ia-mobile` em seguida (sequência já
+  combinada: backend completo antes do mobile) ou se revisa o backend manualmente primeiro
+  (`docker compose up`, testar os 3 endpoints com curl, conferir kill switch/rate limit ao vivo).
+  Nenhum `git push` feito — commits são só locais na branch `feat/ia-acoes`, `main` intocado.
+- **Feature (histórico)**: `fase-3-acoes-ia-backend` e `fase-3-acoes-ia-mobile` **especificadas em
+  sessão anterior**
+  (Specify + Design + Tasks, via `tlc-spec-driven`) — `spec.md`/`design.md`/`tasks.md` das duas
+  escritos e validados limpos por `validate_spec.py`/`validate_tasks.py` (0 erros nas duas
+  features). **Execute ainda não rodou** — nenhum código desta fase foi implementado, por pedido
+  explícito do usuário ("não iniciar código ainda"). `main` está limpo, sem branch nova criada para
+  esta fase ainda. Decisões de produto fechadas com o usuário via `AskUserQuestion` antes de
+  escrever as specs: (1) endpoint novo `GET /patients/:id/ai-actions` além dos dois do plano
+  original; (2) transição de status do `PATCH /ai-actions/:id` é terminal (`pending→accepted`/
+  `pending→dismissed`, sem volta, `409` se repetido); (3) modelo Anthropic padrão
+  `claude-haiku-4-5` via `ANTHROPIC_MODEL`; (4) superfície de IA vive dentro da tela de detalhe do
+  paciente já existente (não uma tela nova); (5) botão "Gerar ações" só aparece com a lista vazia.
+  Decisões de engenharia registradas como Assumptions nos dois `spec.md` (não bloqueantes, não
+  perguntadas ao usuário — infra determinística): kill switch bloqueia os 3 endpoints de
+  `ai-actions`, não só o `POST`; cache é sempre `(patient_id, input_hash)`, nunca cross-patient;
+  falha do provedor LLM (timeout ou schema inválido após 1 retry) vira `502 AI_UNAVAILABLE` (código
+  novo, não coberto pela tabela de status do CLAUDE.md §6.3); `risk_level`/`summary` da resposta do
+  LLM não são persistidos (sem coluna na tabela `ai_actions`); rate limit 10/min só no `POST` de
+  geração; paciente sem biomarcadores → `422 PATIENT_NO_BIOMARKERS` antes de chamar o LLM.
+  `docs/plano-de-desenvolvimento.md` (seção Fase 3) atualizado para refletir essas decisões.
+  **Próximo passo**: usuário decide quando rodar Execute (backend primeiro, depois mobile,
+  seguindo a sequência já estabelecida nas fases anteriores). **Estado real do git nesta sessão**
+  (não confundir com o bloco "Uncommitted files"/"Branch" mais abaixo, que descreve uma sessão
+  anterior já mesclada): `main` está limpo (`git status` sem alterações) até o início desta sessão;
+  os únicos arquivos novos são `docs/plano-de-desenvolvimento.md` (seção Fase 3 atualizada),
+  `.specs/STATE.md` (este handoff) e as 6 specs novas em
+  `.specs/features/fase-3-acoes-ia-{backend,mobile}/{spec,design,tasks}.md` — nenhum commit criado
+  ainda, nenhuma branch nova criada.
+- **Feature (histórico)**: `fase-2-carteira-pacientes-backend` executado e **verificado PASS** nesta
   branch `feat/carteira-pacientes` (13 commits, `2b4d0f6`..`649b57b`, main..HEAD). Todas as 12 tasks
   (T1-T12) commitadas individualmente via 2 sub-agentes de batch (Fase 1+2 = T1-T7, Fase 3+4 = T8-T12)
   seguindo o plano de dependências do `tasks.md`. Verifier independente rodou depois:

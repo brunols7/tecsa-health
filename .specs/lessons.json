@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 13,
+  "next_id": 16,
   "lessons": [
     {
       "id": "L-001",
@@ -220,6 +220,60 @@
       ],
       "created": "2026-09-02T02:49:58Z",
       "last_seen": "2026-09-02T02:49:58Z"
+    },
+    {
+      "id": "L-013",
+      "key": "surviving_mutant::test every scoping predicate in a repository query with a row that matches the other predicates but violates the scope so removing the filter fails a test",
+      "text": "Test every scoping predicate in a repository query with a row that matches the other predicates but violates the scope, so removing the filter fails a test",
+      "signal": "surviving_mutant",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "fase-3-acoes-ia-backend"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "api/app/Infrastructure/Persistence/Eloquent/EloquentAiActionRepository.php:40 (Mutation 4) (repo-layer)"
+      ],
+      "created": "2026-09-02T15:37:07Z",
+      "last_seen": "2026-09-02T15:37:07Z"
+    },
+    {
+      "id": "L-014",
+      "key": "ac_gap::give every listed spec edge case its own dedicated test even when an existing test touches the same method",
+      "text": "Give every listed spec edge case its own dedicated test, even when an existing test touches the same method",
+      "signal": "ac_gap",
+      "scope": "testing",
+      "status": "candidate",
+      "features": [
+        "fase-3-acoes-ia-backend"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md Edge Case 3 (cache nunca compartilhado entre pacientes) - no file:line evidence (testing)"
+      ],
+      "created": "2026-09-02T15:37:07Z",
+      "last_seen": "2026-09-02T15:37:07Z"
+    },
+    {
+      "id": "L-015",
+      "key": "spec_precision_gap::assert the configured numeric value of a timeout or limit constant not only the behavior it triggers",
+      "text": "Assert the configured numeric value of a timeout or limit constant, not only the behavior it triggers",
+      "signal": "spec_precision_gap",
+      "scope": "testing",
+      "status": "candidate",
+      "features": [
+        "fase-3-acoes-ia-backend"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "AIBE-05 / api/app/Infrastructure/Llm/AnthropicClient.php:20 (testing)"
+      ],
+      "created": "2026-09-02T15:37:07Z",
+      "last_seen": "2026-09-02T15:37:07Z"
     }
   ]
 }

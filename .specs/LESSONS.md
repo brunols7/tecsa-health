@@ -86,6 +86,24 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: src/app/patients/__tests__/[id].test.tsx:155 (mutation 2 survived at screen level) (mobile-tests)
 - last seen: 2026-09-02T02:49:58Z
 
+### L-013 - Test every scoping predicate in a repository query with a row that matches the other predicates but violates the scope, so removing the filter fails a test
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: fase-3-acoes-ia-backend
+- evidence: api/app/Infrastructure/Persistence/Eloquent/EloquentAiActionRepository.php:40 (Mutation 4) (repo-layer)
+- last seen: 2026-09-02T15:37:07Z
+
+### L-014 - Give every listed spec edge case its own dedicated test, even when an existing test touches the same method
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `testing` · harmful: 0
+- features: fase-3-acoes-ia-backend
+- evidence: spec.md Edge Case 3 (cache nunca compartilhado entre pacientes) - no file:line evidence (testing)
+- last seen: 2026-09-02T15:37:07Z
+
+### L-015 - Assert the configured numeric value of a timeout or limit constant, not only the behavior it triggers
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `testing` · harmful: 0
+- features: fase-3-acoes-ia-backend
+- evidence: AIBE-05 / api/app/Infrastructure/Llm/AnthropicClient.php:20 (testing)
+- last seen: 2026-09-02T15:37:07Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
