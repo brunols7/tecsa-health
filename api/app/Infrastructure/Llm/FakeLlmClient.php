@@ -19,6 +19,11 @@ final class FakeLlmClient implements LlmClient
 
     private int $timesCalled = 0;
 
+    /**
+     * @var array<int, AiPromptInput>
+     */
+    private array $receivedInputs = [];
+
     public function respondWith(AiSuggestion $suggestion): void
     {
         $this->queue[] = $suggestion;
@@ -34,9 +39,15 @@ final class FakeLlmClient implements LlmClient
         return $this->timesCalled;
     }
 
+    public function lastInput(): ?AiPromptInput
+    {
+        return $this->receivedInputs === [] ? null : $this->receivedInputs[count($this->receivedInputs) - 1];
+    }
+
     public function generate(AiPromptInput $input): AiSuggestion
     {
         $this->timesCalled++;
+        $this->receivedInputs[] = $input;
 
         $next = array_shift($this->queue);
 

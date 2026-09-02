@@ -41,7 +41,7 @@ final class AiActionService
         private readonly LlmClient $llm,
     ) {}
 
-    public function generate(string $patientId): AiActionGenerationResult
+    public function generate(string $patientId, bool $refresh = false): AiActionGenerationResult
     {
         $this->assertValidPatientId($patientId);
 
@@ -71,9 +71,11 @@ final class AiActionService
 
         $existing = $this->aiActions->findByPatientAndHash($patientId, $inputHash);
 
-        if ($existing !== []) {
+        if ($existing !== [] && ! $refresh) {
             return new AiActionGenerationResult(actions: $existing, generated: false);
         }
+
+        $history = $refresh ? $this->aiActions->listForPatient($patientId) : [];
 
         $promptInput = new AiPromptInput(
             age: $this->ageFromBirthDate($patient->birthDate),
@@ -85,6 +87,7 @@ final class AiActionService
                 'refMin' => $biomarker->refMin,
                 'refMax' => $biomarker->refMax,
             ], $biomarkers),
+            existingTitles: $this->titlesToAvoidRepeating($history),
         );
 
         $suggestion = $this->generateWithRetry($promptInput);
@@ -108,7 +111,21 @@ final class AiActionService
 
         $this->aiActions->insertMany($actions);
 
-        return new AiActionGenerationResult(actions: $actions, generated: true);
+        return new AiActionGenerationResult(actions: [...$history, ...$actions], generated: true);
+    }
+
+    /**
+     * @param  array<int, AiAction>  $history
+     * @return array<int, string>
+     */
+    private function titlesToAvoidRepeating(array $history): array
+    {
+        $keptStatuses = [AiActionStatus::Pending, AiActionStatus::Accepted];
+
+        return array_values(array_map(
+            static fn (AiAction $action): string => $action->title,
+            array_filter($history, static fn (AiAction $action): bool => in_array($action->status, $keptStatuses, true)),
+        ));
     }
 
     /**

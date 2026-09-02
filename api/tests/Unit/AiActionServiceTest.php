@@ -319,6 +319,177 @@ class AiActionServiceTest extends TestCase
         $this->assertSame(2, $llm->timesCalled());
     }
 
+    public function test_refresh_bypasses_cache_calls_llm_and_appends_to_existing_actions(): void
+    {
+        $existing = new AiAction(
+            id: 'existing-action-1',
+            patientId: self::PATIENT_ID,
+            title: 'Manter rotina',
+            rationale: 'Biomarcadores estáveis desde a última geração.',
+            priority: 'low',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Pending,
+            inputHash: 'existing-hash',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+        $biomarkers->shouldReceive('listForPatient')->with(self::PATIENT_ID)->andReturn($this->biomarkers());
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findByPatientAndHash')->once()->andReturn([$existing]);
+        $aiActions->shouldReceive('listForPatient')->once()->with(self::PATIENT_ID)->andReturn([$existing]);
+        $aiActions->shouldReceive('insertMany')->once()->with(Mockery::on(function (array $actions) {
+            return count($actions) === 1 && $actions[0]->title === 'Reduzir açúcar refinado';
+        }));
+
+        $llm = new FakeLlmClient;
+        $llm->respondWith($this->suggestion());
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $result = $service->generate(self::PATIENT_ID, refresh: true);
+
+        $this->assertTrue($result->generated);
+        $this->assertSame(1, $llm->timesCalled());
+        $this->assertCount(2, $result->actions);
+        $this->assertSame($existing, $result->actions[0]);
+        $this->assertSame('Reduzir açúcar refinado', $result->actions[1]->title);
+    }
+
+    public function test_refresh_sends_pending_and_accepted_titles_to_the_llm_but_not_dismissed(): void
+    {
+        $pending = new AiAction(
+            id: 'action-pending',
+            patientId: self::PATIENT_ID,
+            title: 'Ação pendente',
+            rationale: 'r',
+            priority: 'low',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Pending,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+        $accepted = new AiAction(
+            id: 'action-accepted',
+            patientId: self::PATIENT_ID,
+            title: 'Ação aceita',
+            rationale: 'r',
+            priority: 'low',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Accepted,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+        $dismissed = new AiAction(
+            id: 'action-dismissed',
+            patientId: self::PATIENT_ID,
+            title: 'Ação descartada',
+            rationale: 'r',
+            priority: 'low',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Dismissed,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+        $history = [$pending, $accepted, $dismissed];
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+        $biomarkers->shouldReceive('listForPatient')->with(self::PATIENT_ID)->andReturn($this->biomarkers());
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findByPatientAndHash')->once()->andReturn($history);
+        $aiActions->shouldReceive('listForPatient')->once()->with(self::PATIENT_ID)->andReturn($history);
+        $aiActions->shouldReceive('insertMany')->once();
+
+        $llm = new FakeLlmClient;
+        $llm->respondWith($this->suggestion());
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $service->generate(self::PATIENT_ID, refresh: true);
+
+        $this->assertSame(['Ação pendente', 'Ação aceita'], $llm->lastInput()?->existingTitles);
+    }
+
+    public function test_refresh_with_no_cache_hit_sends_empty_existing_titles(): void
+    {
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+        $biomarkers->shouldReceive('listForPatient')->with(self::PATIENT_ID)->andReturn($this->biomarkers());
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findByPatientAndHash')->once()->andReturn([]);
+        $aiActions->shouldReceive('listForPatient')->once()->with(self::PATIENT_ID)->andReturn([]);
+        $aiActions->shouldReceive('insertMany')->once();
+
+        $llm = new FakeLlmClient;
+        $llm->respondWith($this->suggestion());
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $result = $service->generate(self::PATIENT_ID, refresh: true);
+
+        $this->assertSame([], $llm->lastInput()?->existingTitles);
+        $this->assertCount(1, $result->actions);
+    }
+
+    public function test_without_refresh_cache_hit_still_short_circuits_without_calling_llm(): void
+    {
+        $existing = [new AiAction(
+            id: 'existing-action-1',
+            patientId: self::PATIENT_ID,
+            title: 'Manter rotina',
+            rationale: 'Biomarcadores estáveis desde a última geração.',
+            priority: 'low',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Pending,
+            inputHash: 'existing-hash',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        )];
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+        $biomarkers->shouldReceive('listForPatient')->with(self::PATIENT_ID)->andReturn($this->biomarkers());
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findByPatientAndHash')->once()->andReturn($existing);
+        $aiActions->shouldNotReceive('listForPatient');
+        $aiActions->shouldNotReceive('insertMany');
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $result = $service->generate(self::PATIENT_ID, refresh: false);
+
+        $this->assertFalse($result->generated);
+        $this->assertSame($existing, $result->actions);
+        $this->assertSame(0, $llm->timesCalled());
+    }
+
     public function test_list_for_patient_returns_the_patients_action_history(): void
     {
         $history = [new AiAction(
