@@ -18,7 +18,7 @@ class PatientControllerTest extends TestCase
     public function test_lists_patients_for_a_known_brand_with_next_cursor(): void
     {
         $brand = BrandModel::factory()->create(['slug' => 'nutri-care']);
-        PatientModel::factory()->count(3)->create(['brand_id' => $brand->id]);
+        PatientModel::factory()->count(3)->create(['brand_id' => $brand->id, 'status' => 'active']);
 
         $response = $this->getJson('/api/v1/patients?brand=nutri-care&limit=2');
 
@@ -31,7 +31,7 @@ class PatientControllerTest extends TestCase
     public function test_paginating_through_next_cursor_covers_every_patient_without_overlap(): void
     {
         $brand = BrandModel::factory()->create(['slug' => 'nutri-care']);
-        PatientModel::factory()->count(5)->create(['brand_id' => $brand->id]);
+        PatientModel::factory()->count(5)->create(['brand_id' => $brand->id, 'status' => 'active']);
 
         $firstPage = $this->getJson('/api/v1/patients?brand=nutri-care&limit=3');
         $firstPage->assertStatus(200);
@@ -56,8 +56,8 @@ class PatientControllerTest extends TestCase
     public function test_filters_patients_by_search_term(): void
     {
         $brand = BrandModel::factory()->create(['slug' => 'nutri-care']);
-        PatientModel::factory()->create(['brand_id' => $brand->id, 'name' => 'Ana Silva']);
-        PatientModel::factory()->create(['brand_id' => $brand->id, 'name' => 'Beatriz Costa']);
+        PatientModel::factory()->create(['brand_id' => $brand->id, 'name' => 'Ana Silva', 'status' => 'active']);
+        PatientModel::factory()->create(['brand_id' => $brand->id, 'name' => 'Beatriz Costa', 'status' => 'active']);
 
         $response = $this->getJson('/api/v1/patients?brand=nutri-care&search=ana');
 

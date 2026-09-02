@@ -14,7 +14,7 @@ interface PatientRepository
         ?string $search,
         ?PatientCursor $cursor,
         int $limit,
-        array $statuses,
+        array $statuses = ['active'],
     ): PatientPage;
 
     public function findById(string $id): ?Patient;

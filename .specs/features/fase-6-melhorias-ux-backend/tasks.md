@@ -312,21 +312,35 @@ $statuses)`).
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `insert()` cria com `status=active`, `needs_follow_up=false`, `status_changed_at=now()`, UUID
+- [x] `insert()` cria com `status=active`, `needs_follow_up=false`, `status_changed_at=now()`, UUID
       gerado (mesmo padrão AD-002)
-- [ ] `update()` só grava os campos presentes em `$fields`
-- [ ] `updateStatus()` grava `status` e `status_changed_at` juntos, atomicamente
-- [ ] `delete()` usa soft delete do Eloquent (`->delete()`, não `->forceDelete()`)
-- [ ] `paginate()` com `$statuses = ['active']` (default) exclui `inactive`/`completed`;
+- [x] `update()` só grava os campos presentes em `$fields`
+- [x] `updateStatus()` grava `status` e `status_changed_at` juntos, atomicamente
+- [x] `delete()` usa soft delete do Eloquent (`->delete()`, não `->forceDelete()`)
+- [x] `paginate()` com `$statuses = ['active']` (default) exclui `inactive`/`completed`;
       `$statuses = ['inactive', 'completed']` devolve só esses dois
-- [ ] Teste de integração cobrindo os 4 métodos novos + o filtro de `paginate()`, incluindo o caso
+- [x] Teste de integração cobrindo os 4 métodos novos + o filtro de `paginate()`, incluindo o caso
       "excluído nunca aparece mesmo pedindo todos os status" (spec P5 AC5)
-- [ ] Gate check passes: `composer test && vendor/bin/phpstan analyse`
+- [x] Gate check passes: `composer test && vendor/bin/phpstan analyse`
 
 **Tests**: integration
 **Gate**: full
 
 **Commit**: `feat(patient-persistence): implement lifecycle and soft delete repository methods`
+
+**Status**: ✅ Complete
+
+**SPEC_DEVIATION**: (1) `PatientRepository::paginate()`'s new `array $statuses` parameter got a
+default (`['active']`, matching spec P5 AC1's own default) instead of being required as T7 first
+wrote it. Reason: `PatientService::listForBrandSlug()` (unchanged until T21) still calls
+`paginate()` with 4 positional args; without a default this throws `ArgumentCountError` on every
+existing list/search request, not just new-filter tests. (2) Several pre-existing tests in
+`EloquentPatientRepositoryTest.php` and `PatientControllerTest.php` that create patients via
+`PatientModel::factory()` without an explicit `status` now pin `'status' => 'active'`. Reason: the
+factory's pre-existing `randomElement(['active', 'inactive'])` combined with the new default
+active-only filter made `paginate()`-backed assertions (count/order) flaky depending on the random
+draw — confirmed by a real failing run before the fix. `PatientFactory`'s default status itself is
+T9's job; this only pins the specific tests whose intent has nothing to do with status.
 
 ---
 
