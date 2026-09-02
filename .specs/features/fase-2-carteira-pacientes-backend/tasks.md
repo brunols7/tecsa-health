@@ -252,21 +252,21 @@ existente
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `paginate()` nunca devolve mais que `$limit` itens em `items`, mesmo buscando `limit+1` linhas
+- [x] `paginate()` nunca devolve mais que `$limit` itens em `items`, mesmo buscando `limit+1` linhas
       internamente
-- [ ] `paginate()` com 2 marcas diferentes nunca mistura pacientes entre elas (teste com pacientes
+- [x] `paginate()` com 2 marcas diferentes nunca mistura pacientes entre elas (teste com pacientes
       de nomes iguais em marcas diferentes)
-- [ ] `paginate()` com busca filtra corretamente (`ILIKE '%termo%'`, case-insensitive)
-- [ ] `paginate()` percorrida página a página (usando o `nextCursor` de cada resposta) cobre todos os
+- [x] `paginate()` com busca filtra corretamente (`ILIKE '%termo%'`, case-insensitive)
+- [x] `paginate()` percorrida página a página (usando o `nextCursor` de cada resposta) cobre todos os
       pacientes de uma marca de teste sem duplicata nem lacuna
-- [ ] `findById()` retorna `null` para id inexistente, entidade para id existente
-- [ ] `updateNeedsFollowUp()` atualiza a coluna e devolve a entidade atualizada; lança
+- [x] `findById()` retorna `null` para id inexistente, entidade para id existente
+- [x] `updateNeedsFollowUp()` atualiza a coluna e devolve a entidade atualizada; lança
       `PatientNotFound` para id inexistente, sem lançar quando o valor já era o mesmo (PATCH
       idempotente — ver Risks do design.md)
-- [ ] `DomainServiceProviderTest` ganha caso novo (`PatientRepository` resolve para
+- [x] `DomainServiceProviderTest` ganha caso novo (`PatientRepository` resolve para
       `EloquentPatientRepository`)
-- [ ] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
-- [ ] Test count: `EloquentPatientRepositoryTest` com pelo menos 6 casos (found/not-found,
+- [x] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
+- [x] Test count: `EloquentPatientRepositoryTest` com pelo menos 6 casos (found/not-found,
       paginação 2 marcas, busca, paginação sem sobreposição em 2+ páginas, PATCH idempotente)
 
 **Tests**: integration
