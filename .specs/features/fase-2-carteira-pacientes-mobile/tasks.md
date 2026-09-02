@@ -490,12 +490,13 @@ modo avião, rollback visível).
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `grep -r "BrandProofScreen" src/` não retorna nada
+- [x] `grep -r "BrandProofScreen" src/` não retorna nada
 - [ ] Verificação manual (com backend real rodando, seed de 5.000+ pacientes): lista rola sem travar
       visivelmente, os 4 estados aparecem em algum fluxo reproduzível, modo avião mantém a carteira
       legível (dado já buscado antes de desligar a rede), mutation de acompanhamento reverte
-      visivelmente com a API derrubada
-- [ ] Gate check passes: `npm run pretest && npx tsc --noEmit && npm test`
+      visivelmente com a API derrubada — **não executada nesta sessão**: requer backend real
+      rodando e device/simulador, indisponíveis neste ambiente
+- [x] Gate check passes: `npm run pretest && npx tsc --noEmit && npm test`
 
 **Tests**: none (verificação manual do critério de saída da fase, registrada aqui)
 **Gate**: build

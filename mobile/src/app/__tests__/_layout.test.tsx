@@ -2,10 +2,12 @@ import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { Text as MockText } from 'react-native';
 
 import { useBiometricGate } from '@/core/auth/useBiometricGate';
+import { setupNetworkStatusListener } from '@/core/offline/network';
 
 import TabLayout from '../_layout';
 
 jest.mock('@/core/auth/useBiometricGate');
+jest.mock('@/core/offline/network');
 
 jest.mock('@/components/animated-icon', () => ({
   __esModule: true,
@@ -18,10 +20,30 @@ jest.mock('@/components/app-tabs', () => ({
 }));
 
 const mockedUseBiometricGate = useBiometricGate as jest.MockedFunction<typeof useBiometricGate>;
+const mockedSetupNetworkStatusListener = setupNetworkStatusListener as jest.MockedFunction<
+  typeof setupNetworkStatusListener
+>;
 
 describe('TabLayout', () => {
+  beforeEach(() => {
+    mockedSetupNetworkStatusListener.mockReturnValue(jest.fn());
+  });
+
   afterEach(() => {
     mockedUseBiometricGate.mockReset();
+    mockedSetupNetworkStatusListener.mockReset();
+  });
+
+  it('liga o listener de status de rede uma única vez ao montar', async () => {
+    mockedUseBiometricGate.mockReturnValue({
+      status: 'checking',
+      warning: undefined,
+      retry: jest.fn(),
+    });
+
+    await render(<TabLayout />);
+
+    expect(mockedSetupNetworkStatusListener).toHaveBeenCalledTimes(1);
   });
 
   it('não renderiza AppTabs enquanto o gate biométrico não resolveu', async () => {
