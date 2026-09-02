@@ -225,8 +225,8 @@ Biomarker> }`.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] Interface pura, sem import de `Illuminate\`
-- [ ] `bash scripts/check-layer-boundary.sh` continua passando
+- [x] Interface pura, sem import de `Illuminate\`
+- [x] `bash scripts/check-layer-boundary.sh` continua passando
 
 **Tests**: none
 **Gate**: build
