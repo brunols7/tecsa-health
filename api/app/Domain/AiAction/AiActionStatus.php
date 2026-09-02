@@ -11,6 +11,7 @@ enum AiActionStatus
     case Pending;
     case Accepted;
     case Dismissed;
+    case Deleted;
 
     public static function fromString(string $value): self
     {
@@ -18,6 +19,7 @@ enum AiActionStatus
             'pending' => self::Pending,
             'accepted' => self::Accepted,
             'dismissed' => self::Dismissed,
+            'deleted' => self::Deleted,
             default => throw new InvalidArgumentException("Invalid ai action status: {$value}"),
         };
     }
@@ -28,11 +30,20 @@ enum AiActionStatus
             self::Pending => 'pending',
             self::Accepted => 'accepted',
             self::Dismissed => 'dismissed',
+            self::Deleted => 'deleted',
         };
     }
 
     public function canTransitionTo(self $target): bool
     {
-        return $this === self::Pending && in_array($target, [self::Accepted, self::Dismissed], true);
+        if ($this === self::Pending) {
+            return in_array($target, [self::Accepted, self::Dismissed], true);
+        }
+
+        if (in_array($this, [self::Accepted, self::Dismissed], true)) {
+            return $target === self::Deleted;
+        }
+
+        return false;
     }
 }

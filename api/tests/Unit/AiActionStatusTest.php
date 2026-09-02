@@ -61,4 +61,34 @@ class AiActionStatusTest extends TestCase
     {
         $this->assertFalse(AiActionStatus::Dismissed->canTransitionTo(AiActionStatus::Accepted));
     }
+
+    public function test_from_string_returns_deleted(): void
+    {
+        $this->assertSame(AiActionStatus::Deleted, AiActionStatus::fromString('deleted'));
+    }
+
+    public function test_accepted_can_transition_to_deleted(): void
+    {
+        $this->assertTrue(AiActionStatus::Accepted->canTransitionTo(AiActionStatus::Deleted));
+    }
+
+    public function test_dismissed_can_transition_to_deleted(): void
+    {
+        $this->assertTrue(AiActionStatus::Dismissed->canTransitionTo(AiActionStatus::Deleted));
+    }
+
+    public function test_pending_cannot_transition_to_deleted(): void
+    {
+        $this->assertFalse(AiActionStatus::Pending->canTransitionTo(AiActionStatus::Deleted));
+    }
+
+    public function test_deleted_cannot_transition_to_deleted_again(): void
+    {
+        $this->assertFalse(AiActionStatus::Deleted->canTransitionTo(AiActionStatus::Deleted));
+    }
+
+    public function test_deleted_cannot_transition_to_pending(): void
+    {
+        $this->assertFalse(AiActionStatus::Deleted->canTransitionTo(AiActionStatus::Pending));
+    }
 }
