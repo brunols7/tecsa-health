@@ -130,11 +130,11 @@ de aplicação ainda — só a instalação e confirmação de compatibilidade c
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Nenhum tipo escrito à mão — todos via `z.infer`
-- [ ] Teste unitário confirma parse de um payload válido e rejeição de payload com campo faltando
+- [x] Nenhum tipo escrito à mão — todos via `z.infer`
+- [x] Teste unitário confirma parse de um payload válido e rejeição de payload com campo faltando
       (ex.: `needsFollowUp` ausente) para cada schema
-- [ ] Gate check passes: `npx tsc --noEmit && npm test -- schemas`
-- [ ] Test count: 6+ tests novos (2+ por schema)
+- [x] Gate check passes: `npx tsc --noEmit && npm test -- schemas`
+- [x] Test count: 6+ tests novos (2+ por schema)
 
 **Tests**: unit
 **Gate**: quick
