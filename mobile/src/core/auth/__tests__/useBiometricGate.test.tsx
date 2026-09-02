@@ -79,7 +79,7 @@ describe('useBiometricGate', () => {
     expect(afterRetry.reason).toBe('biometric');
   });
 
-  it('sem biometria cadastrada mas credencial de device bem-sucedida libera com aviso', async () => {
+  it('sem biometria cadastrada mas credencial de device bem-sucedida libera sem aviso pendente', async () => {
     mockedHasHardwareAsync.mockResolvedValue(true);
     mockedIsEnrolledAsync.mockResolvedValue(false);
     mockedAuthenticateAsync.mockResolvedValue({ success: true });
@@ -90,13 +90,11 @@ describe('useBiometricGate', () => {
 
     assertUnlocked(result.current);
     expect(result.current.reason).toBe('device_credential');
-    expect(result.current.warning).toBe(
-      'Este dispositivo não tem biometria cadastrada. Confirme com a credencial do aparelho.',
-    );
+    expect(result.current.warning).toBeUndefined();
     expect(mockedAuthenticateAsync).toHaveBeenCalledWith({ disableDeviceFallback: false });
   });
 
-  it('sem nenhuma credencial configurada (passcode_not_set) libera com aviso de segurança', async () => {
+  it('sem nenhuma credencial configurada (passcode_not_set) libera com aviso informativo', async () => {
     mockedHasHardwareAsync.mockResolvedValue(false);
     mockedIsEnrolledAsync.mockResolvedValue(false);
     mockedAuthenticateAsync.mockResolvedValue({ success: false, error: 'passcode_not_set' });
@@ -108,11 +106,13 @@ describe('useBiometricGate', () => {
     assertUnlocked(result.current);
     expect(result.current.reason).toBe('no_credential_available');
     expect(result.current.warning).toBe(
-      'Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo.',
+      'Este dispositivo não tem nenhum bloqueio de tela configurado (PIN, padrão, senha ou ' +
+        'biometria). Isso não impede o uso do app, mas recomendamos ativar um bloqueio nas ' +
+        'configurações do aparelho.',
     );
   });
 
-  it('sem nenhuma credencial configurada (not_enrolled, código do Android) libera com aviso de segurança', async () => {
+  it('sem nenhuma credencial configurada (not_enrolled, código do Android) libera com aviso informativo', async () => {
     mockedHasHardwareAsync.mockResolvedValue(false);
     mockedIsEnrolledAsync.mockResolvedValue(false);
     mockedAuthenticateAsync.mockResolvedValue({ success: false, error: 'not_enrolled' });
@@ -124,7 +124,9 @@ describe('useBiometricGate', () => {
     assertUnlocked(result.current);
     expect(result.current.reason).toBe('no_credential_available');
     expect(result.current.warning).toBe(
-      'Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo.',
+      'Este dispositivo não tem nenhum bloqueio de tela configurado (PIN, padrão, senha ou ' +
+        'biometria). Isso não impede o uso do app, mas recomendamos ativar um bloqueio nas ' +
+        'configurações do aparelho.',
     );
   });
 

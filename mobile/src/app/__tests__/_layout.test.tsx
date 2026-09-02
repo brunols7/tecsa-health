@@ -53,7 +53,10 @@ describe('TabLayout', () => {
     mockedUseBiometricGate.mockReturnValue({
       status: 'unlocked',
       reason: 'no_credential_available',
-      warning: 'Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo.',
+      warning:
+        'Este dispositivo não tem nenhum bloqueio de tela configurado (PIN, padrão, senha ou ' +
+        'biometria). Isso não impede o uso do app, mas recomendamos ativar um bloqueio nas ' +
+        'configurações do aparelho.',
       retry: jest.fn(),
     });
 
@@ -62,11 +65,13 @@ describe('TabLayout', () => {
     expect(queryByText('AppTabsStub')).toBeNull();
     expect(
       getByText(
-        'Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo.',
+        'Este dispositivo não tem nenhum bloqueio de tela configurado (PIN, padrão, senha ou ' +
+          'biometria). Isso não impede o uso do app, mas recomendamos ativar um bloqueio nas ' +
+          'configurações do aparelho.',
       ),
     ).toBeTruthy();
 
-    fireEvent.press(getByText('Continuar'));
+    fireEvent.press(getByText('Entendi, continuar'));
 
     await waitFor(() => expect(queryByText('AppTabsStub')).toBeTruthy());
   });

@@ -152,31 +152,31 @@ describe('BiometricGateScreen', () => {
     },
   );
 
-  it('não exibe botão Continuar quando não há aviso', async () => {
+  it('não exibe botão "Entendi, continuar" quando não há aviso', async () => {
     const { queryByText } = await render(
       <BrandProvider brand={fakeBrandA}>
         <BiometricGateScreen status="unlocked" reason="biometric" onRetry={jest.fn()} />
       </BrandProvider>,
     );
 
-    expect(queryByText('Continuar')).toBeNull();
+    expect(queryByText('Entendi, continuar')).toBeNull();
   });
 
-  it('exibe botão Continuar quando unlocked com aviso, e dispara onContinue ao pressionar', async () => {
+  it('exibe botão "Entendi, continuar" quando unlocked com aviso, e dispara onContinue ao pressionar', async () => {
     const onContinue = jest.fn();
     const { getByText } = await render(
       <BrandProvider brand={fakeBrandA}>
         <BiometricGateScreen
           status="unlocked"
-          reason="device_credential"
-          warning="aviso de device credential"
+          reason="no_credential_available"
+          warning="aviso de sem credencial"
           onRetry={jest.fn()}
           onContinue={onContinue}
         />
       </BrandProvider>,
     );
 
-    fireEvent.press(getByText('Continuar'));
+    fireEvent.press(getByText('Entendi, continuar'));
 
     expect(onContinue).toHaveBeenCalledTimes(1);
   });

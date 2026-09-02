@@ -2,9 +2,11 @@ import { useCallback, useEffect, useState } from 'react';
 import * as LocalAuthentication from 'expo-local-authentication';
 
 const NO_BIOMETRIC_ENROLLED_WARNING =
-  'Este dispositivo não tem biometria cadastrada. Confirme com a credencial do aparelho.';
+  'Este dispositivo não tem biometria cadastrada. Vamos confirmar com a credencial do aparelho.';
 const NO_CREDENTIAL_AVAILABLE_WARNING =
-  'Acesso liberado sem verificação. Nenhuma credencial está configurada neste dispositivo.';
+  'Este dispositivo não tem nenhum bloqueio de tela configurado (PIN, padrão, senha ou ' +
+  'biometria). Isso não impede o uso do app, mas recomendamos ativar um bloqueio nas ' +
+  'configurações do aparelho.';
 
 type BiometricGateState =
   | { status: 'checking' }
@@ -49,6 +51,9 @@ export function useBiometricGate(): BiometricGateResult {
       });
 
       if (deviceResult.success) {
+        // A credencial do aparelho é uma verificação real (PIN/padrão/senha), não um caso
+        // degradado — limpa o aviso de biometria ausente em vez de exigir reconhecimento dele.
+        setWarning(undefined);
         setState({ status: 'unlocked', reason: 'device_credential' });
         return;
       }

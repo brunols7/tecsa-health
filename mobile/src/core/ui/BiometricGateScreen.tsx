@@ -141,7 +141,7 @@ export function BiometricGateScreen({
                 fontSize: typography.scale.md,
               }}
             >
-              Continuar
+              Entendi, continuar
             </Text>
           </Pressable>
         )}
