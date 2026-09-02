@@ -12,13 +12,12 @@
   nenhum requisito — só uma escolha de stack do `CLAUDE.md`, que o próprio `CLAUDE.md` trata como
   implementação, não como requisito raiz. Nenhuma camada acima da interface `LlmClient`
   (`AiActionService`, `AiActionController`, retry de schema inválido, mobile) muda — é exatamente o
-  caso de uso que a inversão de dependência do CLAUDE.md §6.2 existe para resolver. Especificado em
-  `.specs/features/fase-3-llm-provider-fallback/` (spec.md/design.md/tasks.md), ainda não executado
-  — usuário pediu para revisar os artefatos antes do Execute. **Importante para a entrega final:**
-  usuário pediu explicitamente para essa decisão (dois provedores, seleção configurável, motivo do
-  Gemini como free tier) ficar clara na documentação de entrega, não só aqui — cobrir em
-  `docs/adr/0002-selecao-de-provedor-llm.md` (task T4 da feature) e no README raiz, não deixar só
-  registrado internamente no STATE.md.
+  caso de uso que a inversão de dependência do CLAUDE.md §6.2 existe para resolver. Executada e
+  verificada — `.specs/features/fase-3-llm-provider-fallback/` (spec.md/design.md/tasks.md,
+  T1-T4 done, `validation.md` com Verifier PASS: gate verde, sensor de discriminação 4/4 mutantes
+  mortos). A decisão está documentada na entrega final em
+  `docs/adr/0002-selecao-de-provedor-llm.md` e no README raiz (pedido explícito do usuário para não
+  ficar só registrada aqui).
 - **AD-013** (status: active) — `docker-compose.yml`, serviço `api` ganha bind mount
   `./api/.env:/app/.env` (arquivo real do host, não cópia); `api/docker/entrypoint.sh` troca o gate
   `[ ! -f .env ]` por `[ ! -s .env ]` (existe E não está vazio) para não pular a cópia de
