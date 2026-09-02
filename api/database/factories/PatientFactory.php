@@ -25,6 +25,7 @@ final class PatientFactory extends Factory
             'birth_date' => $this->faker->dateTimeBetween('-90 years', '-18 years')->format('Y-m-d'),
             'goal' => $this->faker->randomElement(['lose_weight', 'gain_muscle', 'maintain', 'manage_condition']),
             'status' => $this->faker->randomElement(['active', 'inactive']),
+            'needs_follow_up' => false,
             'updated_at' => $this->faker->dateTimeBetween('-6 months', 'now'),
         ];
     }

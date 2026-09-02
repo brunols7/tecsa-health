@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $birth_date
  * @property string $goal
  * @property string $status
+ * @property bool $needs_follow_up
  * @property string $updated_at
  */
 final class Patient extends Model
@@ -35,11 +36,13 @@ final class Patient extends Model
         'birth_date',
         'goal',
         'status',
+        'needs_follow_up',
         'updated_at',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
+        'needs_follow_up' => 'boolean',
         'updated_at' => 'datetime',
     ];
 
