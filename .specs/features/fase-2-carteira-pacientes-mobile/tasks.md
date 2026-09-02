@@ -332,11 +332,11 @@ projeto)
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `setupNetworkStatusListener()` devolve uma função de unsubscribe
-- [ ] `useIsOffline()` reflete o estado mockado do `NetInfo` em teste (conectado → `false`,
+- [x] `setupNetworkStatusListener()` devolve uma função de unsubscribe
+- [x] `useIsOffline()` reflete o estado mockado do `NetInfo` em teste (conectado → `false`,
       desconectado → `true`)
-- [ ] Gate check passes: `npx tsc --noEmit && npm test -- network.test`
-- [ ] Test count: 2+ tests novos
+- [x] Gate check passes: `npx tsc --noEmit && npm test -- network.test`
+- [x] Test count: 2+ tests novos
 
 **Tests**: unit
 **Gate**: quick
