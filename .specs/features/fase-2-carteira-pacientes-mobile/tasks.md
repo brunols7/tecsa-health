@@ -250,9 +250,9 @@ este hook (só de leitura), mas T3 já está concluída antes da Fase 2 começar
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Cada hook expõe `status`/`data`/`refetch` do `useQuery` sem transformação extra
-- [ ] Gate check passes: `npx tsc --noEmit && npm test -- patients`
-- [ ] Test count: 2+ tests novos (1 por hook, caso feliz)
+- [x] Cada hook expõe `status`/`data`/`refetch` do `useQuery` sem transformação extra
+- [x] Gate check passes: `npx tsc --noEmit && npm test -- patients`
+- [x] Test count: 2+ tests novos (1 por hook, caso feliz)
 
 **Tests**: unit
 **Gate**: quick
