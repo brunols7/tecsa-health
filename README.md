@@ -55,6 +55,11 @@ antes do `composer install`/migrations/seed terminarem e cair em `Connection res
 erro do backend, é corrida entre o comando e o entrypoint ainda rodando. Num clone limpo (sem cache
 de imagem), a primeira subida pode levar até ~1-2 minutos por causa do `composer install`.
 
+Só `api/.env` e a pasta `vendor/` são montados no container (`docker-compose.yml`) — o resto do
+código do backend é copiado na imagem no `build`. Depois de editar qualquer arquivo em `api/app/`
+(ou outro código-fonte), rode `docker compose up -d --build api` para a mudança valer; `docker
+compose restart api` só reinicia o processo com a imagem antiga, não recarrega código novo.
+
 Confirme com:
 
 ```bash
