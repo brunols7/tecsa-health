@@ -471,8 +471,8 @@ switch de `generate`.
 
 **Done when**:
 
-- [ ] Cada uma das 5 exceções produz o `status`/`code` certo no envelope padrão
-- [ ] Gate check passa: `php artisan test --testsuite=Unit` (nenhuma quebra; teste real do mapping
+- [x] Cada uma das 5 exceções produz o `status`/`code` certo no envelope padrão
+- [x] Gate check passa: `php artisan test --testsuite=Unit` (nenhuma quebra; teste real do mapping
       vem no Feature test de T17)
 
 **Tests**: none
