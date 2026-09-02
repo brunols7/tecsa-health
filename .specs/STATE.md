@@ -2,6 +2,23 @@
 
 ## Decisions
 
+- **AD-014** (status: active) — `DomainServiceProvider::register()` binda `LlmClient` por uma
+  closure condicional: `AnthropicClient` quando `ANTHROPIC_API_KEY` está preenchida, senão
+  `GeminiClient` (novo adapter, `Infrastructure/Llm/GeminiClient.php`). Seleção acontece uma única
+  vez no boot, por presença de env var — não é fallback em runtime (não tenta Anthropic e cai para
+  Gemini só se a chamada falhar). Rationale: usuário não quer gastar crédito pago da Anthropic
+  agora; `docs/requisitos-do-produto.md` linha 20 autoriza qualquer "provedor equivalente"
+  (Anthropic, OpenAI ou equivalente), então trocar para o free tier do Google Gemini não viola
+  nenhum requisito — só uma escolha de stack do `CLAUDE.md`, que o próprio `CLAUDE.md` trata como
+  implementação, não como requisito raiz. Nenhuma camada acima da interface `LlmClient`
+  (`AiActionService`, `AiActionController`, retry de schema inválido, mobile) muda — é exatamente o
+  caso de uso que a inversão de dependência do CLAUDE.md §6.2 existe para resolver. Especificado em
+  `.specs/features/fase-3-llm-provider-fallback/` (spec.md/design.md/tasks.md), ainda não executado
+  — usuário pediu para revisar os artefatos antes do Execute. **Importante para a entrega final:**
+  usuário pediu explicitamente para essa decisão (dois provedores, seleção configurável, motivo do
+  Gemini como free tier) ficar clara na documentação de entrega, não só aqui — cobrir em
+  `docs/adr/0002-selecao-de-provedor-llm.md` (task T4 da feature) e no README raiz, não deixar só
+  registrado internamente no STATE.md.
 - **AD-013** (status: active) — `docker-compose.yml`, serviço `api` ganha bind mount
   `./api/.env:/app/.env` (arquivo real do host, não cópia); `api/docker/entrypoint.sh` troca o gate
   `[ ! -f .env ]` por `[ ! -s .env ]` (existe E não está vazio) para não pular a cópia de
