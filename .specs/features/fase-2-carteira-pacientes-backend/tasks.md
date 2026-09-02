@@ -405,11 +405,12 @@ camelCase do contrato mobile.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `PatientResource::toArray()` recebe uma entidade `Patient` (não `Model`) e devolve `id, name,
+- [x] `PatientResource::toArray()` recebe uma entidade `Patient` (não `Model`) e devolve `id, name,
       birthDate, goal, status, needsFollowUp, updatedAt`
-- [ ] `PatientPageResource` devolve `{ data: [...PatientResource], nextCursor: string|null }`
-- [ ] `BiomarkerResource::toArray()` recebe `Biomarker` e devolve `id, code, label, value, unit,
-      refMin, refMax, measuredAt, status` (status como string do enum, `$this->status->value`)
+- [x] `PatientPageResource` devolve `{ data: [...PatientResource], nextCursor: string|null }`
+- [x] `BiomarkerResource::toArray()` recebe `Biomarker` e devolve `id, code, label, value, unit,
+      refMin, refMax, measuredAt, status` (status como string do enum via `$this->status->value()`
+      — `BiomarkerStatus` é enum puro, não backed, ver SPEC_DEVIATION registrado em T2)
 
 **Tests**: none (coberto pelos testes Feature do Controller em T12)
 **Gate**: build
