@@ -39,9 +39,10 @@ export function AiActionCard({ action, patientId }: { action: AiAction; patientI
         gap: spacing(2),
       }}
     >
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: spacing(2) }}>
         <Text
           style={{
+            flex: 1,
             color: colors.textPrimary,
             fontFamily: typography.fontFamily.medium,
             fontSize: typography.scale.md,
@@ -52,6 +53,7 @@ export function AiActionCard({ action, patientId }: { action: AiAction; patientI
         <View
           testID={`ai-action-priority-${action.id}`}
           style={{
+            flexShrink: 0,
             backgroundColor: priorityColor(action.priority, colors),
             borderRadius: radii.pill,
             paddingVertical: spacing(1),

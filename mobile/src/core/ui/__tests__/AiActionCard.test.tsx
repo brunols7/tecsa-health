@@ -246,4 +246,21 @@ describe('AiActionCard', () => {
       fakeBrand.colors.danger,
     );
   });
+
+  it('título longo encolhe (flex) e o badge de prioridade nunca encolhe, ficando dentro do card', async () => {
+    mockedUseDecideAiActionMutation.mockReturnValue(idleMutation());
+
+    const longTitleAction: AiAction = {
+      ...pendingAction,
+      title:
+        'Reduzir drasticamente o consumo de açúcar refinado e carboidratos simples ao longo de todas as refeições do dia',
+    };
+
+    const { getByText, getByTestId } = await renderCard(longTitleAction);
+
+    const flatten = (style: unknown) => (Array.isArray(style) ? Object.assign({}, ...style) : style);
+
+    expect(flatten(getByText(longTitleAction.title).props.style).flex).toBe(1);
+    expect(flatten(getByTestId('ai-action-priority-ai-action-1').props.style).flexShrink).toBe(0);
+  });
 });
