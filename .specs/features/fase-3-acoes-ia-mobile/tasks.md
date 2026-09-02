@@ -149,14 +149,14 @@ T8 → T9
 
 **Done when**:
 
-- [ ] `fetchAiActions(patientId)` chama `GET /api/v1/patients/:id/ai-actions` e devolve
+- [x] `fetchAiActions(patientId)` chama `GET /api/v1/patients/:id/ai-actions` e devolve
       `AiAction[]` validado
-- [ ] `generateAiActions(patientId)` chama `POST /api/v1/patients/:id/ai-actions` sem corpo
-- [ ] `decideAiAction(actionId, status)` chama `PATCH /api/v1/ai-actions/:id` com
+- [x] `generateAiActions(patientId)` chama `POST /api/v1/patients/:id/ai-actions` sem corpo
+- [x] `decideAiAction(actionId, status)` chama `PATCH /api/v1/ai-actions/:id` com
       `{"status": ...}`
-- [ ] Cada função tem 1 caso feliz + 1 caso de erro testado (fetch mockado, `ApiError` propagada)
-- [ ] Gate check passa: `npm test -- ai-actions.test`
-- [ ] Test count: 6+ testes passam
+- [x] Cada função tem 1 caso feliz + 1 caso de erro testado (fetch mockado, `ApiError` propagada)
+- [x] Gate check passa: `npm test -- ai-actions.test`
+- [x] Test count: 6+ testes passam
 
 **Tests**: unit
 **Gate**: quick
