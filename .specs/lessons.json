@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 16,
+  "next_id": 17,
   "lessons": [
     {
       "id": "L-001",
@@ -274,6 +274,24 @@
       ],
       "created": "2026-09-02T15:37:07Z",
       "last_seen": "2026-09-02T15:37:07Z"
+    },
+    {
+      "id": "L-016",
+      "key": "spec_precision_gap::when a spec edge case says a flag flip must remove ui on the next render add a rerender test that starts true flips to false and asserts the element is gone do not rely on inspection of an unconditional hook call as evidence",
+      "text": "When a spec edge case says a flag flip must remove UI on the next render, add a rerender test that starts true, flips to false, and asserts the element is gone -- do not rely on inspection of an unconditional hook call as evidence.",
+      "signal": "spec_precision_gap",
+      "scope": "mobile/feature-flags",
+      "status": "candidate",
+      "features": [
+        "fase-3-acoes-ia-mobile"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md edge case: flag muda de true para false com a tela aberta (mobile/feature-flags)"
+      ],
+      "created": "2026-09-02T17:57:16Z",
+      "last_seen": "2026-09-02T17:57:16Z"
     }
   ]
 }

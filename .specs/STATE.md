@@ -119,7 +119,29 @@
 
 ## Handoff
 
-- **Current**: `fase-3-acoes-ia-backend` **executada e verificada PASS** nesta sessão, na branch
+- **Current**: `fase-3-acoes-ia-mobile` **executada e verificada PASS** nesta sessão, na branch
+  `feat/ia-acoes`. Todas as 9 tasks (T1-T9) implementadas via 2 sub-agentes de batch (Batch A =
+  Fase 1+2 = T1-T6, Batch B = Fase 3 = T7-T9), cada task com seu próprio commit atômico. Batch A:
+  `13a8628`..`cab0f77` (`aiActionSchema`, `apiPost`, `core/api/ai-actions.ts`, `useAiActionsQuery`,
+  `useGenerateAiActionsMutation`, `useDecideAiActionMutation` — as duas mutations sem `onMutate`,
+  conforme exigido). Batch B: `08ead56`..`4991786` (`AiActionCard`, `AiActionsSection`, integração
+  em `patients/[id].tsx`). Suíte mobile foi de 130 para 146 testes, 0 falhas. Verifier independente
+  rodou depois: **PASS** de primeira — 14/14 ACs (AIMOB-01..14) com evidência `file:line`, 3/3
+  mutações mortas no sensor de discriminação (cache cross-item em `useDecideAiActionMutation`,
+  condição de kill switch invertida em `AiActionsSection`, remoção de disable de botão em
+  `AiActionCard`), gate completo limpo (`pretest`, `tsc --noEmit` limpo exceto 1 erro pré-existente
+  não relacionado em `src/app/(tabs)/index.tsx:177`, confirmado idêntico a `main`). Único gap
+  não-bloqueante: o terceiro edge case do spec (flag `aiActionsEnabled` indo de `true` para `false`
+  com a tela já aberta remove a seção) só tem evidência estrutural (hook chamado incondicionalmente
+  a cada render), não um teste de rerender dedicado — registrado como lição `L-016` e como
+  spec-precision gap em `validation.md`. Relatório completo:
+  `.specs/features/fase-3-acoes-ia-mobile/validation.md`.
+  **Próximo passo**: usuário decide entre (a) fechar o gap do L-016 com uma fix task pequena antes
+  de seguir, (b) aceitar o PASS como está e seguir para a próxima fase do plano, ou (c) revisar a
+  feature manualmente (rodar o app nas duas marcas, testar aceitar/descartar/gerar ações ao vivo,
+  virar o kill switch no banco). Nenhum `git push` feito — commits são só locais na branch
+  `feat/ia-acoes`, `main` intocado.
+- **Feature (histórico)**: `fase-3-acoes-ia-backend` **executada e verificada PASS** nesta sessão, na branch
   `feat/ia-acoes` (criada a partir de `main`). Todas as 17 tasks (T1-T17) implementadas via 3
   sub-agentes de batch (Fase 1 = T1-T6, Fase 2+3 = T7-T12, Fase 4 = T13-T17), cada task com seu
   próprio commit atômico — 17 commits `5356164`..`f05c3c6`. Verifier independente rodou depois:

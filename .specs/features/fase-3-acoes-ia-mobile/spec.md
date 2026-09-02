@@ -137,22 +137,24 @@ e troca para o indicador "Aceita"; reabrir a tela mostra a mesma ação já como
 
 | Requirement ID | Story | Task | Status |
 | --- | --- | --- | --- |
-| AIMOB-01 | P1: Skeleton no carregamento inicial | T1, T3, T4 | Complete |
-| AIMOB-02 | P1: Estado vazio com disclaimer + botão gerar | T4 | Complete |
-| AIMOB-03 | P1: Gerar ações troca vazio por lista | T2, T3, T5 | Complete |
-| AIMOB-04 | P1: Estado sucesso sem botão gerar | T1, T4 | Complete |
-| AIMOB-05 | P1: Erro no GET não bloqueia resto da tela | T4 | Complete |
-| AIMOB-06 | P1: Erro no POST reabilita botão | T5 | Complete |
-| AIMOB-07 | P1: Kill switch esconde a seção inteira | T4 | Complete |
-| AIMOB-08 | P1: Geração não é otimista | T5 | Complete |
-| AIMOB-09 | P2: Botões aceitar/descartar em ação pending | T3 | Complete |
-| AIMOB-10 | P2: Aceitar decide e desabilita botões até resposta | T3, T6 | Complete |
-| AIMOB-11 | P2: Descartar decide e desabilita botões até resposta | T3, T6 | Complete |
-| AIMOB-12 | P2: Erro no PATCH reabilita botões só daquele card | T6 | Complete |
-| AIMOB-13 | P2: Status final sem botões | T6 | Complete |
-| AIMOB-14 | P2: Aceitar/descartar não é otimista | T6 | Complete |
+| AIMOB-01 | P1: Skeleton no carregamento inicial | T1, T3, T4 | ✅ Verified |
+| AIMOB-02 | P1: Estado vazio com disclaimer + botão gerar | T4 | ✅ Verified |
+| AIMOB-03 | P1: Gerar ações troca vazio por lista | T2, T3, T5 | ✅ Verified |
+| AIMOB-04 | P1: Estado sucesso sem botão gerar | T1, T4 | ✅ Verified |
+| AIMOB-05 | P1: Erro no GET não bloqueia resto da tela | T4 | ✅ Verified |
+| AIMOB-06 | P1: Erro no POST reabilita botão | T5 | ✅ Verified |
+| AIMOB-07 | P1: Kill switch esconde a seção inteira | T4 | ✅ Verified |
+| AIMOB-08 | P1: Geração não é otimista | T5 | ✅ Verified |
+| AIMOB-09 | P2: Botões aceitar/descartar em ação pending | T3 | ✅ Verified |
+| AIMOB-10 | P2: Aceitar decide e desabilita botões até resposta | T3, T6 | ✅ Verified |
+| AIMOB-11 | P2: Descartar decide e desabilita botões até resposta | T3, T6 | ✅ Verified |
+| AIMOB-12 | P2: Erro no PATCH reabilita botões só daquele card | T6 | ✅ Verified |
+| AIMOB-13 | P2: Status final sem botões | T6 | ✅ Verified |
+| AIMOB-14 | P2: Aceitar/descartar não é otimista | T6 | ✅ Verified |
 
-**Coverage:** 14 total, 0 mapped to tasks, 14 unmapped ⚠️ (Tasks ainda não criado)
+**Coverage:** 14 total, 14 verified with `file:line` evidence — ver `.specs/features/fase-3-acoes-ia-mobile/validation.md`.
+Gap secundário: o edge case "flag muda de `true` para `false` com a tela aberta" não tem teste de rerender
+dedicado (comportamento correto por inspeção, sem assertion direta) — ver seção Edge Cases da validação.
 
 ---
 

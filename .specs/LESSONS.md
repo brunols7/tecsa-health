@@ -104,6 +104,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: AIBE-05 / api/app/Infrastructure/Llm/AnthropicClient.php:20 (testing)
 - last seen: 2026-09-02T15:37:07Z
 
+### L-016 - When a spec edge case says a flag flip must remove UI on the next render, add a rerender test that starts true, flips to false, and asserts the element is gone -- do not rely on inspection of an unconditional hook call as evidence.
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `mobile/feature-flags` · harmful: 0
+- features: fase-3-acoes-ia-mobile
+- evidence: spec.md edge case: flag muda de true para false com a tela aberta (mobile/feature-flags)
+- last seen: 2026-09-02T17:57:16Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
