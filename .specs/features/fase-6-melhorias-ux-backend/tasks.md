@@ -122,18 +122,20 @@ AC1-AC4) e `values(): array<int, string>`.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `canTransitionTo()` retorna `true` só para `active→inactive`, `active→completed`,
+- [x] `canTransitionTo()` retorna `true` só para `active→inactive`, `active→completed`,
       `inactive→active`, `completed→active`
-- [ ] `canTransitionTo()` retorna `false` para `inactive→completed`, `completed→inactive`, e para
+- [x] `canTransitionTo()` retorna `false` para `inactive→completed`, `completed→inactive`, e para
       qualquer status igual ao atual (`active→active` etc.)
-- [ ] Teste unitário cobre as 4 transições válidas E as combinações inválidas citadas acima (mesmo
+- [x] Teste unitário cobre as 4 transições válidas E as combinações inválidas citadas acima (mesmo
       espírito de `BiomarkerStatus::from()` cobrindo os limites exatos)
-- [ ] Gate check passes: `composer test`
+- [x] Gate check passes: `composer test`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(patient-domain): add PatientStatus enum with transition rules`
+
+**Status**: ✅ Complete
 
 ---
 
