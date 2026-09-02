@@ -126,7 +126,7 @@ class PatientServiceTest extends TestCase
     public function test_get_by_id_returns_the_patient_when_it_exists(): void
     {
         $patient = new Patient(
-            id: 'patient-1',
+            id: '11111111-1111-1111-1111-111111111111',
             brandId: 'brand-1',
             name: 'Ana Silva',
             birthDate: '1990-01-01',
@@ -139,13 +139,13 @@ class PatientServiceTest extends TestCase
         $brands = Mockery::mock(BrandRepository::class);
 
         $patients = Mockery::mock(PatientRepository::class);
-        $patients->shouldReceive('findById')->with('patient-1')->andReturn($patient);
+        $patients->shouldReceive('findById')->with('11111111-1111-1111-1111-111111111111')->andReturn($patient);
 
         $biomarkers = Mockery::mock(BiomarkerRepository::class);
 
         $service = new PatientService($brands, $patients, $biomarkers);
 
-        $result = $service->getById('patient-1');
+        $result = $service->getById('11111111-1111-1111-1111-111111111111');
 
         $this->assertSame($patient, $result);
     }
@@ -155,7 +155,7 @@ class PatientServiceTest extends TestCase
         $brands = Mockery::mock(BrandRepository::class);
 
         $patients = Mockery::mock(PatientRepository::class);
-        $patients->shouldReceive('findById')->with('missing-id')->andReturn(null);
+        $patients->shouldReceive('findById')->with('22222222-2222-2222-2222-222222222222')->andReturn(null);
 
         $biomarkers = Mockery::mock(BiomarkerRepository::class);
 
@@ -163,13 +163,29 @@ class PatientServiceTest extends TestCase
 
         $this->expectException(PatientNotFound::class);
 
-        $service->getById('missing-id');
+        $service->getById('22222222-2222-2222-2222-222222222222');
+    }
+
+    public function test_get_by_id_throws_patient_not_found_when_id_is_not_a_well_formed_uuid(): void
+    {
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldNotReceive('findById');
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(PatientNotFound::class);
+
+        $service->getById('not-a-uuid');
     }
 
     public function test_list_biomarkers_returns_the_repository_result_when_patient_exists(): void
     {
         $patient = new Patient(
-            id: 'patient-1',
+            id: '11111111-1111-1111-1111-111111111111',
             brandId: 'brand-1',
             name: 'Ana Silva',
             birthDate: '1990-01-01',
@@ -181,7 +197,7 @@ class PatientServiceTest extends TestCase
 
         $biomarker = new Biomarker(
             id: 'bio-1',
-            patientId: 'patient-1',
+            patientId: '11111111-1111-1111-1111-111111111111',
             code: 'glucose',
             label: 'Glicose',
             value: 90.0,
@@ -195,14 +211,14 @@ class PatientServiceTest extends TestCase
         $brands = Mockery::mock(BrandRepository::class);
 
         $patients = Mockery::mock(PatientRepository::class);
-        $patients->shouldReceive('findById')->with('patient-1')->andReturn($patient);
+        $patients->shouldReceive('findById')->with('11111111-1111-1111-1111-111111111111')->andReturn($patient);
 
         $biomarkers = Mockery::mock(BiomarkerRepository::class);
-        $biomarkers->shouldReceive('listForPatient')->with('patient-1')->andReturn([$biomarker]);
+        $biomarkers->shouldReceive('listForPatient')->with('11111111-1111-1111-1111-111111111111')->andReturn([$biomarker]);
 
         $service = new PatientService($brands, $patients, $biomarkers);
 
-        $result = $service->listBiomarkers('patient-1');
+        $result = $service->listBiomarkers('11111111-1111-1111-1111-111111111111');
 
         $this->assertSame([$biomarker], $result);
     }
@@ -212,7 +228,7 @@ class PatientServiceTest extends TestCase
         $brands = Mockery::mock(BrandRepository::class);
 
         $patients = Mockery::mock(PatientRepository::class);
-        $patients->shouldReceive('findById')->with('missing-id')->andReturn(null);
+        $patients->shouldReceive('findById')->with('22222222-2222-2222-2222-222222222222')->andReturn(null);
 
         $biomarkers = Mockery::mock(BiomarkerRepository::class);
         $biomarkers->shouldNotReceive('listForPatient');
@@ -221,13 +237,30 @@ class PatientServiceTest extends TestCase
 
         $this->expectException(PatientNotFound::class);
 
-        $service->listBiomarkers('missing-id');
+        $service->listBiomarkers('22222222-2222-2222-2222-222222222222');
+    }
+
+    public function test_list_biomarkers_throws_patient_not_found_when_id_is_not_a_well_formed_uuid(): void
+    {
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldNotReceive('findById');
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+        $biomarkers->shouldNotReceive('listForPatient');
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(PatientNotFound::class);
+
+        $service->listBiomarkers('not-a-uuid');
     }
 
     public function test_set_needs_follow_up_delegates_to_the_repository_and_returns_updated_patient(): void
     {
         $updated = new Patient(
-            id: 'patient-1',
+            id: '11111111-1111-1111-1111-111111111111',
             brandId: 'brand-1',
             name: 'Ana Silva',
             birthDate: '1990-01-01',
@@ -240,13 +273,13 @@ class PatientServiceTest extends TestCase
         $brands = Mockery::mock(BrandRepository::class);
 
         $patients = Mockery::mock(PatientRepository::class);
-        $patients->shouldReceive('updateNeedsFollowUp')->with('patient-1', true)->andReturn($updated);
+        $patients->shouldReceive('updateNeedsFollowUp')->with('11111111-1111-1111-1111-111111111111', true)->andReturn($updated);
 
         $biomarkers = Mockery::mock(BiomarkerRepository::class);
 
         $service = new PatientService($brands, $patients, $biomarkers);
 
-        $result = $service->setNeedsFollowUp('patient-1', true);
+        $result = $service->setNeedsFollowUp('11111111-1111-1111-1111-111111111111', true);
 
         $this->assertSame($updated, $result);
     }
@@ -256,7 +289,7 @@ class PatientServiceTest extends TestCase
         $brands = Mockery::mock(BrandRepository::class);
 
         $patients = Mockery::mock(PatientRepository::class);
-        $patients->shouldReceive('updateNeedsFollowUp')->with('missing-id', true)->andThrow(new PatientNotFound('missing-id'));
+        $patients->shouldReceive('updateNeedsFollowUp')->with('22222222-2222-2222-2222-222222222222', true)->andThrow(new PatientNotFound('22222222-2222-2222-2222-222222222222'));
 
         $biomarkers = Mockery::mock(BiomarkerRepository::class);
 
@@ -264,6 +297,22 @@ class PatientServiceTest extends TestCase
 
         $this->expectException(PatientNotFound::class);
 
-        $service->setNeedsFollowUp('missing-id', true);
+        $service->setNeedsFollowUp('22222222-2222-2222-2222-222222222222', true);
+    }
+
+    public function test_set_needs_follow_up_throws_patient_not_found_when_id_is_not_a_well_formed_uuid(): void
+    {
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldNotReceive('updateNeedsFollowUp');
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(PatientNotFound::class);
+
+        $service->setNeedsFollowUp('not-a-uuid', true);
     }
 }

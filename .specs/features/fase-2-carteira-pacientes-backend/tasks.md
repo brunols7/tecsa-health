@@ -435,23 +435,38 @@ Resources (T11)
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `curl -f localhost:9000/up` continua respondendo 200 (regressão de `routes/api.php`)
-- [ ] `GET /api/v1/patients?brand=nutri-care&limit=50` responde 200 com `data`/`nextCursor`
-- [ ] Duas chamadas encadeadas via `nextCursor` não repetem nem pulam paciente (teste Feature com
+- [x] `curl -f localhost:9000/up` continua respondendo 200 (regressão de `routes/api.php`)
+- [x] `GET /api/v1/patients?brand=nutri-care&limit=50` responde 200 com `data`/`nextCursor`
+- [x] Duas chamadas encadeadas via `nextCursor` não repetem nem pulam paciente (teste Feature com
       seed de tamanho conhecido no banco de teste)
-- [ ] `GET /api/v1/patients?brand=nutri-care&search=<termo>` filtra corretamente
-- [ ] `GET /api/v1/patients` sem `brand` → 422; `?brand=inexistente` → 404; `?cursor=lixo` → 400
-- [ ] `GET /api/v1/patients/:id` → 200 com paciente; id inexistente → 404
-- [ ] `GET /api/v1/patients/:id/biomarkers` → 200 com lista + `status`; paciente sem biomarcadores →
+- [x] `GET /api/v1/patients?brand=nutri-care&search=<termo>` filtra corretamente
+- [x] `GET /api/v1/patients` sem `brand` → 422; `?brand=inexistente` → 404; `?cursor=lixo` → 400
+- [x] `GET /api/v1/patients/:id` → 200 com paciente; id inexistente → 404
+- [x] `GET /api/v1/patients/:id/biomarkers` → 200 com lista + `status`; paciente sem biomarcadores →
       `[]`; paciente inexistente → 404
-- [ ] `PATCH /api/v1/patients/:id` com `{"needsFollowUp":true}` → 200, `GET` subsequente confirma
+- [x] `PATCH /api/v1/patients/:id` com `{"needsFollowUp":true}` → 200, `GET` subsequente confirma
       persistência; corpo inválido → 422; id inexistente → 404
-- [ ] Controller não importa Eloquent, `DB::`, nem contém `if` de negócio
+- [x] Controller não importa Eloquent, `DB::`, nem contém `if` de negócio
       (`bash scripts/check-layer-boundary.sh`)
-- [ ] `curl localhost:9000/docs/api` lista as 4 rotas novas (verificação manual, sem asserção
-      automatizada — mesmo padrão da Fase 1)
-- [ ] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test && vendor/bin/pint --test && vendor/bin/phpstan analyse`
-- [ ] Test count: `PatientControllerTest` com pelo menos 10 casos
+- [x] `curl localhost:9000/docs/api` lista as 4 rotas novas (verificação manual, sem asserção
+      automatizada — mesmo padrão da Fase 1) — confirmado via `docker compose up` real e
+      `curl localhost:9000/docs/api.json`, que lista `/v1/patients` (get), `/v1/patients/{id}`
+      (get+patch), `/v1/patients/{id}/biomarkers` (get)
+- [x] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test && vendor/bin/pint --test && vendor/bin/phpstan analyse`
+- [x] Test count: `PatientControllerTest` com pelo menos 10 casos (18 casos)
+
+**SPEC_DEVIATION**: `PatientService` ganhou validação de formato de UUID (`assertValidId`, regex
+puro sem dependência) em `getById`/`listBiomarkers`/`setNeedsFollowUp`, não prevista no design.md.
+Sem essa checagem, um `id` malformado (ex.: `not-a-uuid`) chegava ao Eloquent como bind de uma coluna
+Postgres `uuid`, e o banco lançava `invalid input syntax for type uuid` — um erro 500 não mapeado,
+violando o AC "id não é um UUID bem formado → 404" (P2.3/PATBE-11). Corrigido na camada Application
+(PHP puro, sem dependência de framework) em vez do Repository, mantendo a mesma decisão de design de
+"o Service decide o que é not-found". `PatientResource`/`BiomarkerResource` ganharam `$wrap = null`
+e o endpoint de biomarcadores usa `->resolve()` em vez de `->response()` para respeitar o shape
+literal do spec (`GET .../biomarkers` devolve `[]`/`[...]`, não `{"data": [...]}"`) — o wrap
+`'data'` do Laravel é uma propriedade estática por classe de Resource, e uma
+`AnonymousResourceCollection` não herda o override de `BiomarkerResource`, então precisou de
+`resolve()` explícito para não vazar o envelope padrão do framework.
 
 **Tests**: integration
 **Gate**: build

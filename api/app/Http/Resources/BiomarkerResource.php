@@ -13,6 +13,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 final class BiomarkerResource extends JsonResource
 {
+    public static $wrap = null;
+
     /**
      * @return array<string, mixed>
      */

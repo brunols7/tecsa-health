@@ -20,6 +20,8 @@ final class PatientService
 
     private const MAX_LIMIT = 100;
 
+    private const UUID_PATTERN = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
+
     public function __construct(
         private readonly BrandRepository $brands,
         private readonly PatientRepository $patients,
@@ -45,6 +47,8 @@ final class PatientService
 
     public function getById(string $id): Patient
     {
+        $this->assertValidId($id);
+
         $patient = $this->patients->findById($id);
 
         if ($patient === null) {
@@ -59,6 +63,8 @@ final class PatientService
      */
     public function listBiomarkers(string $patientId): array
     {
+        $this->assertValidId($patientId);
+
         if ($this->patients->findById($patientId) === null) {
             throw new PatientNotFound($patientId);
         }
@@ -68,7 +74,16 @@ final class PatientService
 
     public function setNeedsFollowUp(string $id, bool $value): Patient
     {
+        $this->assertValidId($id);
+
         return $this->patients->updateNeedsFollowUp($id, $value);
+    }
+
+    private function assertValidId(string $id): void
+    {
+        if (preg_match(self::UUID_PATTERN, $id) !== 1) {
+            throw new PatientNotFound($id);
+        }
     }
 
     private function clampLimit(?int $limit): int
