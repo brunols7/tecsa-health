@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
+import type { InfiniteData } from '@tanstack/react-query';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react-native';
 
 import { patchPatientFollowUp } from '@/core/api/patients';
-import type { Patient } from '@/core/api/schemas/patient';
+import type { Patient, PatientPage } from '@/core/api/schemas/patient';
 import { createTestQueryClient } from '@/core/offline/queryClient';
 import { BrandProvider } from '@/core/theme/BrandProvider';
 import type { Brand } from '@/core/theme/brand.types';
@@ -127,6 +128,50 @@ describe('useSetFollowUpMutation', () => {
 
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['patient', 'patient-1'] });
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['patients', 'brand-a'] });
+  });
+
+  it('aplica o valor otimista imediatamente no cache da listagem (onMutate)', async () => {
+    mockedPatchPatientFollowUp.mockResolvedValue({ ...fakePatient, needsFollowUp: true });
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(['patient', 'patient-1'], fakePatient);
+    const listData: InfiniteData<PatientPage> = {
+      pages: [{ data: [fakePatient], nextCursor: null }],
+      pageParams: [undefined],
+    };
+    queryClient.setQueryData(['patients', 'brand-a', ''], listData);
+
+    const { result } = await renderMutation(queryClient);
+
+    result.current.mutate({ id: 'patient-1', needsFollowUp: true });
+
+    await waitFor(() =>
+      expect(
+        queryClient.getQueryData<InfiniteData<PatientPage>>(['patients', 'brand-a', ''])?.pages[0]
+          .data[0].needsFollowUp,
+      ).toBe(true),
+    );
+  });
+
+  it('reverte o cache da listagem para o snapshot anterior quando a mutation falha (onError)', async () => {
+    mockedPatchPatientFollowUp.mockRejectedValue(new Error('patch failed'));
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(['patient', 'patient-1'], fakePatient);
+    const listData: InfiniteData<PatientPage> = {
+      pages: [{ data: [fakePatient], nextCursor: null }],
+      pageParams: [undefined],
+    };
+    queryClient.setQueryData(['patients', 'brand-a', ''], listData);
+
+    const { result } = await renderMutation(queryClient);
+
+    result.current.mutate({ id: 'patient-1', needsFollowUp: true });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+
+    expect(
+      queryClient.getQueryData<InfiniteData<PatientPage>>(['patients', 'brand-a', ''])?.pages[0]
+        .data[0].needsFollowUp,
+    ).toBe(false);
   });
 
   it('mantém isPending true enquanto a mutation está em voo', async () => {
