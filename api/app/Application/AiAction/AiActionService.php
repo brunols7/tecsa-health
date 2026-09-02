@@ -110,6 +110,24 @@ final class AiActionService
         return new AiActionGenerationResult(actions: $actions, generated: true);
     }
 
+    /**
+     * @return array<int, AiAction>
+     */
+    public function listForPatient(string $patientId): array
+    {
+        $this->assertValidPatientId($patientId);
+
+        $patient = $this->patients->findById($patientId);
+
+        if ($patient === null) {
+            throw new PatientNotFound($patientId);
+        }
+
+        $this->assertAiEnabled($patient->brandId);
+
+        return $this->aiActions->listForPatient($patientId);
+    }
+
     private function generateWithRetry(AiPromptInput $promptInput): AiSuggestion
     {
         try {

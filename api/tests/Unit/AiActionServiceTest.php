@@ -316,4 +316,105 @@ class AiActionServiceTest extends TestCase
         $this->assertCount(1, $result->actions);
         $this->assertSame(2, $llm->timesCalled());
     }
+
+    public function test_list_for_patient_returns_the_patients_action_history(): void
+    {
+        $history = [new AiAction(
+            id: 'action-1',
+            patientId: self::PATIENT_ID,
+            title: 'Reduzir açúcar',
+            rationale: 'Glicemia acima da faixa.',
+            priority: 'high',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Accepted,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        )];
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('listForPatient')->with(self::PATIENT_ID)->andReturn($history);
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $result = $service->listForPatient(self::PATIENT_ID);
+
+        $this->assertSame($history, $result);
+    }
+
+    public function test_list_for_patient_returns_empty_array_when_patient_has_no_history(): void
+    {
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('listForPatient')->with(self::PATIENT_ID)->andReturn([]);
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $result = $service->listForPatient(self::PATIENT_ID);
+
+        $this->assertSame([], $result);
+    }
+
+    public function test_list_for_patient_throws_patient_not_found_when_patient_does_not_exist(): void
+    {
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->andReturn(null);
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldNotReceive('findByKeyAndBrand');
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldNotReceive('listForPatient');
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $this->expectException(PatientNotFound::class);
+
+        $service->listForPatient('22222222-2222-2222-2222-222222222222');
+    }
+
+    public function test_list_for_patient_throws_ai_disabled_when_kill_switch_is_off(): void
+    {
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)
+            ->andReturn(new FeatureFlag(key: 'aiActionsEnabled', brandId: self::BRAND_ID, enabled: false));
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldNotReceive('listForPatient');
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $this->expectException(AiDisabled::class);
+
+        $service->listForPatient(self::PATIENT_ID);
+    }
 }

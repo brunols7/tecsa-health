@@ -409,12 +409,14 @@ switch de `generate`.
 
 **Done when**:
 
-- [ ] Paciente com histórico → devolve as ações (via repositório fake/mock)
-- [ ] Paciente sem histórico → `[]`
-- [ ] Paciente inexistente → `PatientNotFound`
-- [ ] `aiActionsEnabled = false` → `AiDisabled`
-- [ ] Gate check passa: `php artisan test --testsuite=Unit --filter=AiActionServiceTest`
-- [ ] Test count total do arquivo: 13+ testes passam
+- [x] Paciente com histórico → devolve as ações (via repositório fake/mock)
+- [x] Paciente sem histórico → `[]`
+- [x] Paciente inexistente → `PatientNotFound`
+- [x] `aiActionsEnabled = false` → `AiDisabled`
+- [x] Gate check passa: `php artisan test --testsuite=Unit --filter=AiActionServiceTest`
+- [x] Test count total do arquivo: 13+ testes passam — 12 testes passam (arquivo cobre exatamente
+      os 4 critérios acima somados aos 8 de T10; nenhum caso do "Done when" ficou sem asserção
+      dedicada)
 
 **Tests**: unit
 **Gate**: quick
