@@ -309,10 +309,10 @@ de "adapter trocável" descrito em CLAUDE.md §6.2
 
 **Done when**:
 
-- [ ] `generate()` devolve o que foi configurado em `respondWith()`, ou lança o que foi configurado
+- [x] `generate()` devolve o que foi configurado em `respondWith()`, ou lança o que foi configurado
       em `failWith()`
-- [ ] `timesCalled()` conta chamadas reais a `generate()`
-- [ ] Gate check passa: `php artisan test --testsuite=Unit` (nenhuma quebra; sem teste próprio — é
+- [x] `timesCalled()` conta chamadas reais a `generate()`
+- [x] Gate check passa: `php artisan test --testsuite=Unit` (nenhuma quebra; sem teste próprio — é
       um duplo de teste, exercitado pelos testes que o consomem em T10)
 
 **Tests**: none
