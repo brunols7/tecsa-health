@@ -276,14 +276,14 @@ este hook (só de leitura), mas T3 já está concluída antes da Fase 2 começar
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `onMutate` aplica o novo valor de `needsFollowUp` imediatamente no cache de `['patient', id]`
+- [x] `onMutate` aplica o novo valor de `needsFollowUp` imediatamente no cache de `['patient', id]`
       e devolve o snapshot anterior no `context`
-- [ ] `onError` restaura exatamente o snapshot anterior (teste força a `mutationFn` a rejeitar e
+- [x] `onError` restaura exatamente o snapshot anterior (teste força a `mutationFn` a rejeitar e
       confirma que o cache volta ao valor pré-mutation)
-- [ ] `onSettled` invalida as 2 query keys, independente de sucesso ou erro
-- [ ] `isPending` é `true` enquanto a mutation está em voo (usado por T13 para desabilitar o toggle)
-- [ ] Gate check passes: `npx tsc --noEmit && npm test -- useSetFollowUpMutation`
-- [ ] Test count: 4+ tests novos (otimista aplicado, rollback em erro, invalidação em sucesso,
+- [x] `onSettled` invalida as 2 query keys, independente de sucesso ou erro
+- [x] `isPending` é `true` enquanto a mutation está em voo (usado por T13 para desabilitar o toggle)
+- [x] Gate check passes: `npx tsc --noEmit && npm test -- useSetFollowUpMutation`
+- [x] Test count: 4+ tests novos (otimista aplicado, rollback em erro, invalidação em sucesso,
       invalidação em erro)
 
 **Tests**: unit
