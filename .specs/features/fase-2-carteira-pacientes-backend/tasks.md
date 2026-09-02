@@ -171,12 +171,12 @@ para string usa método `value(): string` em vez da propriedade `->value` do bac
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `PatientCursorTest` cobre round-trip (`encode` seguido de `decode` devolve `name`/`id`
+- [x] `PatientCursorTest` cobre round-trip (`encode` seguido de `decode` devolve `name`/`id`
       originais) e decode de string malformada lançando `InvalidCursor`
-- [ ] Nenhuma classe deste task importa `Illuminate\`
-- [ ] `bash scripts/check-layer-boundary.sh` continua passando
-- [ ] Gate check passes: `php artisan test --testsuite=Unit --filter=PatientCursorTest`
-- [ ] Test count: 2+ tests novos em `PatientCursorTest`
+- [x] Nenhuma classe deste task importa `Illuminate\`
+- [x] `bash scripts/check-layer-boundary.sh` continua passando
+- [x] Gate check passes: `php artisan test --testsuite=Unit --filter=PatientCursorTest`
+- [x] Test count: 2+ tests novos em `PatientCursorTest`
 
 **Tests**: unit
 **Gate**: quick
