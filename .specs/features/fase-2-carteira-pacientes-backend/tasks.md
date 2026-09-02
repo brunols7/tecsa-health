@@ -199,10 +199,10 @@ updatedAt`); interface `PatientRepository` com `paginate()`, `findById()`, `upda
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `Patient` é `final class`, `readonly` por construtor
-- [ ] `PatientRepository` é interface pura (assinatura exata do design.md), sem import de
+- [x] `Patient` é `final class`, `readonly` por construtor
+- [x] `PatientRepository` é interface pura (assinatura exata do design.md), sem import de
       `Illuminate\`
-- [ ] `bash scripts/check-layer-boundary.sh` continua passando
+- [x] `bash scripts/check-layer-boundary.sh` continua passando
 
 **Tests**: none
 **Gate**: build
