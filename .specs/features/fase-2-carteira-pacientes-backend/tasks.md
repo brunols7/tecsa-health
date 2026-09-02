@@ -380,9 +380,9 @@ boolean).
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `authorize()` retorna `true` nos dois (sem auth real — CLAUDE.md §15)
-- [ ] `rules()` batem exatamente com o design.md
-- [ ] Nenhuma lógica de negócio dentro dos FormRequests
+- [x] `authorize()` retorna `true` nos dois (sem auth real — CLAUDE.md §15)
+- [x] `rules()` batem exatamente com o design.md
+- [x] Nenhuma lógica de negócio dentro dos FormRequests
 
 **Tests**: none
 **Gate**: build
