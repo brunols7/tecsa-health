@@ -62,6 +62,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: mobile/src/core/ui/BiometricGateScreen.tsx:114 (mutation 4, FLAGSMOB-09) (mobile-ui)
 - last seen: 2026-09-01T23:29:47Z
 
+### L-009 - When a spec's acceptance criterion specifies an exact sort order and tie-break column, assert the returned sequence directly against out-of-order and duplicate-key fixtures, not just pagination totals/uniqueness.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `backend/repository-pagination` · harmful: 0
+- features: fase-2-carteira-pacientes-backend
+- evidence: PATBE-01 (spec.md P1 AC1) / validation.md Spec-Anchored Acceptance Criteria (backend/repository-pagination)
+- last seen: 2026-09-02T01:40:43Z
+
+### L-010 - Every documented edge case in spec.md must have its own explicit test, even when the guarding code is a one-line conditional that looks obviously correct on read.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `backend/testing` · harmful: 0
+- features: fase-2-carteira-pacientes-backend
+- evidence: spec.md Edge Cases (search vazio) / validation.md Edge Cases (backend/testing)
+- last seen: 2026-09-02T01:40:43Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

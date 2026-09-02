@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 9,
+  "next_id": 11,
   "lessons": [
     {
       "id": "L-001",
@@ -148,6 +148,42 @@
       ],
       "created": "2026-09-01T23:29:47Z",
       "last_seen": "2026-09-01T23:29:47Z"
+    },
+    {
+      "id": "L-009",
+      "key": "ac_gap::when a spec s acceptance criterion specifies an exact sort order and tie break column assert the returned sequence directly against out of order and duplicate key fixtures not just pagination totals uniqueness",
+      "text": "When a spec's acceptance criterion specifies an exact sort order and tie-break column, assert the returned sequence directly against out-of-order and duplicate-key fixtures, not just pagination totals/uniqueness.",
+      "signal": "ac_gap",
+      "scope": "backend/repository-pagination",
+      "status": "candidate",
+      "features": [
+        "fase-2-carteira-pacientes-backend"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "PATBE-01 (spec.md P1 AC1) / validation.md Spec-Anchored Acceptance Criteria (backend/repository-pagination)"
+      ],
+      "created": "2026-09-02T01:40:43Z",
+      "last_seen": "2026-09-02T01:40:43Z"
+    },
+    {
+      "id": "L-010",
+      "key": "ac_gap::every documented edge case in spec md must have its own explicit test even when the guarding code is a one line conditional that looks obviously correct on read",
+      "text": "Every documented edge case in spec.md must have its own explicit test, even when the guarding code is a one-line conditional that looks obviously correct on read.",
+      "signal": "ac_gap",
+      "scope": "backend/testing",
+      "status": "candidate",
+      "features": [
+        "fase-2-carteira-pacientes-backend"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md Edge Cases (search vazio) / validation.md Edge Cases (backend/testing)"
+      ],
+      "created": "2026-09-02T01:40:43Z",
+      "last_seen": "2026-09-02T01:40:43Z"
     }
   ]
 }
