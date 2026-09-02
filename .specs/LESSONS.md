@@ -122,6 +122,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: api/app/Infrastructure/Llm/GeminiClient.php:32 (api-http-adapters)
 - last seen: 2026-09-02T18:53:18Z
 
+### L-019 - When a spec says 'a cache-hit list SHALL exclude X', write a test with a genuine mixed hit (some X, some not, same cache key) — a scenario where deleting the only cached row forces a cache miss doesn't prove exclusion within a hit.
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `api/tests` · harmful: 0
+- features: acoes-ia-excluir
+- evidence: AIDEL-11 (api/tests)
+- last seen: 2026-09-02T20:50:25Z
+
+### L-020 - When a UI edge case is 'deleting the last item falls back to the empty state', add a direct integration test for it even if the empty-state condition and the delete mutation are each unit-tested separately — composition isn't evidence.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `mobile/src/core/ui` · harmful: 0
+- features: acoes-ia-excluir
+- evidence: Edge Case: última ação restante excluída cai no estado vazio (mobile/src/core/ui)
+- last seen: 2026-09-02T20:50:25Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
