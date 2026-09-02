@@ -36,6 +36,30 @@ final class GeminiClient implements LlmClient
                     ],
                     'generationConfig' => [
                         'response_mime_type' => 'application/json',
+                        'thinkingConfig' => ['thinkingBudget' => 0],
+                        'responseSchema' => [
+                            'type' => 'OBJECT',
+                            'properties' => [
+                                'risk_level' => ['type' => 'STRING', 'enum' => ['low', 'moderate', 'high']],
+                                'summary' => ['type' => 'STRING'],
+                                'actions' => [
+                                    'type' => 'ARRAY',
+                                    'minItems' => 1,
+                                    'maxItems' => 5,
+                                    'items' => [
+                                        'type' => 'OBJECT',
+                                        'properties' => [
+                                            'title' => ['type' => 'STRING'],
+                                            'rationale' => ['type' => 'STRING'],
+                                            'biomarkers' => ['type' => 'ARRAY', 'items' => ['type' => 'STRING']],
+                                            'priority' => ['type' => 'STRING', 'enum' => ['low', 'medium', 'high']],
+                                        ],
+                                        'required' => ['title', 'rationale', 'biomarkers', 'priority'],
+                                    ],
+                                ],
+                            ],
+                            'required' => ['risk_level', 'summary', 'actions'],
+                        ],
                     ],
                 ]);
         } catch (ConnectionException) {
