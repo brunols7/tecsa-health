@@ -14,6 +14,7 @@ final class Patient
         public readonly string $goal,
         public readonly string $status,
         public readonly bool $needsFollowUp,
-        public readonly string $updatedAt,
+        public readonly string $statusChangedAt = '',
+        public readonly string $updatedAt = '',
     ) {}
 }

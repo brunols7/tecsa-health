@@ -181,16 +181,28 @@ posicionado antes de `updatedAt` (mesma ordem usada no `PatientResource`/design.
 - Skill: NONE
 
 **Done when**:
-- [ ] Propriedade adicionada, `declare(strict_types=1)` mantido
-- [ ] Nenhum outro arquivo que instancia `new Patient(...)` quebra a compilação (é código morto até
+- [x] Propriedade adicionada, `declare(strict_types=1)` mantido
+- [x] Nenhum outro arquivo que instancia `new Patient(...)` quebra a compilação (é código morto até
       T8 atualizar `toDomain()` — aceitável, T8 é a próxima task da mesma fase)
-- [ ] Gate check passes: `composer test` (Entity/Config — build gate only, matriz não exige teste
+- [x] Gate check passes: `composer test` (Entity/Config — build gate only, matriz não exige teste
       dedicado para um DTO puro)
 
 **Tests**: none
 **Gate**: quick
 
 **Commit**: `feat(patient-domain): add statusChangedAt to Patient entity`
+
+**Status**: ✅ Complete
+
+**SPEC_DEVIATION**: `statusChangedAt` and `updatedAt` both got a `= ''` default on the constructor
+parameter, instead of being required as design.md shows. Reason: all existing call sites
+(`EloquentPatientRepository::toDomain()`, `PatientServiceTest`, `AiActionServiceTest`) construct
+`Patient` with named arguments and did not pass `statusChangedAt`; without a default, this is a
+runtime `ArgumentCountError`, not the "dead code until T8" compile-time-only situation the task
+description assumed — PHP has no compile-time arity check. Giving only `statusChangedAt` a default
+is rejected by PHP itself (`Optional parameter declared before required parameter is implicitly
+treated as required`), so `updatedAt` needed the same treatment. T8 replaces both with real values
+in `toDomain()`; this default only exists to keep the gate green in the T4-T7 window.
 
 ---
 
