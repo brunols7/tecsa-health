@@ -226,8 +226,8 @@ com mensagem no construtor)
 
 **Done when**:
 
-- [ ] As 7 classes existem, cada uma `extends RuntimeException`, zero import de `Illuminate\`
-- [ ] Gate check passa: `php artisan test --testsuite=Unit` (nenhuma quebra)
+- [x] As 7 classes existem, cada uma `extends RuntimeException`, zero import de `Illuminate\`
+- [x] Gate check passa: `php artisan test --testsuite=Unit` (nenhuma quebra)
 
 **Tests**: none
 **Gate**: quick

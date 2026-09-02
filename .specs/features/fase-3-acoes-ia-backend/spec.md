@@ -208,23 +208,23 @@ as 10 primeiras seguem o fluxo normal (gerando ou batendo cache), a 11ª devolve
 | AIBE-01 | P1: Gera ações novas quando não há hash existente | T1, T3, T4 | Implementing |
 | AIBE-02 | P1: Cache hit devolve ações existentes, sem chamar LLM | T4 | Implementing |
 | AIBE-03 | P1: Paciente inexistente → 404 | - | Pending |
-| AIBE-04 | P1: Kill switch off → 503 | - | Pending |
-| AIBE-05 | P1: Timeout → 502 | - | Pending |
-| AIBE-06 | P1: Schema inválido → retry único → 502 | - | Pending |
+| AIBE-04 | P1: Kill switch off → 503 | T5 | Implementing |
+| AIBE-05 | P1: Timeout → 502 | T5 | Implementing |
+| AIBE-06 | P1: Schema inválido → retry único → 502 | T5 | Implementing |
 | AIBE-07 | P1: Nunca persiste resposta não validada | - | Pending |
 | AIBE-08 | P1: Só dado clínico mínimo no prompt (sem PII) | T3 | Implementing |
 | AIBE-09 | P1: Controller sem regra de negócio | - | Pending |
-| AIBE-10 | Edge: sem biomarcadores → 422 PATIENT_NO_BIOMARKERS | - | Pending |
+| AIBE-10 | Edge: sem biomarcadores → 422 PATIENT_NO_BIOMARKERS | T5 | Implementing |
 | AIBE-11 | P2: Lista todas as ações, ordenadas created_at desc | - | Pending |
 | AIBE-12 | P2: Paciente sem histórico → [] | - | Pending |
 | AIBE-13 | P2: Paciente inexistente → 404 | - | Pending |
 | AIBE-14 | P2: Kill switch off → 503 | - | Pending |
 | AIBE-15 | P3: PATCH aceita ação pending | T2 | Implementing |
 | AIBE-16 | P3: PATCH descarta ação pending | T2 | Implementing |
-| AIBE-17 | P3: Ação inexistente → 404 | - | Pending |
-| AIBE-18 | P3: Ação já resolvida → 409 | T2 | Implementing |
+| AIBE-17 | P3: Ação inexistente → 404 | T5 | Implementing |
+| AIBE-18 | P3: Ação já resolvida → 409 | T2, T5 | Implementing |
 | AIBE-19 | P3: Corpo inválido → 422 | - | Pending |
-| AIBE-20 | P3: Kill switch off → 503 | - | Pending |
+| AIBE-20 | P3: Kill switch off → 503 | T5 | Implementing |
 | AIBE-21 | P3: Ignora campos não permitidos | - | Pending |
 | AIBE-22 | P4: 11ª requisição na janela → 429 | - | Pending |
 | AIBE-23 | P4: Rate limit só no POST | - | Pending |
