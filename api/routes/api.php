@@ -14,6 +14,7 @@ Route::prefix('v1')->group(function () {
     Route::get('patients/{id}/biomarkers', [PatientController::class, 'biomarkers']);
     Route::patch('patients/{id}', [PatientController::class, 'updateFollowUp']);
     Route::get('patients/{id}/ai-actions', [AiActionController::class, 'index']);
-    Route::post('patients/{id}/ai-actions', [AiActionController::class, 'generate']);
+    Route::post('patients/{id}/ai-actions', [AiActionController::class, 'generate'])
+        ->middleware('throttle:ai');
     Route::patch('ai-actions/{id}', [AiActionController::class, 'decide']);
 });

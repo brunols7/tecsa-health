@@ -552,9 +552,9 @@ padrão do Laravel, primeira vez usada no projeto)
 
 **Done when**:
 
-- [ ] `throttle:ai` está presente só na rota `POST` de geração, não em `GET`/`PATCH`
-- [ ] Limite configurado em 10 requisições/minuto por IP
-- [ ] Gate check passa: `bash scripts/check-layer-boundary.sh && php artisan route:list` mostra o
+- [x] `throttle:ai` está presente só na rota `POST` de geração, não em `GET`/`PATCH`
+- [x] Limite configurado em 10 requisições/minuto por IP
+- [x] Gate check passa: `bash scripts/check-layer-boundary.sh && php artisan route:list` mostra o
       middleware na rota certa
 
 **Tests**: none (exercitado em T17)
