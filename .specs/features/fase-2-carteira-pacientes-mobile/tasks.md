@@ -305,10 +305,10 @@ este hook (só de leitura), mas T3 já está concluída antes da Fase 2 começar
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Valor só atualiza após `delayMs` sem nova mudança (teste com fake timers, `jest.advanceTimersByTime`)
-- [ ] Mudança rápida sucessiva reinicia o timer (o valor intermediário nunca "vaza" para o resultado)
-- [ ] Gate check passes: `npx tsc --noEmit && npm test -- useDebouncedValue`
-- [ ] Test count: 2+ tests novos
+- [x] Valor só atualiza após `delayMs` sem nova mudança (teste com fake timers, `jest.advanceTimersByTime`)
+- [x] Mudança rápida sucessiva reinicia o timer (o valor intermediário nunca "vaza" para o resultado)
+- [x] Gate check passes: `npx tsc --noEmit && npm test -- useDebouncedValue`
+- [x] Test count: 2+ tests novos
 
 **Tests**: unit
 **Gate**: quick
