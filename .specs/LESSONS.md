@@ -74,6 +74,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: spec.md Edge Cases (search vazio) / validation.md Edge Cases (backend/testing)
 - last seen: 2026-09-02T01:40:43Z
 
+### L-011 - Check the installed package version's actual type definitions before writing a required prop or API into design.md, not the version the docs describe
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `mobile` · harmful: 0
+- features: fase-2-carteira-pacientes-mobile
+- evidence: spec.md PATMOB-07 / validation.md SPEC_DEVIATION table (mobile)
+- last seen: 2026-09-02T02:49:58Z
+
+### L-012 - When a rollback path and a refetch produce the same final UI value, make the mocked refetch return the server value so only the rollback can produce the asserted state
+- signal: `spec_deviation` · recurrence: 1 feature(s) · scope: `mobile-tests` · harmful: 0
+- features: fase-2-carteira-pacientes-mobile
+- evidence: src/app/patients/__tests__/[id].test.tsx:155 (mutation 2 survived at screen level) (mobile-tests)
+- last seen: 2026-09-02T02:49:58Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
