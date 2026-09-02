@@ -151,17 +151,16 @@ resolve `AnthropicClient` quando `ANTHROPIC_API_KEY` está preenchida, senão `G
 
 **Done when**:
 
-- [ ] `config(['services.anthropic.key' => 'sk-ant-x'])` + `$this->app->make(LlmClient::class)` →
+- [x] `config(['services.anthropic.key' => 'sk-ant-x'])` + `$this->app->make(LlmClient::class)` →
       instância de `AnthropicClient` (LLMSEL-07)
-- [ ] `config(['services.anthropic.key' => ''])` (e também `null` e `'   '`) + mesma chamada →
+- [x] `config(['services.anthropic.key' => ''])` (e também `null` e `'   '`) + mesma chamada →
       instância de `GeminiClient` (LLMSEL-08)
-- [ ] Nenhuma outra classe (`AiActionService`, `AiActionController`) referencia qual provedor está
+- [x] Nenhuma outra classe (`AiActionService`, `AiActionController`) referencia qual provedor está
       ativo — confirmado por leitura, não é testável por asserção direta (LLMSEL-09)
-- [ ] Binding continua sendo `bind()`, não `singleton()` — os dois testes acima resolvendo em
+- [x] Binding continua sendo `bind()`, não `singleton()` — os dois testes acima resolvendo em
       sequência na mesma execução provam isso (LLMSEL-10)
-- [ ] Gate check passa: `php artisan test --filter=DomainServiceProviderTest`
-- [ ] Test count: 2+ testes novos passam, suíte existente de `DomainServiceProviderTest` sem
-      regressão
+- [x] Gate check passa: `php artisan test --filter=DomainServiceProviderTest`
+- [x] Test count: 5 testes novos passam (4 pré-existentes + 5 novos = 9 total), sem regressão
 
 **Tests**: unit
 **Gate**: quick

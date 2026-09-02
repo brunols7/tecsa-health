@@ -146,12 +146,12 @@ pago pronto depois) — mas só faz sentido depois que o P1 garante que o adapte
 | LLMSEL-04 | P1: Falha de conexão/timeout → LlmTimeout | T2 | Done |
 | LLMSEL-05 | P1: Nunca envia nome/id do paciente ao Gemini | T2 | Done |
 | LLMSEL-06 | P1: Timeout de 15s na chamada HTTP | T2 | Done |
-| LLMSEL-07 | P2: ANTHROPIC_API_KEY preenchida → binda AnthropicClient | T3 | Pending |
-| LLMSEL-08 | P2: ANTHROPIC_API_KEY vazia/ausente → binda GeminiClient | T3 | Pending |
-| LLMSEL-09 | P2: Decisão isolada no DomainServiceProvider | T3 | Pending |
-| LLMSEL-10 | P2: bind() reavalia a cada resolução (não singleton) | T3 | Pending |
+| LLMSEL-07 | P2: ANTHROPIC_API_KEY preenchida → binda AnthropicClient | T3 | Done |
+| LLMSEL-08 | P2: ANTHROPIC_API_KEY vazia/ausente → binda GeminiClient | T3 | Done |
+| LLMSEL-09 | P2: Decisão isolada no DomainServiceProvider | T3 | Done |
+| LLMSEL-10 | P2: bind() reavalia a cada resolução (não singleton) | T3 | Done |
 
-**Coverage:** 10 total, 6 mapped to tasks (T2), 4 pending (T3)
+**Coverage:** 10 total, 10 mapped to tasks, 0 unmapped
 
 ---
 
