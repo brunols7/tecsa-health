@@ -415,19 +415,21 @@ achatados via `useMemo(() => data?.pages.flatMap((p) => p.data) ?? [], [data])`.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Os 4 estados aparecem no fluxo real de teste (RNTL): mock de query `pending` mostra skeleton,
+- [x] Os 4 estados aparecem no fluxo real de teste (RNTL): mock de query `pending` mostra skeleton,
       `error` mostra retry, `success` com página vazia mostra `emptyState` (`theme.copy.emptyPatients`),
       `success` com itens mostra a `FlashList`
-- [ ] Digitar no campo de busca (com fake timers avançando 300ms) dispara nova query com `search`
+- [x] Digitar no campo de busca (com fake timers avançando 300ms) dispara nova query com `search`
       preenchido
-- [ ] `FlashList` recebe `estimatedItemSize` (valor medido do card real — ajustar observando o
-      layout renderizado no simulador/device antes de fechar a task) e `keyExtractor={(p) => p.id}`
-- [ ] `onEndReached` chama `fetchNextPage` quando `hasNextPage`
-- [ ] `OfflineBanner` renderizado no topo da tela
-- [ ] Tocar num card navega para `/patients/${id}`
-- [ ] Nenhum literal de cor/raio/fonte
-- [ ] Gate check passes: `npm run pretest && npx tsc --noEmit && npm test -- app/__tests__/index`
-- [ ] Test count: 6+ tests novos
+- [x] `FlashList` recebe `keyExtractor={(p) => p.id}`. SPEC_DEVIATION: `estimatedItemSize` foi
+      omitido — `@shopify/flash-list@2.0.2` (a versão instalada por T1) removeu essa prop do tipo
+      `FlashListProps` e faz auto-sizing internamente; passá-la quebraria `tsc --noEmit` contra um
+      prop que o tipo não declara mais.
+- [x] `onEndReached` chama `fetchNextPage` quando `hasNextPage`
+- [x] `OfflineBanner` renderizado no topo da tela
+- [x] Tocar num card navega para `/patients/${id}`
+- [x] Nenhum literal de cor/raio/fonte
+- [x] Gate check passes: `npm run pretest && npx tsc --noEmit && npm test -- app/__tests__/index`
+- [x] Test count: 8 tests novos
 
 **Tests**: component
 **Gate**: full
