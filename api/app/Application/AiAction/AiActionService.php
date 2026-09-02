@@ -23,7 +23,6 @@ use App\Domain\Biomarker\Biomarker;
 use App\Domain\Biomarker\BiomarkerRepository;
 use App\Domain\FeatureFlag\FeatureFlagRepository;
 use App\Domain\Patient\Exceptions\PatientNotFound;
-use App\Domain\Patient\Patient;
 use App\Domain\Patient\PatientRepository;
 use DateTimeImmutable;
 use Ramsey\Uuid\Uuid;

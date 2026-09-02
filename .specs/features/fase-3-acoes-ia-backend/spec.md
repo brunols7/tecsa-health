@@ -205,31 +205,31 @@ as 10 primeiras seguem o fluxo normal (gerando ou batendo cache), a 11ª devolve
 
 | Requirement ID | Story | Task | Status |
 | --- | --- | --- | --- |
-| AIBE-01 | P1: Gera ações novas quando não há hash existente | T1, T3, T4, T6 | Implementing |
-| AIBE-02 | P1: Cache hit devolve ações existentes, sem chamar LLM | T4, T6 | Implementing |
-| AIBE-03 | P1: Paciente inexistente → 404 | - | Pending |
-| AIBE-04 | P1: Kill switch off → 503 | T5 | Implementing |
-| AIBE-05 | P1: Timeout → 502 | T5 | Implementing |
-| AIBE-06 | P1: Schema inválido → retry único → 502 | T5 | Implementing |
-| AIBE-07 | P1: Nunca persiste resposta não validada | - | Pending |
-| AIBE-08 | P1: Só dado clínico mínimo no prompt (sem PII) | T3 | Implementing |
-| AIBE-09 | P1: Controller sem regra de negócio | - | Pending |
-| AIBE-10 | Edge: sem biomarcadores → 422 PATIENT_NO_BIOMARKERS | T5 | Implementing |
-| AIBE-11 | P2: Lista todas as ações, ordenadas created_at desc | T6 | Implementing |
-| AIBE-12 | P2: Paciente sem histórico → [] | - | Pending |
-| AIBE-13 | P2: Paciente inexistente → 404 | - | Pending |
-| AIBE-14 | P2: Kill switch off → 503 | - | Pending |
-| AIBE-15 | P3: PATCH aceita ação pending | T2, T6 | Implementing |
-| AIBE-16 | P3: PATCH descarta ação pending | T2 | Implementing |
-| AIBE-17 | P3: Ação inexistente → 404 | T5 | Implementing |
-| AIBE-18 | P3: Ação já resolvida → 409 | T2, T5 | Implementing |
-| AIBE-19 | P3: Corpo inválido → 422 | - | Pending |
-| AIBE-20 | P3: Kill switch off → 503 | T5 | Implementing |
-| AIBE-21 | P3: Ignora campos não permitidos | - | Pending |
-| AIBE-22 | P4: 11ª requisição na janela → 429 | - | Pending |
-| AIBE-23 | P4: Rate limit só no POST | - | Pending |
+| AIBE-01 | P1: Gera ações novas quando não há hash existente | T1, T3, T4, T6, T10, T17 | Complete |
+| AIBE-02 | P1: Cache hit devolve ações existentes, sem chamar LLM | T4, T6, T10, T17 | Complete |
+| AIBE-03 | P1: Paciente inexistente → 404 | T10, T13, T17 | Complete |
+| AIBE-04 | P1: Kill switch off → 503 | T5, T10, T13, T17 | Complete |
+| AIBE-05 | P1: Timeout → 502 | T5, T9, T10, T13, T17 | Complete |
+| AIBE-06 | P1: Schema inválido → retry único → 502 | T5, T9, T10, T13, T17 | Complete |
+| AIBE-07 | P1: Nunca persiste resposta não validada | T10, T17 | Complete |
+| AIBE-08 | P1: Só dado clínico mínimo no prompt (sem PII) | T3, T9 | Complete |
+| AIBE-09 | P1: Controller sem regra de negócio | T15 | Complete |
+| AIBE-10 | Edge: sem biomarcadores → 422 PATIENT_NO_BIOMARKERS | T5, T10, T13, T17 | Complete |
+| AIBE-11 | P2: Lista todas as ações, ordenadas created_at desc | T6, T7, T11, T17 | Complete |
+| AIBE-12 | P2: Paciente sem histórico → [] | T11, T17 | Complete |
+| AIBE-13 | P2: Paciente inexistente → 404 | T11, T13, T17 | Complete |
+| AIBE-14 | P2: Kill switch off → 503 | T11, T13, T17 | Complete |
+| AIBE-15 | P3: PATCH aceita ação pending | T2, T6, T12, T17 | Complete |
+| AIBE-16 | P3: PATCH descarta ação pending | T2, T12, T17 | Complete |
+| AIBE-17 | P3: Ação inexistente → 404 | T5, T12, T13, T17 | Complete |
+| AIBE-18 | P3: Ação já resolvida → 409 | T2, T5, T12, T13, T17 | Complete |
+| AIBE-19 | P3: Corpo inválido → 422 | T14, T17 | Complete |
+| AIBE-20 | P3: Kill switch off → 503 | T5, T12, T13, T17 | Complete |
+| AIBE-21 | P3: Ignora campos não permitidos | T14, T17 | Complete |
+| AIBE-22 | P4: 11ª requisição na janela → 429 | T16, T17 | Complete |
+| AIBE-23 | P4: Rate limit só no POST | T16, T17 | Complete |
 
-**Coverage:** 23 total, 13 mapped to tasks (Phase 1: T1-T6), 10 unmapped ⚠️ (aguardando Phases 2-4)
+**Coverage:** 23 total, 23 mapped and Complete (Phases 1-4: T1-T17).
 
 ---
 

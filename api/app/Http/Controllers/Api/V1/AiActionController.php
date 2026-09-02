@@ -27,9 +27,10 @@ final class AiActionController extends Controller
     {
         $result = $this->aiActions->generate($patientId);
 
-        return AiActionResource::collection($result->actions)
-            ->response()
-            ->setStatusCode($result->generated ? 201 : 200);
+        return response()->json(
+            AiActionResource::collection($result->actions)->resolve(),
+            $result->generated ? 201 : 200,
+        );
     }
 
     #[DocResponse(404, description: 'Patient not found')]
@@ -38,7 +39,7 @@ final class AiActionController extends Controller
     {
         $actions = $this->aiActions->listForPatient($patientId);
 
-        return AiActionResource::collection($actions)->response();
+        return response()->json(AiActionResource::collection($actions)->resolve());
     }
 
     #[DocResponse(404, description: 'Ai action not found')]

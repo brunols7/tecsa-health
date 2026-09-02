@@ -579,18 +579,19 @@ codes), incluindo o teste de rate limit (11 chamadas).
 
 **Done when**:
 
-- [ ] `POST` gera (`201`) na primeira chamada e devolve cache hit (`200`) na segunda, mesmo
+- [x] `POST` gera (`201`) na primeira chamada e devolve cache hit (`200`) na segunda, mesmo
       paciente, `FakeLlmClient::timesCalled() === 1`
-- [ ] `POST` com paciente inexistente → `404`; sem biomarcadores → `422`; kill switch off → `503`
-- [ ] `GET` devolve `[]` para paciente sem histórico, e as ações depois de um `POST` — kill switch
+- [x] `POST` com paciente inexistente → `404`; sem biomarcadores → `422`; kill switch off → `503`
+- [x] `GET` devolve `[]` para paciente sem histórico, e as ações depois de um `POST` — kill switch
       off → `503`
-- [ ] `PATCH` aceita e descarta uma ação `pending` (`200` nos dois); ação inexistente → `404`; ação
+- [x] `PATCH` aceita e descarta uma ação `pending` (`200` nos dois); ação inexistente → `404`; ação
       já resolvida → `409`; corpo inválido → `422`; kill switch off → `503`
-- [ ] 11ª chamada `POST` na mesma janela de 1 minuto → `429`
-- [ ] Toda a Traceability table do `spec.md` é atualizada para `Complete` nesta task
-- [ ] Gate check passa: `bash scripts/check-layer-boundary.sh && php artisan test && vendor/bin/pint
+- [x] 11ª chamada `POST` na mesma janela de 1 minuto → `429`
+- [x] Toda a Traceability table do `spec.md` é atualizada para `Complete` nesta task
+- [x] Gate check passa: `bash scripts/check-layer-boundary.sh && php artisan test && vendor/bin/pint
       --test && vendor/bin/phpstan analyse`
-- [ ] Test count: 12+ testes passam neste arquivo; suíte completa sem regressão
+- [x] Test count: 12+ testes passam neste arquivo; suíte completa sem regressão — 20 testes passam
+      neste arquivo; suíte completa 142 testes, sem regressão
 
 **Tests**: integration
 **Gate**: build
