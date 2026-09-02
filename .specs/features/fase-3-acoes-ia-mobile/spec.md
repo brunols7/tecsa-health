@@ -137,13 +137,13 @@ e troca para o indicador "Aceita"; reabrir a tela mostra a mesma ação já como
 
 | Requirement ID | Story | Task | Status |
 | --- | --- | --- | --- |
-| AIMOB-01 | P1: Skeleton no carregamento inicial | T1, T3 | In Progress |
-| AIMOB-02 | P1: Estado vazio com disclaimer + botão gerar | - | Pending |
+| AIMOB-01 | P1: Skeleton no carregamento inicial | T1, T3, T4 | In Progress |
+| AIMOB-02 | P1: Estado vazio com disclaimer + botão gerar | T4 | In Progress |
 | AIMOB-03 | P1: Gerar ações troca vazio por lista | T2, T3 | In Progress |
-| AIMOB-04 | P1: Estado sucesso sem botão gerar | T1 | In Progress |
-| AIMOB-05 | P1: Erro no GET não bloqueia resto da tela | - | Pending |
+| AIMOB-04 | P1: Estado sucesso sem botão gerar | T1, T4 | In Progress |
+| AIMOB-05 | P1: Erro no GET não bloqueia resto da tela | T4 | In Progress |
 | AIMOB-06 | P1: Erro no POST reabilita botão | - | Pending |
-| AIMOB-07 | P1: Kill switch esconde a seção inteira | - | Pending |
+| AIMOB-07 | P1: Kill switch esconde a seção inteira | T4 | In Progress |
 | AIMOB-08 | P1: Geração não é otimista | - | Pending |
 | AIMOB-09 | P2: Botões aceitar/descartar em ação pending | T3 | In Progress |
 | AIMOB-10 | P2: Aceitar decide e desabilita botões até resposta | T3 | In Progress |

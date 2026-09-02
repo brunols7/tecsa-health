@@ -179,11 +179,11 @@ T8 → T9
 
 **Done when**:
 
-- [ ] `queryKey` é `['ai-actions', patientId]`
-- [ ] `enabled` é `false` quando `useFlag('aiActionsEnabled')` é `false` — teste confirma que
+- [x] `queryKey` é `['ai-actions', patientId]`
+- [x] `enabled` é `false` quando `useFlag('aiActionsEnabled')` é `false` — teste confirma que
       `fetchAiActions` não é chamada nesse caso
-- [ ] Gate check passa: `npm test -- useAiActionsQuery`
-- [ ] Test count: 3+ testes passam
+- [x] Gate check passa: `npm test -- useAiActionsQuery`
+- [x] Test count: 3+ testes passam
 
 **Tests**: unit
 **Gate**: quick
