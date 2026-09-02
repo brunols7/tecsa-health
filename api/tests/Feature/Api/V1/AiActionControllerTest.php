@@ -129,6 +129,10 @@ class AiActionControllerTest extends TestCase
         $this->assertEquals($firstIds, array_intersect($firstIds, $refreshedIds));
         $this->assertSame(2, $fake->timesCalled());
         $this->assertSame(2, AiActionModel::query()->where('patient_id', $patient->id)->count());
+        $this->assertSame(
+            1,
+            AiActionModel::query()->where('patient_id', $patient->id)->distinct('input_hash')->count('input_hash'),
+        );
     }
 
     public function test_post_without_refresh_still_hits_cache_and_never_appends(): void
@@ -168,6 +172,18 @@ class AiActionControllerTest extends TestCase
         $response->assertJsonPath('error.code', 'PATIENT_NO_BIOMARKERS');
     }
 
+    public function test_post_with_refresh_returns_422_when_patient_has_no_biomarkers(): void
+    {
+        $brand = $this->brand();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+        $this->bindFakeLlm();
+
+        $response = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions", ['refresh' => true]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('error.code', 'PATIENT_NO_BIOMARKERS');
+    }
+
     public function test_post_returns_503_when_kill_switch_is_off(): void
     {
         $brand = $this->brand(aiEnabled: false);
@@ -175,6 +191,19 @@ class AiActionControllerTest extends TestCase
         $fake = $this->bindFakeLlm();
 
         $response = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions");
+
+        $response->assertStatus(503);
+        $response->assertJsonPath('error.code', 'AI_DISABLED');
+        $this->assertSame(0, $fake->timesCalled());
+    }
+
+    public function test_post_with_refresh_returns_503_when_kill_switch_is_off(): void
+    {
+        $brand = $this->brand(aiEnabled: false);
+        $patient = $this->patientWithBiomarker($brand);
+        $fake = $this->bindFakeLlm();
+
+        $response = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions", ['refresh' => true]);
 
         $response->assertStatus(503);
         $response->assertJsonPath('error.code', 'AI_DISABLED');
@@ -209,6 +238,29 @@ class AiActionControllerTest extends TestCase
         $response->assertJsonPath('error.code', 'AI_UNAVAILABLE');
         $this->assertSame(2, $fake->timesCalled());
         $this->assertSame(0, AiActionModel::query()->where('patient_id', $patient->id)->count());
+    }
+
+    public function test_post_with_refresh_returns_502_after_one_retry_and_keeps_existing_actions(): void
+    {
+        $brand = $this->brand();
+        $patient = $this->patientWithBiomarker($brand);
+        $fake = $this->bindFakeLlm();
+        $fake->respondWith($this->suggestion());
+
+        $first = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions");
+        $first->assertStatus(201);
+        $existingId = collect($first->json())->pluck('id')->first();
+
+        $fake->failWith(new LlmInvalidResponse('missing field'));
+        $fake->failWith(new LlmInvalidResponse('missing field'));
+
+        $refreshed = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions", ['refresh' => true]);
+
+        $refreshed->assertStatus(502);
+        $refreshed->assertJsonPath('error.code', 'AI_UNAVAILABLE');
+        $this->assertSame(3, $fake->timesCalled());
+        $this->assertSame(1, AiActionModel::query()->where('patient_id', $patient->id)->count());
+        $this->assertTrue(AiActionModel::query()->whereKey($existingId)->exists());
     }
 
     public function test_get_returns_empty_list_when_patient_has_no_history(): void

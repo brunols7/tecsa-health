@@ -103,11 +103,12 @@ describe('AiActionsSection', () => {
   it('exibe o disclaimer, o convite e o botão "Gerar ações" quando a lista vem vazia', async () => {
     mockedFetchAiActions.mockResolvedValue([]);
 
-    const { getByTestId, getByText } = await renderSection();
+    const { getByTestId, getByText, queryByTestId } = await renderSection();
 
     await waitFor(() => expect(getByTestId('ai-actions-generate-button')).toBeTruthy());
     expect(getByText('Revise as sugestões da IA antes de aceitar.')).toBeTruthy();
     expect(getByText('Ações de acompanhamento')).toBeTruthy();
+    expect(queryByTestId('ai-actions-refresh-button')).toBeNull();
   });
 
   it('ao tocar "Gerar ações", desabilita o botão com loading e depois mostra a lista sem o botão', async () => {
@@ -135,15 +136,22 @@ describe('AiActionsSection', () => {
     expect(queryByTestId('ai-actions-generate-button')).toBeNull();
   });
 
-  it('exibe o disclaimer, um card por ação e o botão "Novas sugestões" (sem "Gerar ações"), quando o GET devolve itens', async () => {
+  it('exibe o disclaimer, um card por ação e o botão "Novas sugestões" (sem "Gerar ações"), acima dos cards, quando o GET devolve itens', async () => {
     mockedFetchAiActions.mockResolvedValue([fakeAction]);
 
-    const { getByText, getByTestId, queryByTestId } = await renderSection();
+    const { getByText, getByTestId, queryByTestId, toJSON } = await renderSection();
 
     await waitFor(() => expect(getByText('Reduzir consumo de açúcar')).toBeTruthy());
     expect(getByText('Revise as sugestões da IA antes de aceitar.')).toBeTruthy();
     expect(queryByTestId('ai-actions-generate-button')).toBeNull();
     expect(getByTestId('ai-actions-refresh-button')).toBeTruthy();
+
+    const tree = JSON.stringify(toJSON());
+    const refreshButtonIndex = tree.indexOf('"ai-actions-refresh-button"');
+    const firstCardIndex = tree.indexOf(`"ai-action-card-${fakeAction.id}"`);
+    expect(refreshButtonIndex).toBeGreaterThan(-1);
+    expect(firstCardIndex).toBeGreaterThan(-1);
+    expect(refreshButtonIndex).toBeLessThan(firstCardIndex);
   });
 
   it('ao tocar "Novas sugestões", chama generateAiActions com refresh:true e substitui a lista pelo resultado do servidor sem duplicar', async () => {
