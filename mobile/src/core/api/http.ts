@@ -87,3 +87,11 @@ export async function apiPatch(path: string, body: unknown): Promise<unknown> {
 
   return response.json();
 }
+
+export async function apiDelete(path: string): Promise<void> {
+  const response = await fetch(buildUrl(path), { method: 'DELETE' });
+
+  if (!response.ok) {
+    return handleErrorResponse(response);
+  }
+}

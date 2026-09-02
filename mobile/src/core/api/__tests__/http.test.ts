@@ -1,4 +1,4 @@
-import { apiGet, apiPatch, apiPost, ApiError } from '@/core/api/http';
+import { apiDelete, apiGet, apiPatch, apiPost, ApiError } from '@/core/api/http';
 
 describe('apiGet', () => {
   const originalFetch = global.fetch;
@@ -137,5 +137,40 @@ describe('apiPost', () => {
       code: 'AI_UNAVAILABLE',
     });
     await expect(apiPost('/api/v1/patients/patient-1/ai-actions')).rejects.toBeInstanceOf(ApiError);
+  });
+});
+
+describe('apiDelete', () => {
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('chama fetch com method DELETE e não lê corpo quando a resposta é 204', async () => {
+    const json = jest.fn();
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 204, json }) as unknown as typeof fetch;
+
+    await apiDelete('/api/v1/ai-actions/ai-action-1');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/v1/ai-actions/ai-action-1',
+      expect.objectContaining({ method: 'DELETE' }),
+    );
+    expect(json).not.toHaveBeenCalled();
+  });
+
+  it('lança ApiError com status e code quando a resposta não é 2xx', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 409,
+      json: async () => ({ error: { code: 'AI_ACTION_ALREADY_RESOLVED', message: 'Já resolvida' } }),
+    }) as unknown as typeof fetch;
+
+    await expect(apiDelete('/api/v1/ai-actions/ai-action-1')).rejects.toMatchObject({
+      status: 409,
+      code: 'AI_ACTION_ALREADY_RESOLVED',
+    });
+    await expect(apiDelete('/api/v1/ai-actions/ai-action-1')).rejects.toBeInstanceOf(ApiError);
   });
 });

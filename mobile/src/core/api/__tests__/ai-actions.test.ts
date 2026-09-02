@@ -1,4 +1,4 @@
-import { decideAiAction, fetchAiActions, generateAiActions } from '@/core/api/ai-actions';
+import { decideAiAction, deleteAiAction, fetchAiActions, generateAiActions } from '@/core/api/ai-actions';
 import { ApiError } from '@/core/api/http';
 import type { AiAction } from '@/core/api/schemas/ai-action';
 
@@ -124,6 +124,39 @@ describe('decideAiAction', () => {
     await expect(decideAiAction('ai-action-1', 'dismissed')).rejects.toMatchObject({
       status: 409,
       code: 'AI_ACTION_ALREADY_DECIDED',
+    });
+  });
+});
+
+describe('deleteAiAction', () => {
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('chama DELETE /api/v1/ai-actions/:id', async () => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, status: 204 }) as unknown as typeof fetch;
+
+    await deleteAiAction('ai-action-1');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/v1/ai-actions/ai-action-1',
+      expect.objectContaining({ method: 'DELETE' }),
+    );
+  });
+
+  it('propaga ApiError quando a resposta não é 2xx', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 409,
+      json: async () => ({ error: { code: 'AI_ACTION_ALREADY_RESOLVED', message: 'Já resolvida' } }),
+    }) as unknown as typeof fetch;
+
+    await expect(deleteAiAction('ai-action-1')).rejects.toBeInstanceOf(ApiError);
+    await expect(deleteAiAction('ai-action-1')).rejects.toMatchObject({
+      status: 409,
+      code: 'AI_ACTION_ALREADY_RESOLVED',
     });
   });
 });
