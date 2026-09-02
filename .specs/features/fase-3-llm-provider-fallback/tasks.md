@@ -115,17 +115,20 @@ schema, exceptions lançadas), `AiSuggestion::fromArray()`
 
 **Done when**:
 
-- [ ] Resposta `200` com JSON válido conforme schema → `generate()` devolve `AiSuggestion`
+- [x] Resposta `200` com JSON válido conforme schema → `generate()` devolve `AiSuggestion`
       equivalente (LLMSEL-01)
-- [ ] Resposta HTTP não-2xx → lança `LlmInvalidResponse` com o status na mensagem (LLMSEL-02)
-- [ ] JSON fora do schema (campo faltando, enum inválido, `actions` vazio ou >5) → lança
+- [x] Resposta HTTP não-2xx → lança `LlmInvalidResponse` com o status na mensagem (LLMSEL-02)
+- [x] JSON fora do schema (campo faltando, enum inválido, `actions` vazio ou >5) → lança
       `LlmInvalidResponse` (LLMSEL-03)
-- [ ] `ConnectionException` na chamada HTTP → lança `LlmTimeout` (LLMSEL-04)
-- [ ] Corpo da requisição enviado ao Gemini nunca contém `name`/`id` do paciente, só
+- [x] `ConnectionException` na chamada HTTP → lança `LlmTimeout` (LLMSEL-04)
+- [x] Corpo da requisição enviado ao Gemini nunca contém `name`/`id` do paciente, só
       idade/goal/biomarcadores (LLMSEL-05)
-- [ ] Chamada HTTP usa timeout de 15 segundos (LLMSEL-06)
-- [ ] Gate check passa: `php artisan test --filter=GeminiClientTest`
-- [ ] Test count: 5+ testes passam (mesmo número de cenários do `AnthropicClientTest`)
+- [x] Chamada HTTP usa timeout de 15 segundos (LLMSEL-06) — garantido pela constante
+      `TIMEOUT_SECONDS = 15`, mesmo padrão (não testado por asserção direta) do `AnthropicClient`
+      irmão
+- [x] Gate check passa: `php artisan test --filter=GeminiClientTest`
+- [x] Test count: 7 testes passam (5 cenários do `AnthropicClientTest` + 1 extra cobrindo a
+      diferença de payload do Gemini — chave na query string, não no corpo/header)
 
 **Tests**: unit
 **Gate**: quick
