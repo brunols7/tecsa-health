@@ -104,10 +104,10 @@ automaticamente, como efeito colateral do comando, não uma edição manual sepa
 
 **Done when**:
 
-- [ ] `expo-updates` e `expo-dev-client` aparecem em `dependencies` de `package.json` com as
+- [x] `expo-updates` e `expo-dev-client` aparecem em `dependencies` de `package.json` com as
       versões resolvidas por `expo install`
-- [ ] `npx tsc --noEmit` continua limpo
-- [ ] `npm run pretest` continua passando (nenhuma dependência nova quebra lint/boundary)
+- [x] `npx tsc --noEmit` continua limpo
+- [x] `npm run pretest` continua passando (nenhuma dependência nova quebra lint/boundary)
 
 **Tests**: none
 **Gate**: quick
