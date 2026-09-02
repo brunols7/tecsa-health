@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 9,
+  "next_id": 13,
   "lessons": [
     {
       "id": "L-001",
@@ -148,6 +148,78 @@
       ],
       "created": "2026-09-01T23:29:47Z",
       "last_seen": "2026-09-01T23:29:47Z"
+    },
+    {
+      "id": "L-009",
+      "key": "ac_gap::when a spec s acceptance criterion specifies an exact sort order and tie break column assert the returned sequence directly against out of order and duplicate key fixtures not just pagination totals uniqueness",
+      "text": "When a spec's acceptance criterion specifies an exact sort order and tie-break column, assert the returned sequence directly against out-of-order and duplicate-key fixtures, not just pagination totals/uniqueness.",
+      "signal": "ac_gap",
+      "scope": "backend/repository-pagination",
+      "status": "candidate",
+      "features": [
+        "fase-2-carteira-pacientes-backend"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "PATBE-01 (spec.md P1 AC1) / validation.md Spec-Anchored Acceptance Criteria (backend/repository-pagination)"
+      ],
+      "created": "2026-09-02T01:40:43Z",
+      "last_seen": "2026-09-02T01:40:43Z"
+    },
+    {
+      "id": "L-010",
+      "key": "ac_gap::every documented edge case in spec md must have its own explicit test even when the guarding code is a one line conditional that looks obviously correct on read",
+      "text": "Every documented edge case in spec.md must have its own explicit test, even when the guarding code is a one-line conditional that looks obviously correct on read.",
+      "signal": "ac_gap",
+      "scope": "backend/testing",
+      "status": "candidate",
+      "features": [
+        "fase-2-carteira-pacientes-backend"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md Edge Cases (search vazio) / validation.md Edge Cases (backend/testing)"
+      ],
+      "created": "2026-09-02T01:40:43Z",
+      "last_seen": "2026-09-02T01:40:43Z"
+    },
+    {
+      "id": "L-011",
+      "key": "spec_precision_gap::check the installed package version s actual type definitions before writing a required prop or api into design md not the version the docs describe",
+      "text": "Check the installed package version's actual type definitions before writing a required prop or API into design.md, not the version the docs describe",
+      "signal": "spec_precision_gap",
+      "scope": "mobile",
+      "status": "candidate",
+      "features": [
+        "fase-2-carteira-pacientes-mobile"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md PATMOB-07 / validation.md SPEC_DEVIATION table (mobile)"
+      ],
+      "created": "2026-09-02T02:49:58Z",
+      "last_seen": "2026-09-02T02:49:58Z"
+    },
+    {
+      "id": "L-012",
+      "key": "spec_deviation::when a rollback path and a refetch produce the same final ui value make the mocked refetch return the server value so only the rollback can produce the asserted state",
+      "text": "When a rollback path and a refetch produce the same final UI value, make the mocked refetch return the server value so only the rollback can produce the asserted state",
+      "signal": "spec_deviation",
+      "scope": "mobile-tests",
+      "status": "candidate",
+      "features": [
+        "fase-2-carteira-pacientes-mobile"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "src/app/patients/__tests__/[id].test.tsx:155 (mutation 2 survived at screen level) (mobile-tests)"
+      ],
+      "created": "2026-09-02T02:49:58Z",
+      "last_seen": "2026-09-02T02:49:58Z"
     }
   ]
 }

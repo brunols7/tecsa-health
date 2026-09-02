@@ -10,15 +10,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property string $id
  * @property string $brand_id
  * @property string $name
- * @property string $birth_date
+ * @property Carbon $birth_date
  * @property string $goal
  * @property string $status
- * @property string $updated_at
+ * @property bool $needs_follow_up
+ * @property Carbon $updated_at
  */
 final class Patient extends Model
 {
@@ -35,11 +37,13 @@ final class Patient extends Model
         'birth_date',
         'goal',
         'status',
+        'needs_follow_up',
         'updated_at',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
+        'needs_follow_up' => 'boolean',
         'updated_at' => 'datetime',
     ];
 

@@ -119,7 +119,27 @@
 
 ## Handoff
 
-- **Feature**: `fase-0-fundacao` (`.specs/features/fase-0-fundacao/`)
+- **Current**: `fase-2-carteira-pacientes-backend` executado e **verificado PASS** nesta sessão, na
+  branch `feat/carteira-pacientes` (13 commits, `2b4d0f6`..`649b57b`, main..HEAD). Todas as 12 tasks
+  (T1-T12) commitadas individualmente via 2 sub-agentes de batch (Fase 1+2 = T1-T7, Fase 3+4 = T8-T12)
+  seguindo o plano de dependências do `tasks.md`. Verifier independente rodou depois:
+  `.specs/features/fase-2-carteira-pacientes-backend/validation.md`, 19/20 ACs com evidência exata,
+  1 gap de cobertura não-bloqueante (ordenação `name asc, id asc` do PATBE-01 correta no código mas
+  sem asserção direta de ordem), sensor de mutação 3/3 mortos, gate completo (layer-boundary + 79
+  testes + Pint + PHPStan nível 6) limpo. Traceability do spec.md já estava com as 20 linhas
+  PATBE-01..20 em "Complete", confirmado real pelo Verifier. Duas lições novas gravadas em
+  `.specs/lessons.json`/`LESSONS.md` (L-009, L-010) a partir dos 2 gaps não-bloqueantes.
+  **Próximo passo**: decidir com o usuário se os 2 gaps de cobertura viram fix tasks rápidas antes de
+  seguir, ou se seguimos direto para `fase-2-carteira-pacientes-mobile` (sequência já combinada:
+  backend completo antes de começar mobile). `design.md`/`validation.md` desta feature ainda não
+  commitados no git (ver Uncommitted files).
+  **Desvios do design.md, ambos verificados corretos**: (1) `BiomarkerStatus` implementado como enum
+  PHP puro (não backed) com método `value(): string`, não enum backed com propriedade `->value` —
+  PHP dá erro fatal ao redeclarar `from()`/`tryFrom()` num enum backed; (2) `PatientService` ganhou
+  validação de formato UUID antes de chamar o Repository (`getById`/`listBiomarkers`/
+  `setNeedsFollowUp`) — sem isso, um id malformado batia direto no tipo `uuid` do Postgres e devolvia
+  500 não mapeado em vez do 404 exigido pelo spec (PATBE-11).
+- **Feature (histórico)**: `fase-0-fundacao` (`.specs/features/fase-0-fundacao/`)
 - **Phase / Task**: Execute concluído (T1-T32 commitados). Verifier rodou e retornou **FAIL**
   (`.specs/features/fase-0-fundacao/validation.md`): 2 blockers reais + 1 mutante sobrevivente +
   gaps menores, todos com fix aplicado nesta sessão (ver "Fixes pós-Verifier" abaixo). Ainda não
@@ -221,11 +241,16 @@
   commits até agora seguem esse padrão (autor = Bruno Leonardo via config local do git, mensagem
   Conventional Commits pura). Manter esse padrão em todos os batches restantes.
 - **Blockers**: none
-- **Uncommitted files**: `.claude/`, `.agents/`, `CLAUDE.md` (modificado), `README.md` (vazio),
-  `.specs/STATE.md`, `.specs/features/fase-0-fundacao/{spec,design}.md` (nunca fizeram parte de
-  nenhum commit de task — não pertencem a nenhuma task do plano; só `tasks.md` é tocado pelas tasks),
-  `api/.env.testing` (gitignored agora, credenciais de teste, não deve ser commitado)
-- **Branch**: main
+- **Uncommitted files** (nesta sessão): `.specs/STATE.md`, `.specs/LESSONS.md`, `.specs/lessons.json`
+  (atualizados pelo Verifier + por este handoff),
+  `.specs/features/fase-2-carteira-pacientes-backend/{design.md,validation.md}` (nunca fizeram parte
+  de nenhum commit de task — `spec.md`/`tasks.md` já estão commitados via os commits de task),
+  `.specs/features/fase-2-carteira-pacientes-mobile/` (spec/design/tasks da próxima feature, ainda
+  não commitados nem executados). Herdado de sessões anteriores, ainda não resolvido:
+  `.specs/features/fase-0-fundacao/{spec,design}.md`, `api/.env.testing` (gitignored, não deve ser
+  commitado).
+- **Branch**: `feat/carteira-pacientes` (criada nesta sessão a partir de `main`, 13 commits à frente).
+  `main` não tocado.
 - **Remote**: nenhum configurado ainda — usuário pediu para adicionar
   `https://github.com/brunols7/tecsa-health.git` como `origin` ao final de toda a Fase 0 (não fazer
   antes disso, e nunca dar `git push` sem autorização explícita separada).
