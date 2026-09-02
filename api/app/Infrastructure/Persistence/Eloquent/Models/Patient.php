@@ -10,16 +10,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property string $id
  * @property string $brand_id
  * @property string $name
- * @property string $birth_date
+ * @property Carbon $birth_date
  * @property string $goal
  * @property string $status
  * @property bool $needs_follow_up
- * @property string $updated_at
+ * @property Carbon $updated_at
  */
 final class Patient extends Model
 {
