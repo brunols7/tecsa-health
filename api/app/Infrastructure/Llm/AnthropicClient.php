@@ -97,6 +97,18 @@ final class AnthropicClient implements LlmClient
         {"risk_level": "low"|"moderate"|"high", "summary": "string até 400 caracteres", "actions": [{"title": "string até 120 caracteres", "rationale": "string até 400 caracteres", "biomarkers": ["codigo"], "priority": "low"|"medium"|"high"}]}
         Gere entre 1 e 5 ações com base nos dados clínicos a seguir:
         {$payload}
+        {$this->existingTitlesInstruction($input)}
         PROMPT;
+    }
+
+    private function existingTitlesInstruction(AiPromptInput $input): string
+    {
+        if ($input->existingTitles === []) {
+            return '';
+        }
+
+        $titles = json_encode($input->existingTitles, JSON_THROW_ON_ERROR);
+
+        return "Não repita nenhuma das ações a seguir, já sugeridas anteriormente para este paciente: {$titles}";
     }
 }
