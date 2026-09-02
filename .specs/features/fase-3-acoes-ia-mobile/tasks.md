@@ -206,13 +206,13 @@ T8 → T9
 
 **Done when**:
 
-- [ ] `mutate(patientId)` chama `generateAiActions` e, no sucesso, popula
+- [x] `mutate(patientId)` chama `generateAiActions` e, no sucesso, popula
       `['ai-actions', patientId]` com o resultado
-- [ ] O arquivo não declara `onMutate` em nenhum lugar — teste next-to-code lê o módulo ou o
+- [x] O arquivo não declara `onMutate` em nenhum lugar — teste next-to-code lê o módulo ou o
       comportamento (nenhuma mudança de cache acontece antes do `mutationFn` resolver)
-- [ ] Erro da mutation não altera o cache existente
-- [ ] Gate check passa: `npm test -- useGenerateAiActionsMutation`
-- [ ] Test count: 3+ testes passam
+- [x] Erro da mutation não altera o cache existente
+- [x] Gate check passa: `npm test -- useGenerateAiActionsMutation`
+- [x] Test count: 3+ testes passam
 
 **Tests**: unit
 **Gate**: quick
