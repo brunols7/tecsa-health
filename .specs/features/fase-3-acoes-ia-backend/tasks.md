@@ -498,10 +498,10 @@ switch de `generate`.
 
 **Done when**:
 
-- [ ] `DecideAiActionRequest::rules()` rejeita corpo sem `status` ou com valor fora do enum
-- [ ] `AiActionResource::toArray()` expõe `id, patientId, title, rationale, priority, biomarkers,
+- [x] `DecideAiActionRequest::rules()` rejeita corpo sem `status` ou com valor fora do enum
+- [x] `AiActionResource::toArray()` expõe `id, patientId, title, rationale, priority, biomarkers,
       status, createdAt`
-- [ ] Gate check passa: `php artisan test --testsuite=Unit` (nenhuma quebra)
+- [x] Gate check passa: `php artisan test --testsuite=Unit` (nenhuma quebra)
 
 **Tests**: none
 **Gate**: quick
