@@ -221,16 +221,18 @@ valores, `status` restrito aos 3 valores). `down()` reverte na ordem inversa.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `php artisan migrate` roda limpo a partir de um banco já com a Fase 0-3 aplicada
-- [ ] `php artisan migrate:rollback` reverte sem erro
-- [ ] Inserir uma linha com `goal`/`status` fora do enum via SQL cru falha por constraint (verificado
+- [x] `php artisan migrate` roda limpo a partir de um banco já com a Fase 0-3 aplicada
+- [x] `php artisan migrate:rollback` reverte sem erro
+- [x] Inserir uma linha com `goal`/`status` fora do enum via SQL cru falha por constraint (verificado
       manualmente ou no teste de T8)
-- [ ] Gate check passes: `composer test`
+- [x] Gate check passes: `composer test`
 
 **Tests**: none
 **Gate**: full
 
 **Commit**: `feat(patient-persistence): add lifecycle columns and check constraints migration`
+
+**Status**: ✅ Complete
 
 ---
 
