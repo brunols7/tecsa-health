@@ -131,9 +131,10 @@ Depois de confirmado e executado, capturar o `projectId` gerado.
 
 **Done when**:
 
-- [ ] Usuário confirmou explicitamente antes de `eas login`/`eas init` rodarem
-- [ ] `eas init` concluído com sucesso, projeto vinculado à conta EAS do usuário
-- [ ] `projectId` (UUID) anotado para uso em T3
+- [x] Usuário confirmou explicitamente antes de `eas login`/`eas init` rodarem
+- [x] `eas init` concluído com sucesso, projeto vinculado à conta EAS do usuário
+      (`@brunols7/nutri-care`)
+- [x] `projectId` (UUID) anotado para uso em T3: `9a7ed133-242f-47a6-b70f-ebc2bfeeb50b`
 
 **Tests**: none
 **Gate**: build (ação externa; sem gate de código — o "gate" é a confirmação humana antes de
@@ -162,12 +163,12 @@ sub-campo `eas.projectId`, mesmo padrão de spread.
 
 **Done when**:
 
-- [ ] `updates.url`, `runtimeVersion.policy` e `extra.eas.projectId` presentes no `ExpoConfig`
+- [x] `updates.url`, `runtimeVersion.policy` e `extra.eas.projectId` presentes no `ExpoConfig`
       retornado
-- [ ] `npx expo config --type public | jq '.updates, .runtimeVersion, .extra.eas'` mostra os três
+- [x] `npx expo config --type public | jq '.updates, .runtimeVersion, .extra.eas'` mostra os três
       campos preenchidos corretamente para `APP_BRAND=nutri-care` e para `APP_BRAND=vita-plus`
-- [ ] `npx tsc --noEmit` limpo
-- [ ] Nenhuma referência a `nutri-care`/`vita-plus` nova em `mobile/src/core/**` (não se aplica —
+- [x] `npx tsc --noEmit` limpo
+- [x] Nenhuma referência a `nutri-care`/`vita-plus` nova em `mobile/src/core/**` (não se aplica —
       task não toca `core/`, mas confirmar com `npm run pretest`)
 
 **Tests**: none

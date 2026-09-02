@@ -178,7 +178,7 @@ mudança; reabrir o app da marca B e confirmar que ele NÃO mudou.
 | REL-02 | P1: Build de desenvolvimento por marca | Design | Pending |
 | REL-03 | P1: Build de desenvolvimento por marca | Design | Pending |
 | REL-04 | P1: Build de desenvolvimento por marca | Design | Pending |
-| REL-05 | P2: expo-updates com canal por marca | Design | Pending |
+| REL-05 | P2: expo-updates com canal por marca | Design | Implementing |
 | REL-06 | P2: expo-updates com canal por marca | Design | Pending |
 | REL-07 | P2: expo-updates com canal por marca | Design | Pending |
 | REL-08 | P2: expo-updates com canal por marca | Design | Pending |

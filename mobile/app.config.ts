@@ -65,6 +65,9 @@ function withBrandedSplash(
   });
 }
 
+const easProjectId = (config: ConfigContext['config']): string | undefined =>
+  (config.extra?.eas as { projectId?: string } | undefined)?.projectId;
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: build.displayName,
@@ -85,9 +88,20 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
   },
   plugins: withBrandedSplash(config.plugins ?? [], build),
+  updates: {
+    ...config.updates,
+    url: `https://u.expo.dev/${easProjectId(config)}`,
+  },
+  runtimeVersion: {
+    policy: 'appVersion',
+  },
   extra: {
     ...config.extra,
     brandId,
     apiUrl,
+    eas: {
+      ...config.extra?.eas,
+      projectId: easProjectId(config),
+    },
   },
 });
