@@ -387,10 +387,10 @@ projeto)
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Banner visível quando `useIsOffline()` é `true`, ausente quando `false`
-- [ ] Nenhum literal de cor/raio/fonte
-- [ ] Gate check passes: `npx tsc --noEmit && npm test -- OfflineBanner`
-- [ ] Test count: 2 tests novos (visível/ausente)
+- [x] Banner visível quando `useIsOffline()` é `true`, ausente quando `false`
+- [x] Nenhum literal de cor/raio/fonte
+- [x] Gate check passes: `npx tsc --noEmit && npm test -- OfflineBanner`
+- [x] Test count: 2 tests novos (visível/ausente)
 
 **Tests**: component
 **Gate**: quick
