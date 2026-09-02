@@ -515,6 +515,46 @@ class AiActionControllerTest extends TestCase
         $this->assertSame(['Reavaliar em 30 dias'], $titles);
     }
 
+    public function test_post_cache_hit_excludes_a_deleted_action_but_keeps_the_surviving_one(): void
+    {
+        $brand = $this->brand();
+        $patient = $this->patientWithBiomarker($brand);
+        $fake = $this->bindFakeLlm();
+        $fake->respondWith(new AiSuggestion(
+            riskLevel: 'moderate',
+            summary: 'Duas sugestões.',
+            actions: [
+                new AiSuggestedAction(
+                    title: 'Ação que será excluída',
+                    rationale: 'r',
+                    biomarkers: ['glucose'],
+                    priority: 'medium',
+                ),
+                new AiSuggestedAction(
+                    title: 'Ação que sobrevive',
+                    rationale: 'r',
+                    biomarkers: ['glucose'],
+                    priority: 'low',
+                ),
+            ],
+        ));
+
+        $first = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions");
+        $first->assertStatus(201);
+        $first->assertJsonCount(2);
+        $toDelete = collect($first->json())->firstWhere('title', 'Ação que será excluída');
+
+        $this->patchJson("/api/v1/ai-actions/{$toDelete['id']}", ['status' => 'accepted'])->assertStatus(200);
+        $this->deleteJson("/api/v1/ai-actions/{$toDelete['id']}")->assertStatus(204);
+
+        $cacheHit = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions");
+
+        $cacheHit->assertStatus(200);
+        $cacheHit->assertJsonCount(1);
+        $cacheHit->assertJsonPath('0.title', 'Ação que sobrevive');
+        $this->assertSame(1, $fake->timesCalled());
+    }
+
     public function test_patch_ignores_fields_other_than_status(): void
     {
         $brand = $this->brand();

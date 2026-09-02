@@ -1,7 +1,8 @@
 import { QueryClientProvider } from '@tanstack/react-query';
+import { Alert } from 'react-native';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 
-import { fetchAiActions, generateAiActions } from '@/core/api/ai-actions';
+import { deleteAiAction, fetchAiActions, generateAiActions } from '@/core/api/ai-actions';
 import type { AiAction } from '@/core/api/schemas/ai-action';
 import { useFlag } from '@/core/flags/useFlag';
 import { createTestQueryClient } from '@/core/offline/queryClient';
@@ -14,6 +15,7 @@ jest.mock('@/core/flags/useFlag');
 
 const mockedFetchAiActions = fetchAiActions as jest.MockedFunction<typeof fetchAiActions>;
 const mockedGenerateAiActions = generateAiActions as jest.MockedFunction<typeof generateAiActions>;
+const mockedDeleteAiAction = deleteAiAction as jest.MockedFunction<typeof deleteAiAction>;
 const mockedUseFlag = useFlag as jest.MockedFunction<typeof useFlag>;
 
 const fakeBrand: Brand = {
@@ -78,6 +80,7 @@ describe('AiActionsSection', () => {
   afterEach(() => {
     mockedFetchAiActions.mockReset();
     mockedGenerateAiActions.mockReset();
+    mockedDeleteAiAction.mockReset();
     mockedUseFlag.mockReset();
   });
 
@@ -223,5 +226,26 @@ describe('AiActionsSection', () => {
 
     await waitFor(() => expect(getByTestId('ai-actions-generate-error')).toBeTruthy());
     expect(getByTestId('ai-actions-generate-button').props.accessibilityState?.disabled).toBe(false);
+  });
+
+  it('excluir a última ação restante faz a tela cair no estado vazio', async () => {
+    const acceptedAction: AiAction = { ...fakeAction, status: 'accepted' };
+    mockedFetchAiActions.mockResolvedValue([acceptedAction]);
+    mockedDeleteAiAction.mockResolvedValue(undefined);
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+      const confirmButton = buttons?.find((button) => button.text === 'Excluir');
+      confirmButton?.onPress?.();
+    });
+
+    const { getByTestId, getByText, queryByTestId } = await renderSection();
+
+    await waitFor(() => expect(getByText('Reduzir consumo de açúcar')).toBeTruthy());
+
+    await fireEvent.press(getByTestId('ai-action-delete-ai-action-1'));
+
+    await waitFor(() => expect(getByTestId('ai-actions-generate-button')).toBeTruthy());
+    expect(queryByTestId(`ai-action-card-${acceptedAction.id}`)).toBeNull();
+
+    alertSpy.mockRestore();
   });
 });

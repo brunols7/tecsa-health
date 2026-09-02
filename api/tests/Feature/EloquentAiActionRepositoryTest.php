@@ -88,6 +88,38 @@ class EloquentAiActionRepositoryTest extends TestCase
         $this->assertSame($matching->id, $result[0]->id);
     }
 
+    public function test_find_by_patient_and_hash_excludes_deleted_rows_but_keeps_the_rest(): void
+    {
+        $brand = BrandModel::factory()->create();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+
+        $surviving = AiActionModel::query()->create($this->rowFor($patient->id, status: 'accepted', inputHash: 'hash-a'));
+        AiActionModel::query()->create($this->rowFor($patient->id, status: 'deleted', inputHash: 'hash-a'));
+
+        $repository = $this->app->make(AiActionRepository::class);
+
+        $result = $repository->findByPatientAndHash($patient->id, 'hash-a');
+
+        $this->assertCount(1, $result);
+        $this->assertSame($surviving->id, $result[0]->id);
+    }
+
+    public function test_list_for_patient_excludes_deleted_rows_but_keeps_the_rest(): void
+    {
+        $brand = BrandModel::factory()->create();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+
+        $surviving = AiActionModel::query()->create($this->rowFor($patient->id, status: 'dismissed'));
+        AiActionModel::query()->create($this->rowFor($patient->id, status: 'deleted'));
+
+        $repository = $this->app->make(AiActionRepository::class);
+
+        $result = $repository->listForPatient($patient->id);
+
+        $this->assertCount(1, $result);
+        $this->assertSame($surviving->id, $result[0]->id);
+    }
+
     public function test_find_by_patient_and_hash_never_returns_another_patients_rows(): void
     {
         $brand = BrandModel::factory()->create();
