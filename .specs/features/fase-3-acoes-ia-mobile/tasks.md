@@ -235,13 +235,13 @@ cache.
 
 **Done when**:
 
-- [ ] `mutate({actionId, status: 'accepted'})` no sucesso substitui só aquele item no array de
+- [x] `mutate({actionId, status: 'accepted'})` no sucesso substitui só aquele item no array de
       `['ai-actions', patientId]`, mantendo os outros intactos
-- [ ] Mesma cobertura para `'dismissed'`
-- [ ] Erro da mutation não altera nenhum item do cache (nada para reverter — sem `onMutate`)
-- [ ] O arquivo não declara `onMutate`
-- [ ] Gate check passa: `npm test -- useDecideAiActionMutation`
-- [ ] Test count: 4+ testes passam
+- [x] Mesma cobertura para `'dismissed'`
+- [x] Erro da mutation não altera nenhum item do cache (nada para reverter — sem `onMutate`)
+- [x] O arquivo não declara `onMutate`
+- [x] Gate check passa: `npm test -- useDecideAiActionMutation`
+- [x] Test count: 4+ testes passam
 
 **Tests**: unit
 **Gate**: quick

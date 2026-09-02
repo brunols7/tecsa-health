@@ -146,11 +146,11 @@ e troca para o indicador "Aceita"; reabrir a tela mostra a mesma ação já como
 | AIMOB-07 | P1: Kill switch esconde a seção inteira | T4 | In Progress |
 | AIMOB-08 | P1: Geração não é otimista | T5 | Complete |
 | AIMOB-09 | P2: Botões aceitar/descartar em ação pending | T3 | In Progress |
-| AIMOB-10 | P2: Aceitar decide e desabilita botões até resposta | T3 | In Progress |
-| AIMOB-11 | P2: Descartar decide e desabilita botões até resposta | T3 | In Progress |
-| AIMOB-12 | P2: Erro no PATCH reabilita botões só daquele card | - | Pending |
-| AIMOB-13 | P2: Status final sem botões | - | Pending |
-| AIMOB-14 | P2: Aceitar/descartar não é otimista | - | Pending |
+| AIMOB-10 | P2: Aceitar decide e desabilita botões até resposta | T3, T6 | In Progress |
+| AIMOB-11 | P2: Descartar decide e desabilita botões até resposta | T3, T6 | In Progress |
+| AIMOB-12 | P2: Erro no PATCH reabilita botões só daquele card | T6 | In Progress |
+| AIMOB-13 | P2: Status final sem botões | T6 | In Progress |
+| AIMOB-14 | P2: Aceitar/descartar não é otimista | T6 | Complete |
 
 **Coverage:** 14 total, 0 mapped to tasks, 14 unmapped ⚠️ (Tasks ainda não criado)
 
