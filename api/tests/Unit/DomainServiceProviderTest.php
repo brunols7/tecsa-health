@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use App\Domain\Biomarker\BiomarkerRepository;
 use App\Domain\Brand\BrandRepository;
 use App\Domain\FeatureFlag\FeatureFlagRepository;
 use App\Domain\Patient\PatientRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentBiomarkerRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentBrandRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentFeatureFlagRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentPatientRepository;
@@ -33,5 +35,12 @@ class DomainServiceProviderTest extends TestCase
         $resolved = $this->app->make(PatientRepository::class);
 
         $this->assertInstanceOf(EloquentPatientRepository::class, $resolved);
+    }
+
+    public function test_biomarker_repository_resolves_to_eloquent_implementation(): void
+    {
+        $resolved = $this->app->make(BiomarkerRepository::class);
+
+        $this->assertInstanceOf(EloquentBiomarkerRepository::class, $resolved);
     }
 }

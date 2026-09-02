@@ -290,14 +290,14 @@ existente
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `listForPatient()` devolve `[]` para paciente sem biomarcadores, lista ordenada por
+- [x] `listForPatient()` devolve `[]` para paciente sem biomarcadores, lista ordenada por
       `measuredAt desc` para paciente com biomarcadores
-- [ ] Cada `Biomarker` devolvido tem `status` correto (usa `Biomarker::factory()->outOfRange()`
+- [x] Cada `Biomarker` devolvido tem `status` correto (usa `Biomarker::factory()->outOfRange()`
       existente da Fase 0 para cobrir o caso "alto"/"baixo")
-- [ ] `DomainServiceProviderTest` ganha caso novo (`BiomarkerRepository` resolve para
+- [x] `DomainServiceProviderTest` ganha caso novo (`BiomarkerRepository` resolve para
       `EloquentBiomarkerRepository`)
-- [ ] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
-- [ ] Test count: `EloquentBiomarkerRepositoryTest` com pelo menos 3 casos
+- [x] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
+- [x] Test count: `EloquentBiomarkerRepositoryTest` com pelo menos 3 casos
 
 **Tests**: integration
 **Gate**: full
