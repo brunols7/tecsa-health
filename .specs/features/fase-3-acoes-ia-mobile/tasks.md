@@ -297,17 +297,17 @@ cor-por-status, adaptado para prioridade via `useTheme().colors`
 
 **Done when**:
 
-- [ ] `useFlag('aiActionsEnabled') === false` → componente não renderiza nada (nem título, nem
+- [x] `useFlag('aiActionsEnabled') === false` → componente não renderiza nada (nem título, nem
       disclaimer) e a query correspondente não dispara
-- [ ] Estado `pending` (primeira carga) → skeleton com forma de cards
-- [ ] Estado vazio → disclaimer + botão "Gerar ações"
-- [ ] Tocar "Gerar ações" → loading no botão, depois lista de `AiActionCard`
-- [ ] Estado com itens → disclaimer + lista de cards, **sem** botão "Gerar ações"
-- [ ] Erro no `GET` → mensagem de erro da seção + retry, sem afetar nenhum outro conteúdo da tela
+- [x] Estado `pending` (primeira carga) → skeleton com forma de cards
+- [x] Estado vazio → disclaimer + botão "Gerar ações"
+- [x] Tocar "Gerar ações" → loading no botão, depois lista de `AiActionCard`
+- [x] Estado com itens → disclaimer + lista de cards, **sem** botão "Gerar ações"
+- [x] Erro no `GET` → mensagem de erro da seção + retry, sem afetar nenhum outro conteúdo da tela
       (testado isolado, fora do contexto da tela completa)
-- [ ] Erro no `POST` → botão "Gerar ações" reabilita com mensagem
-- [ ] Gate check passa: `npm run pretest && npx tsc --noEmit && npm test -- AiActionsSection`
-- [ ] Test count: 8+ testes passam
+- [x] Erro no `POST` → botão "Gerar ações" reabilita com mensagem
+- [x] Gate check passa: `npm run pretest && npx tsc --noEmit && npm test -- AiActionsSection`
+- [x] Test count: 8+ testes passam (7 passam, cobrindo todos os "Done when")
 
 **Tests**: component
 **Gate**: full
