@@ -250,15 +250,17 @@ valores, `status` restrito aos 3 valores). `down()` reverte na ordem inversa.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `SoftDeletes` importado e usado
-- [ ] `$fillable` lista `name`, `brand_id`, `birth_date`, `goal`, `status`, `needs_follow_up`,
+- [x] `SoftDeletes` importado e usado
+- [x] `$fillable` lista `name`, `brand_id`, `birth_date`, `goal`, `status`, `needs_follow_up`,
       `status_changed_at` (nunca `$guarded = []`)
-- [ ] Gate check passes: `composer test`
+- [x] Gate check passes: `composer test`
 
 **Tests**: none
 **Gate**: quick
 
 **Commit**: `feat(patient-persistence): add SoftDeletes trait to Patient model`
+
+**Status**: ✅ Complete
 
 ---
 
