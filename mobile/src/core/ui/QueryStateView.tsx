@@ -78,5 +78,9 @@ export function QueryStateView<T>({
     return <>{emptyState}</>;
   }
 
-  return <>{children(data as T)}</>;
+  if (data === undefined) {
+    return null;
+  }
+
+  return <>{children(data)}</>;
 }
