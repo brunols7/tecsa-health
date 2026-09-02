@@ -153,15 +153,17 @@ construtor `__construct(string $from, string $to)`, mesmo estilo de `PatientNotF
 - Skill: NONE
 
 **Done when**:
-- [ ] Classe criada, sem `Illuminate\`
-- [ ] Mensagem inclui os dois valores (`$from`, `$to`)
-- [ ] Gate check passes: `composer test` (build gate — sem teste unitário dedicado, mesmo padrão de
+- [x] Classe criada, sem `Illuminate\`
+- [x] Mensagem inclui os dois valores (`$from`, `$to`)
+- [x] Gate check passes: `composer test` (build gate — sem teste unitário dedicado, mesmo padrão de
       `PatientNotFound`/`InvalidCursor`, exercida via `PatientServiceTest`/Feature test em T13/T21)
 
 **Tests**: none
 **Gate**: quick
 
 **Commit**: `feat(patient-domain): add InvalidStatusTransition exception`
+
+**Status**: ✅ Complete
 
 ---
 
