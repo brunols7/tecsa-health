@@ -337,15 +337,15 @@ lança `LlmInvalidResponse`/`LlmTimeout` conforme o caso.
 
 **Done when**:
 
-- [ ] Com `Http::fake()` devolvendo um JSON válido, `generate()` devolve `AiSuggestion` correta
-- [ ] Com `Http::fake()` devolvendo JSON fora do schema, `generate()` lança `LlmInvalidResponse`
-- [ ] Com `Http::fake()` simulando timeout (`Http::fake(fn () => throw new ConnectionException())`
+- [x] Com `Http::fake()` devolvendo um JSON válido, `generate()` devolve `AiSuggestion` correta
+- [x] Com `Http::fake()` devolvendo JSON fora do schema, `generate()` lança `LlmInvalidResponse`
+- [x] Com `Http::fake()` simulando timeout (`Http::fake(fn () => throw new ConnectionException())`
       ou equivalente), `generate()` lança `LlmTimeout`
-- [ ] Nenhum teste faz chamada de rede real (CLAUDE.md §10 — "nenhum teste pode fazer chamada real
+- [x] Nenhum teste faz chamada de rede real (CLAUDE.md §10 — "nenhum teste pode fazer chamada real
       ao provedor de LLM")
-- [ ] `AiPromptInput` enviado ao prompt nunca inclui `name`/id do paciente
-- [ ] Gate check passa: `php artisan test --testsuite=Unit --filter=AnthropicClientTest`
-- [ ] Test count: 3+ testes passam
+- [x] `AiPromptInput` enviado ao prompt nunca inclui `name`/id do paciente
+- [x] Gate check passa: `php artisan test --testsuite=Unit --filter=AnthropicClientTest`
+- [x] Test count: 3+ testes passam — 5 testes passam
 
 **Tests**: unit
 **Gate**: quick
