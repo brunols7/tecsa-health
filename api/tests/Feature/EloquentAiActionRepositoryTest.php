@@ -88,6 +88,21 @@ class EloquentAiActionRepositoryTest extends TestCase
         $this->assertSame($matching->id, $result[0]->id);
     }
 
+    public function test_find_by_patient_and_hash_never_returns_another_patients_rows(): void
+    {
+        $brand = BrandModel::factory()->create();
+        $patientA = PatientModel::factory()->create(['brand_id' => $brand->id]);
+        $patientB = PatientModel::factory()->create(['brand_id' => $brand->id]);
+
+        AiActionModel::query()->create($this->rowFor($patientB->id, inputHash: 'shared-hash'));
+
+        $repository = $this->app->make(AiActionRepository::class);
+
+        $result = $repository->findByPatientAndHash($patientA->id, 'shared-hash');
+
+        $this->assertSame([], $result);
+    }
+
     public function test_insert_many_persists_all_rows_in_a_single_call(): void
     {
         $brand = BrandModel::factory()->create();
