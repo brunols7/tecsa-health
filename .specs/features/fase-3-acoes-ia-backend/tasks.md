@@ -168,12 +168,12 @@ adapter para o value object.
 
 **Done when**:
 
-- [ ] `AiAction` tem exatamente os campos do design (`id, patientId, title, rationale, priority,
+- [x] `AiAction` tem exatamente os campos do design (`id, patientId, title, rationale, priority,
       biomarkers, status, inputHash, createdAt`)
-- [ ] `AiPromptInput` tem `age, goal, biomarkers` (sem `name`/`id` do paciente)
-- [ ] `AiSuggestion::fromArray()` monta `riskLevel, summary, actions: AiSuggestedAction[]`
-- [ ] Zero import de `Illuminate\` em qualquer um dos 4 arquivos
-- [ ] Gate check passa: `php artisan test --testsuite=Unit` (nenhum teste quebrado pelas novas classes)
+- [x] `AiPromptInput` tem `age, goal, biomarkers` (sem `name`/`id` do paciente)
+- [x] `AiSuggestion::fromArray()` monta `riskLevel, summary, actions: AiSuggestedAction[]`
+- [x] Zero import de `Illuminate\` em qualquer um dos 4 arquivos
+- [x] Gate check passa: `php artisan test --testsuite=Unit` (nenhum teste quebrado pelas novas classes)
 
 **Tests**: none
 **Gate**: quick

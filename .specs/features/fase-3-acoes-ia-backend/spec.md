@@ -205,14 +205,14 @@ as 10 primeiras seguem o fluxo normal (gerando ou batendo cache), a 11ª devolve
 
 | Requirement ID | Story | Task | Status |
 | --- | --- | --- | --- |
-| AIBE-01 | P1: Gera ações novas quando não há hash existente | T1 | Implementing |
+| AIBE-01 | P1: Gera ações novas quando não há hash existente | T1, T3 | Implementing |
 | AIBE-02 | P1: Cache hit devolve ações existentes, sem chamar LLM | - | Pending |
 | AIBE-03 | P1: Paciente inexistente → 404 | - | Pending |
 | AIBE-04 | P1: Kill switch off → 503 | - | Pending |
 | AIBE-05 | P1: Timeout → 502 | - | Pending |
 | AIBE-06 | P1: Schema inválido → retry único → 502 | - | Pending |
 | AIBE-07 | P1: Nunca persiste resposta não validada | - | Pending |
-| AIBE-08 | P1: Só dado clínico mínimo no prompt (sem PII) | - | Pending |
+| AIBE-08 | P1: Só dado clínico mínimo no prompt (sem PII) | T3 | Implementing |
 | AIBE-09 | P1: Controller sem regra de negócio | - | Pending |
 | AIBE-10 | Edge: sem biomarcadores → 422 PATIENT_NO_BIOMARKERS | - | Pending |
 | AIBE-11 | P2: Lista todas as ações, ordenadas created_at desc | - | Pending |
