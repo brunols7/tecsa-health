@@ -280,16 +280,19 @@ $statusChangedAt): Patient`, `delete(string $id): void`; `paginate()` ganha par�
 - Skill: NONE
 
 **Done when**:
-- [ ] Interface compila (Domain puro, sem `Illuminate\`)
-- [ ] `EloquentPatientRepository` ainda não implementa os métodos novos — quebra esperada até T8 (T7
+- [x] Interface compila (Domain puro, sem `Illuminate\`)
+- [x] `EloquentPatientRepository` ainda não implementa os métodos novos — quebra esperada até T8 (T7
       e T8 são consecutivos na mesma fase)
-- [ ] Gate check passes: leitura de código (PHPStan vai reclamar da implementação incompleta até T8
+- [x] Gate check passes: leitura de código (PHPStan vai reclamar da implementação incompleta até T8
       — não rodar `composer test` isolado nesta task; gate real acontece em T8)
 
 **Tests**: none
 **Gate**: quick
 
 **Commit**: `feat(patient-domain): extend PatientRepository interface with lifecycle methods`
+
+**Status**: ✅ Complete (código lido: `php -l` limpo, `check-layer-boundary.sh` limpo; suíte
+automatizada roda como parte do gate de T8, conforme instruído por esta própria task)
 
 ---
 
