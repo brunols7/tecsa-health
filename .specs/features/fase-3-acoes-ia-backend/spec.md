@@ -219,10 +219,10 @@ as 10 primeiras seguem o fluxo normal (gerando ou batendo cache), a 11ª devolve
 | AIBE-12 | P2: Paciente sem histórico → [] | - | Pending |
 | AIBE-13 | P2: Paciente inexistente → 404 | - | Pending |
 | AIBE-14 | P2: Kill switch off → 503 | - | Pending |
-| AIBE-15 | P3: PATCH aceita ação pending | - | Pending |
-| AIBE-16 | P3: PATCH descarta ação pending | - | Pending |
+| AIBE-15 | P3: PATCH aceita ação pending | T2 | Implementing |
+| AIBE-16 | P3: PATCH descarta ação pending | T2 | Implementing |
 | AIBE-17 | P3: Ação inexistente → 404 | - | Pending |
-| AIBE-18 | P3: Ação já resolvida → 409 | - | Pending |
+| AIBE-18 | P3: Ação já resolvida → 409 | T2 | Implementing |
 | AIBE-19 | P3: Corpo inválido → 422 | - | Pending |
 | AIBE-20 | P3: Kill switch off → 503 | - | Pending |
 | AIBE-21 | P3: Ignora campos não permitidos | - | Pending |

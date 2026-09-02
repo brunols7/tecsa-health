@@ -138,12 +138,12 @@ estático — não backed, porque backed impede redeclarar `from()`)
 
 **Done when**:
 
-- [ ] `fromString('pending'|'accepted'|'dismissed')` devolve a instância certa; qualquer outra
+- [x] `fromString('pending'|'accepted'|'dismissed')` devolve a instância certa; qualquer outra
       string lança exceção
-- [ ] `canTransitionTo()` só devolve `true` para `Pending->Accepted` e `Pending->Dismissed`
-- [ ] Zero import de `Illuminate\` no arquivo
-- [ ] Gate check passa: `php artisan test --testsuite=Unit --filter=AiActionStatusTest`
-- [ ] Test count: 4+ testes passam (fromString válido, fromString inválido, 2+ casos de transição)
+- [x] `canTransitionTo()` só devolve `true` para `Pending->Accepted` e `Pending->Dismissed`
+- [x] Zero import de `Illuminate\` no arquivo
+- [x] Gate check passa: `php artisan test --testsuite=Unit --filter=AiActionStatusTest`
+- [x] Test count: 4+ testes passam (fromString válido, fromString inválido, 2+ casos de transição) — 10 testes passam
 
 **Tests**: unit
 **Gate**: quick
