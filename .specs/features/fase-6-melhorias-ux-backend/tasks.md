@@ -405,6 +405,9 @@ T16 porque o controller ainda aponta para o método antigo até T19).
 
 **Commit**: `chore(patient-http): remove UpdateFollowUpRequest ahead of consolidation`
 
+**Status**: ⏭️ Deferred — merged into T16 per the execution note below (batch worker applied the
+documented "merge backward" resolution instead of committing this task standalone).
+
 > **Nota de execução**: esta task só é segura se `PatientController::updateFollowUp` também for
 > removido no mesmo commit (senão a rota fica sem `FormRequest` e quebra o type-hint). Na prática,
 > **mesclar T10 dentro de T16** (a task que cria `UpdatePatientRequest` e atualiza o controller) é
