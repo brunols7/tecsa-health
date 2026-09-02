@@ -110,6 +110,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: spec.md edge case: flag muda de true para false com a tela aberta (mobile/feature-flags)
 - last seen: 2026-09-02T17:57:16Z
 
+### L-017 - When an acceptance criterion enumerates boundary sub-cases (empty, over-max), assert each boundary explicitly instead of relying on one representative invalid payload
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `api-tests` · harmful: 0
+- features: fase-3-llm-provider-fallback
+- evidence: api/tests/Unit/GeminiClientTest.php:68 (api-tests)
+- last seen: 2026-09-02T18:53:18Z
+
+### L-018 - HTTP client timeout values are invisible to Laravel Http::fake assertions, so record them as code-inspection evidence in the spec rather than promising a test assertion
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `api-http-adapters` · harmful: 0
+- features: fase-3-llm-provider-fallback
+- evidence: api/app/Infrastructure/Llm/GeminiClient.php:32 (api-http-adapters)
+- last seen: 2026-09-02T18:53:18Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

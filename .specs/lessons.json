@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 17,
+  "next_id": 19,
   "lessons": [
     {
       "id": "L-001",
@@ -292,6 +292,42 @@
       ],
       "created": "2026-09-02T17:57:16Z",
       "last_seen": "2026-09-02T17:57:16Z"
+    },
+    {
+      "id": "L-017",
+      "key": "spec_precision_gap::when an acceptance criterion enumerates boundary sub cases empty over max assert each boundary explicitly instead of relying on one representative invalid payload",
+      "text": "When an acceptance criterion enumerates boundary sub-cases (empty, over-max), assert each boundary explicitly instead of relying on one representative invalid payload",
+      "signal": "spec_precision_gap",
+      "scope": "api-tests",
+      "status": "candidate",
+      "features": [
+        "fase-3-llm-provider-fallback"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "api/tests/Unit/GeminiClientTest.php:68 (api-tests)"
+      ],
+      "created": "2026-09-02T18:53:18Z",
+      "last_seen": "2026-09-02T18:53:18Z"
+    },
+    {
+      "id": "L-018",
+      "key": "spec_precision_gap::http client timeout values are invisible to laravel http fake assertions so record them as code inspection evidence in the spec rather than promising a test assertion",
+      "text": "HTTP client timeout values are invisible to Laravel Http::fake assertions, so record them as code-inspection evidence in the spec rather than promising a test assertion",
+      "signal": "spec_precision_gap",
+      "scope": "api-http-adapters",
+      "status": "candidate",
+      "features": [
+        "fase-3-llm-provider-fallback"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "api/app/Infrastructure/Llm/GeminiClient.php:32 (api-http-adapters)"
+      ],
+      "created": "2026-09-02T18:53:18Z",
+      "last_seen": "2026-09-02T18:53:18Z"
     }
   ]
 }
