@@ -1,4 +1,4 @@
-import { apiGet, apiPatch, ApiError } from '@/core/api/http';
+import { apiGet, apiPatch, apiPost, ApiError } from '@/core/api/http';
 
 describe('apiGet', () => {
   const originalFetch = global.fetch;
@@ -79,5 +79,63 @@ describe('apiPatch', () => {
     await expect(apiPatch('/api/v1/patients/patient-1', { needsFollowUp: true })).rejects.toBeInstanceOf(
       ApiError,
     );
+  });
+});
+
+describe('apiPost', () => {
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('serializa o corpo como JSON com Content-Type quando body é informado', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [{ id: 'ai-action-1' }],
+    }) as unknown as typeof fetch;
+
+    const result = await apiPost('/api/v1/patients/patient-1/ai-actions', { note: 'x' });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/v1/patients/patient-1/ai-actions',
+      expect.objectContaining({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note: 'x' }),
+      }),
+    );
+    expect(result).toEqual([{ id: 'ai-action-1' }]);
+  });
+
+  it('não envia corpo nem Content-Type quando body é omitido', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [{ id: 'ai-action-1' }],
+    }) as unknown as typeof fetch;
+
+    await apiPost('/api/v1/patients/patient-1/ai-actions');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/v1/patients/patient-1/ai-actions',
+      expect.objectContaining({ method: 'POST' }),
+    );
+    const call = (global.fetch as jest.Mock).mock.calls[0][1];
+    expect(call.body).toBeUndefined();
+    expect(call.headers).toBeUndefined();
+  });
+
+  it('lança ApiError com status e code quando a resposta não é 2xx', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 502,
+      json: async () => ({ error: { code: 'AI_UNAVAILABLE', message: 'IA indisponível' } }),
+    }) as unknown as typeof fetch;
+
+    await expect(apiPost('/api/v1/patients/patient-1/ai-actions')).rejects.toMatchObject({
+      status: 502,
+      code: 'AI_UNAVAILABLE',
+    });
+    await expect(apiPost('/api/v1/patients/patient-1/ai-actions')).rejects.toBeInstanceOf(ApiError);
   });
 });

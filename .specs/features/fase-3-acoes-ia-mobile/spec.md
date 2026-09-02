@@ -139,7 +139,7 @@ e troca para o indicador "Aceita"; reabrir a tela mostra a mesma ação já como
 | --- | --- | --- | --- |
 | AIMOB-01 | P1: Skeleton no carregamento inicial | T1 | In Progress |
 | AIMOB-02 | P1: Estado vazio com disclaimer + botão gerar | - | Pending |
-| AIMOB-03 | P1: Gerar ações troca vazio por lista | - | Pending |
+| AIMOB-03 | P1: Gerar ações troca vazio por lista | T2 | In Progress |
 | AIMOB-04 | P1: Estado sucesso sem botão gerar | T1 | In Progress |
 | AIMOB-05 | P1: Erro no GET não bloqueia resto da tela | - | Pending |
 | AIMOB-06 | P1: Erro no POST reabilita botão | - | Pending |

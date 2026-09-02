@@ -123,11 +123,11 @@ T8 → T9
 
 **Done when**:
 
-- [ ] `apiPost(path, body)` serializa `body` como JSON quando presente
-- [ ] `apiPost(path)` sem segundo argumento não envia corpo
-- [ ] Resposta `!response.ok` lança `ApiError` com `status`/`code`, mesmo padrão de `apiGet`
-- [ ] Gate check passa: `npm test -- http.test`
-- [ ] Test count: 2+ testes novos passam, suíte de `http.test.ts` sem regressão
+- [x] `apiPost(path, body)` serializa `body` como JSON quando presente
+- [x] `apiPost(path)` sem segundo argumento não envia corpo
+- [x] Resposta `!response.ok` lança `ApiError` com `status`/`code`, mesmo padrão de `apiGet`
+- [x] Gate check passa: `npm test -- http.test`
+- [x] Test count: 2+ testes novos passam, suíte de `http.test.ts` sem regressão
 
 **Tests**: unit
 **Gate**: quick
