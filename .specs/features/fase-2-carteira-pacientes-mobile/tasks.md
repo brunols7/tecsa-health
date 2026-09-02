@@ -455,18 +455,18 @@ do design.md — volume baixo, não é a lista que o CLAUDE.md §2.5 mira).
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Skeleton enquanto qualquer uma das 2 queries está pendente
-- [ ] Erro distinto do vazio quando qualquer uma das 2 falha, com retry
-- [ ] Estado vazio de biomarcadores (copy fixa, ver Assumptions) quando a lista vem vazia
-- [ ] Cada biomarcador mostra `label`, `value`, `unit`, faixa `refMin`–`refMax`, indicador de
+- [x] Skeleton enquanto qualquer uma das 2 queries está pendente
+- [x] Erro distinto do vazio quando qualquer uma das 2 falha, com retry
+- [x] Estado vazio de biomarcadores (copy fixa, ver Assumptions) quando a lista vem vazia
+- [x] Cada biomarcador mostra `label`, `value`, `unit`, faixa `refMin`–`refMax`, indicador de
       `status` — sem nenhum cálculo de status no componente (vem pronto do backend)
-- [ ] Tocar o toggle aplica a mudança imediatamente (otimista) e o desabilita enquanto
+- [x] Tocar o toggle aplica a mudança imediatamente (otimista) e o desabilita enquanto
       `useSetFollowUpMutation().isPending`
-- [ ] Forçar a `mutationFn` a rejeitar (mock) mostra o toggle revertendo visivelmente para o valor
+- [x] Forçar a `mutationFn` a rejeitar (mock) mostra o toggle revertendo visivelmente para o valor
       anterior
-- [ ] Nenhum literal de cor/raio/fonte
-- [ ] Gate check passes: `npm run pretest && npx tsc --noEmit && npm test -- patients/__tests__`
-- [ ] Test count: 7+ tests novos
+- [x] Nenhum literal de cor/raio/fonte
+- [x] Gate check passes: `npm run pretest && npx tsc --noEmit && npm test -- patients/__tests__`
+- [x] Test count: 7 tests novos
 
 **Tests**: component
 **Gate**: full
