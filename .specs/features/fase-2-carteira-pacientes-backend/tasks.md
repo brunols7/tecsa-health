@@ -321,16 +321,16 @@ existente
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] Dependências injetadas via construtor `private readonly`, nenhum `app()->make()`/`resolve()`
-- [ ] `listForBrandSlug`: `limit` nulo → 50; `limit > 100` → 100 (clamp, sem erro); propaga
+- [x] Dependências injetadas via construtor `private readonly`, nenhum `app()->make()`/`resolve()`
+- [x] `listForBrandSlug`: `limit` nulo → 50; `limit > 100` → 100 (clamp, sem erro); propaga
       `BrandNotFound`/`InvalidCursor`
-- [ ] `getById`: lança `PatientNotFound` quando `PatientRepository::findById` retorna `null`
-- [ ] `listBiomarkers`: lança `PatientNotFound` quando o paciente não existe, antes de consultar
+- [x] `getById`: lança `PatientNotFound` quando `PatientRepository::findById` retorna `null`
+- [x] `listBiomarkers`: lança `PatientNotFound` quando o paciente não existe, antes de consultar
       biomarcadores
-- [ ] `setNeedsFollowUp`: propaga `PatientNotFound` do Repository
-- [ ] Testes unitários usam fakes/mocks (Mockery) para as 3 interfaces, sem tocar banco
-- [ ] Gate check passes: `php artisan test --testsuite=Unit`
-- [ ] Test count: `PatientServiceTest` com pelo menos 7 casos (1 por AC principal + clamp de limit)
+- [x] `setNeedsFollowUp`: propaga `PatientNotFound` do Repository
+- [x] Testes unitários usam fakes/mocks (Mockery) para as 3 interfaces, sem tocar banco
+- [x] Gate check passes: `php artisan test --testsuite=Unit`
+- [x] Test count: `PatientServiceTest` com pelo menos 7 casos (1 por AC principal + clamp de limit)
 
 **Tests**: unit
 **Gate**: quick
