@@ -10,6 +10,8 @@ use App\Domain\AiAction\AiActionStatus;
 use App\Domain\AiAction\AiPromptInput;
 use App\Domain\AiAction\AiSuggestedAction;
 use App\Domain\AiAction\AiSuggestion;
+use App\Domain\AiAction\Exceptions\AiActionAlreadyResolved;
+use App\Domain\AiAction\Exceptions\AiActionNotFound;
 use App\Domain\AiAction\Exceptions\AiDisabled;
 use App\Domain\AiAction\Exceptions\LlmInvalidResponse;
 use App\Domain\AiAction\Exceptions\LlmTimeout;
@@ -128,6 +130,31 @@ final class AiActionService
         return $this->aiActions->listForPatient($patientId);
     }
 
+    public function decide(string $actionId, AiActionStatus $targetStatus): AiAction
+    {
+        $this->assertValidActionId($actionId);
+
+        $action = $this->aiActions->findById($actionId);
+
+        if ($action === null) {
+            throw new AiActionNotFound($actionId);
+        }
+
+        $patient = $this->patients->findById($action->patientId);
+
+        if ($patient === null) {
+            throw new PatientNotFound($action->patientId);
+        }
+
+        $this->assertAiEnabled($patient->brandId);
+
+        if (! $action->status->canTransitionTo($targetStatus)) {
+            throw new AiActionAlreadyResolved($actionId);
+        }
+
+        return $this->aiActions->updateStatus($actionId, $targetStatus);
+    }
+
     private function generateWithRetry(AiPromptInput $promptInput): AiSuggestion
     {
         try {
@@ -166,6 +193,13 @@ final class AiActionService
     {
         if (preg_match(self::UUID_PATTERN, $id) !== 1) {
             throw new PatientNotFound($id);
+        }
+    }
+
+    private function assertValidActionId(string $id): void
+    {
+        if (preg_match(self::UUID_PATTERN, $id) !== 1) {
+            throw new AiActionNotFound($id);
         }
     }
 }

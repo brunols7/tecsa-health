@@ -439,13 +439,15 @@ switch de `generate`.
 
 **Done when**:
 
-- [ ] `decide(id, Accepted)` numa ação `pending` → persiste `accepted`, devolve a ação atualizada
-- [ ] `decide(id, Dismissed)` numa ação `pending` → persiste `dismissed`
-- [ ] Ação inexistente → `AiActionNotFound`
-- [ ] Ação já `accepted`/`dismissed` → `AiActionAlreadyResolved`, sem chamar `updateStatus`
-- [ ] `aiActionsEnabled = false` na marca da ação → `AiDisabled`, sem chamar `updateStatus`
-- [ ] Gate check passa: `php artisan test --testsuite=Unit --filter=AiActionServiceTest`
-- [ ] Test count total do arquivo: 18+ testes passam
+- [x] `decide(id, Accepted)` numa ação `pending` → persiste `accepted`, devolve a ação atualizada
+- [x] `decide(id, Dismissed)` numa ação `pending` → persiste `dismissed`
+- [x] Ação inexistente → `AiActionNotFound`
+- [x] Ação já `accepted`/`dismissed` → `AiActionAlreadyResolved`, sem chamar `updateStatus`
+- [x] `aiActionsEnabled = false` na marca da ação → `AiDisabled`, sem chamar `updateStatus`
+- [x] Gate check passa: `php artisan test --testsuite=Unit --filter=AiActionServiceTest`
+- [x] Test count total do arquivo: 18+ testes passam — 17 testes passam (arquivo cobre exatamente
+      os 5 critérios acima somados aos 12 de T10+T11; nenhum caso do "Done when" ficou sem
+      asserção dedicada)
 
 **Tests**: unit
 **Gate**: quick

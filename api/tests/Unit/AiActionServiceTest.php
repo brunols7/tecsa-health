@@ -10,6 +10,8 @@ use App\Domain\AiAction\AiActionRepository;
 use App\Domain\AiAction\AiActionStatus;
 use App\Domain\AiAction\AiSuggestedAction;
 use App\Domain\AiAction\AiSuggestion;
+use App\Domain\AiAction\Exceptions\AiActionAlreadyResolved;
+use App\Domain\AiAction\Exceptions\AiActionNotFound;
 use App\Domain\AiAction\Exceptions\AiDisabled;
 use App\Domain\AiAction\Exceptions\LlmInvalidResponse;
 use App\Domain\AiAction\Exceptions\LlmTimeout;
@@ -320,7 +322,7 @@ class AiActionServiceTest extends TestCase
     public function test_list_for_patient_returns_the_patients_action_history(): void
     {
         $history = [new AiAction(
-            id: 'action-1',
+            id: '33333333-3333-3333-3333-333333333333',
             patientId: self::PATIENT_ID,
             title: 'Reduzir açúcar',
             rationale: 'Glicemia acima da faixa.',
@@ -416,5 +418,169 @@ class AiActionServiceTest extends TestCase
         $this->expectException(AiDisabled::class);
 
         $service->listForPatient(self::PATIENT_ID);
+    }
+
+    private function pendingAction(): AiAction
+    {
+        return new AiAction(
+            id: '33333333-3333-3333-3333-333333333333',
+            patientId: self::PATIENT_ID,
+            title: 'Reduzir açúcar',
+            rationale: 'Glicemia acima da faixa.',
+            priority: 'high',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Pending,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+    }
+
+    public function test_decide_accepts_a_pending_action(): void
+    {
+        $accepted = new AiAction(
+            id: '33333333-3333-3333-3333-333333333333',
+            patientId: self::PATIENT_ID,
+            title: 'Reduzir açúcar',
+            rationale: 'Glicemia acima da faixa.',
+            priority: 'high',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Accepted,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findById')->with('33333333-3333-3333-3333-333333333333')->andReturn($this->pendingAction());
+        $aiActions->shouldReceive('updateStatus')->once()->with('33333333-3333-3333-3333-333333333333', AiActionStatus::Accepted)->andReturn($accepted);
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $result = $service->decide('33333333-3333-3333-3333-333333333333', AiActionStatus::Accepted);
+
+        $this->assertSame($accepted, $result);
+    }
+
+    public function test_decide_dismisses_a_pending_action(): void
+    {
+        $dismissed = new AiAction(
+            id: '33333333-3333-3333-3333-333333333333',
+            patientId: self::PATIENT_ID,
+            title: 'Reduzir açúcar',
+            rationale: 'Glicemia acima da faixa.',
+            priority: 'high',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Dismissed,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findById')->with('33333333-3333-3333-3333-333333333333')->andReturn($this->pendingAction());
+        $aiActions->shouldReceive('updateStatus')->once()->with('33333333-3333-3333-3333-333333333333', AiActionStatus::Dismissed)->andReturn($dismissed);
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $result = $service->decide('33333333-3333-3333-3333-333333333333', AiActionStatus::Dismissed);
+
+        $this->assertSame($dismissed, $result);
+    }
+
+    public function test_decide_throws_ai_action_not_found_when_action_does_not_exist(): void
+    {
+        $patients = Mockery::mock(PatientRepository::class);
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldNotReceive('findByKeyAndBrand');
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findById')->with('44444444-4444-4444-4444-444444444444')->andReturn(null);
+        $aiActions->shouldNotReceive('updateStatus');
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $this->expectException(AiActionNotFound::class);
+
+        $service->decide('44444444-4444-4444-4444-444444444444', AiActionStatus::Accepted);
+    }
+
+    public function test_decide_throws_ai_action_already_resolved_when_action_is_not_pending(): void
+    {
+        $resolved = new AiAction(
+            id: '33333333-3333-3333-3333-333333333333',
+            patientId: self::PATIENT_ID,
+            title: 'Reduzir açúcar',
+            rationale: 'Glicemia acima da faixa.',
+            priority: 'high',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Accepted,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findById')->with('33333333-3333-3333-3333-333333333333')->andReturn($resolved);
+        $aiActions->shouldNotReceive('updateStatus');
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $this->expectException(AiActionAlreadyResolved::class);
+
+        $service->decide('33333333-3333-3333-3333-333333333333', AiActionStatus::Dismissed);
+    }
+
+    public function test_decide_throws_ai_disabled_when_kill_switch_is_off_without_updating(): void
+    {
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)
+            ->andReturn(new FeatureFlag(key: 'aiActionsEnabled', brandId: self::BRAND_ID, enabled: false));
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findById')->with('33333333-3333-3333-3333-333333333333')->andReturn($this->pendingAction());
+        $aiActions->shouldNotReceive('updateStatus');
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $this->expectException(AiDisabled::class);
+
+        $service->decide('33333333-3333-3333-3333-333333333333', AiActionStatus::Accepted);
     }
 }
