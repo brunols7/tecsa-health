@@ -359,13 +359,13 @@ projeto)
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `status: 'pending'` renderiza `skeleton`
-- [ ] `status: 'error'` renderiza `errorMessage` + botão que chama `onRetry`
-- [ ] `status: 'success', isEmpty: true` renderiza `emptyState`
-- [ ] `status: 'success', isEmpty: false` renderiza `children(data)`
-- [ ] Nenhum literal de cor/raio/fonte — tudo via `useTheme()`
-- [ ] Gate check passes: `npx tsc --noEmit && npm test -- QueryStateView`
-- [ ] Test count: 4 tests novos (1 por estado)
+- [x] `status: 'pending'` renderiza `skeleton`
+- [x] `status: 'error'` renderiza `errorMessage` + botão que chama `onRetry`
+- [x] `status: 'success', isEmpty: true` renderiza `emptyState`
+- [x] `status: 'success', isEmpty: false` renderiza `children(data)`
+- [x] Nenhum literal de cor/raio/fonte — tudo via `useTheme()`
+- [x] Gate check passes: `npx tsc --noEmit && npm test -- QueryStateView`
+- [x] Test count: 4 tests novos (1 por estado)
 
 **Tests**: component
 **Gate**: quick
