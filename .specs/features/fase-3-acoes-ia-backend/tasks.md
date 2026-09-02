@@ -525,10 +525,10 @@ sem `if` de negócio)
 
 **Done when**:
 
-- [ ] `GET /api/v1/patients/{id}/ai-actions`, `POST /api/v1/patients/{id}/ai-actions`,
+- [x] `GET /api/v1/patients/{id}/ai-actions`, `POST /api/v1/patients/{id}/ai-actions`,
       `PATCH /api/v1/ai-actions/{id}` registradas
-- [ ] Controller não importa nenhuma classe `Eloquent`/`Models\`/`DB::`
-- [ ] Gate check passa: `bash scripts/check-layer-boundary.sh`
+- [x] Controller não importa nenhuma classe `Eloquent`/`Models\`/`DB::`
+- [x] Gate check passa: `bash scripts/check-layer-boundary.sh`
 
 **Tests**: none (exercitado end-to-end em T17)
 **Gate**: quick

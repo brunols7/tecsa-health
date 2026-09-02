@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\V1\AiActionController;
 use App\Http\Controllers\Api\V1\FeatureFlagController;
 use App\Http\Controllers\Api\V1\PatientController;
 use Illuminate\Support\Facades\Route;
@@ -12,4 +13,7 @@ Route::prefix('v1')->group(function () {
     Route::get('patients/{id}', [PatientController::class, 'show']);
     Route::get('patients/{id}/biomarkers', [PatientController::class, 'biomarkers']);
     Route::patch('patients/{id}', [PatientController::class, 'updateFollowUp']);
+    Route::get('patients/{id}/ai-actions', [AiActionController::class, 'index']);
+    Route::post('patients/{id}/ai-actions', [AiActionController::class, 'generate']);
+    Route::patch('ai-actions/{id}', [AiActionController::class, 'decide']);
 });
