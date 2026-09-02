@@ -3,6 +3,7 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import { useLocalSearchParams } from 'expo-router';
 
 import { resolveBrand } from '@/brands';
+import { fetchAiActions } from '@/core/api/ai-actions';
 import {
   fetchPatientBiomarkers,
   fetchPatientDetail,
@@ -10,6 +11,7 @@ import {
 } from '@/core/api/patients';
 import type { Biomarker } from '@/core/api/schemas/biomarker';
 import type { Patient } from '@/core/api/schemas/patient';
+import { useFlag } from '@/core/flags/useFlag';
 import { createTestQueryClient } from '@/core/offline/queryClient';
 import { useIsOffline } from '@/core/offline/network';
 import { BrandProvider } from '@/core/theme/BrandProvider';
@@ -17,6 +19,8 @@ import { BrandProvider } from '@/core/theme/BrandProvider';
 import PatientDetailScreen from '../[id]';
 
 jest.mock('@/core/api/patients');
+jest.mock('@/core/api/ai-actions');
+jest.mock('@/core/flags/useFlag');
 jest.mock('@/core/offline/network');
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn(),
@@ -29,10 +33,28 @@ const mockedFetchPatientBiomarkers = fetchPatientBiomarkers as jest.MockedFuncti
 const mockedPatchPatientFollowUp = patchPatientFollowUp as jest.MockedFunction<
   typeof patchPatientFollowUp
 >;
+const mockedFetchAiActions = fetchAiActions as jest.MockedFunction<typeof fetchAiActions>;
+const mockedUseFlag = useFlag as jest.MockedFunction<typeof useFlag>;
 const mockedUseLocalSearchParams = useLocalSearchParams as jest.MockedFunction<
   typeof useLocalSearchParams
 >;
 const mockedUseIsOffline = useIsOffline as jest.MockedFunction<typeof useIsOffline>;
+
+function flattenText(node: unknown): string[] {
+  if (node === null || node === undefined || typeof node === 'boolean') {
+    return [];
+  }
+  if (typeof node === 'string' || typeof node === 'number') {
+    return [String(node)];
+  }
+  if (Array.isArray(node)) {
+    return node.flatMap(flattenText);
+  }
+  if (typeof node === 'object' && 'children' in node) {
+    return flattenText((node as { children: unknown }).children);
+  }
+  return [];
+}
 
 const fakePatient: Patient = {
   id: 'patient-1',
@@ -74,12 +96,16 @@ describe('PatientDetailScreen', () => {
       typeof useLocalSearchParams
     >);
     mockedUseIsOffline.mockReturnValue(false);
+    mockedUseFlag.mockReturnValue(true);
+    mockedFetchAiActions.mockResolvedValue([]);
   });
 
   afterEach(() => {
     mockedFetchPatientDetail.mockReset();
     mockedFetchPatientBiomarkers.mockReset();
     mockedPatchPatientFollowUp.mockReset();
+    mockedFetchAiActions.mockReset();
+    mockedUseFlag.mockReset();
     mockedUseLocalSearchParams.mockReset();
     mockedUseIsOffline.mockReset();
   });
@@ -198,5 +224,47 @@ describe('PatientDetailScreen', () => {
     });
 
     await waitFor(() => expect(getByTestId('follow-up-toggle').props.value).toBe(false));
+  });
+
+  it('exibe a seção de ações de IA depois dos biomarcadores', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+    mockedFetchAiActions.mockResolvedValue([
+      {
+        id: 'ai-action-1',
+        patientId: 'patient-1',
+        title: 'Reduzir consumo de açúcar',
+        rationale: 'HbA1c acima da faixa de referência',
+        priority: 'high',
+        biomarkers: ['hba1c'],
+        status: 'pending',
+        createdAt: '2026-01-01T10:00:00Z',
+      },
+    ]);
+
+    const { getByText, toJSON } = await renderScreen();
+
+    await waitFor(() => expect(getByText('Reduzir consumo de açúcar')).toBeTruthy());
+
+    const order = flattenText(toJSON());
+    const biomarkerIndex = order.indexOf('Hemoglobina glicada');
+    const aiSectionIndex = order.indexOf('Ações de acompanhamento');
+
+    expect(biomarkerIndex).toBeGreaterThanOrEqual(0);
+    expect(aiSectionIndex).toBeGreaterThan(biomarkerIndex);
+  });
+
+  it('erro só na busca de ações de IA não impede paciente e biomarcadores de aparecerem', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+    mockedFetchAiActions.mockRejectedValue(new Error('ai-actions boom'));
+
+    const { getByText } = await renderScreen();
+
+    await waitFor(() => expect(getByText('Maria Silva')).toBeTruthy());
+    expect(getByText('Hemoglobina glicada')).toBeTruthy();
+    await waitFor(() =>
+      expect(getByText('Não foi possível carregar as ações de acompanhamento.')).toBeTruthy(),
+    );
   });
 });

@@ -9,6 +9,7 @@ import { usePatientBiomarkersQuery } from '@/core/patients/usePatientBiomarkersQ
 import { usePatientDetailQuery } from '@/core/patients/usePatientDetailQuery';
 import { useSetFollowUpMutation } from '@/core/patients/useSetFollowUpMutation';
 import { useTheme } from '@/core/theme/useTheme';
+import { AiActionsSection } from '@/core/ui/AiActionsSection';
 
 const ERROR_MESSAGE = 'Não foi possível carregar o paciente.';
 const OFFLINE_ERROR_MESSAGE =
@@ -265,6 +266,7 @@ export default function PatientDetailScreen() {
               ))}
             </View>
           )}
+          <AiActionsSection patientId={id} />
         </ScrollView>
       ) : null}
     </SafeAreaView>

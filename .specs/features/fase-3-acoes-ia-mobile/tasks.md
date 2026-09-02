@@ -330,12 +330,13 @@ do `ScrollView` existente.
 
 **Done when**:
 
-- [ ] A seção de IA aparece visualmente depois dos biomarcadores na tela de detalhe
-- [ ] Um erro simulado só na query de `ai-actions` não impede paciente/biomarcadores de aparecerem
+- [x] A seção de IA aparece visualmente depois dos biomarcadores na tela de detalhe
+- [x] Um erro simulado só na query de `ai-actions` não impede paciente/biomarcadores de aparecerem
       normalmente (teste no arquivo existente `[id].test.tsx`)
-- [ ] `tsc --noEmit` limpo
-- [ ] Gate check passa: `npm run pretest && npx tsc --noEmit && npm test`
-- [ ] Test count: suíte completa do mobile sem regressão, 2+ testes novos no arquivo existente
+- [x] `tsc --noEmit` limpo
+- [x] Gate check passa: `npm run pretest && npx tsc --noEmit && npm test`
+- [x] Test count: suíte completa do mobile sem regressão (146 passam, 0 falham), 2 testes novos no
+      arquivo existente
 
 **Tests**: component
 **Gate**: build
