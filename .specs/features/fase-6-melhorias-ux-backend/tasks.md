@@ -91,16 +91,18 @@ Map".
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] Enum criado sem nenhum `use Illuminate\...` (Domain puro, verificável por
+- [x] Enum criado sem nenhum `use Illuminate\...` (Domain puro, verificável por
       `check-layer-boundary.sh`)
-- [ ] `values()` retorna os 4 valores na ordem declarada
-- [ ] Teste unitário cobrindo `values()` e `PatientGoal::from('lose_weight')` etc.
-- [ ] Gate check passes: `composer test`
+- [x] `values()` retorna os 4 valores na ordem declarada
+- [x] Teste unitário cobrindo `values()` e `PatientGoal::from('lose_weight')` etc.
+- [x] Gate check passes: `composer test`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(patient-domain): add PatientGoal enum`
+
+**Status**: ✅ Complete
 
 ---
 
