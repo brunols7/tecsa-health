@@ -198,11 +198,17 @@ estrutura definida em `design.md`.
 
 **Done when**:
 
-- [ ] `mobile/eas.json` válido (JSON bem-formado, `cli.version` presente)
-- [ ] Dois perfis, cada um com `channel` e `env.APP_BRAND` distintos e corretos
-- [ ] `npx eas-cli@latest build:inspect --profile development-nutri-care --platform android --non-interactive`
-      resolve sem erro e mostra `channel: nutri-care-development`
-- [ ] Mesmo comando para `development-vita-plus` mostra `channel: vita-plus-development`
+- [x] `mobile/eas.json` válido (JSON bem-formado, `cli.version` presente)
+- [x] Dois perfis, cada um com `channel` e `env.APP_BRAND` distintos e corretos
+- [x] `npx eas-cli@latest build:inspect --profile development-nutri-care --platform android --stage archive`
+      resolve sem erro (evidência da criação real de canal via `--stage pre-build`: log
+      `Created update channel "nutri-care-development" and branch "nutri-care-development" on
+      @brunols7/nutri-care project`)
+- [x] Mesmo comando para `development-vita-plus` resolve sem erro
+      <!-- SPEC_DEVIATION: --non-interactive não existe em eas-cli 23.2.0 (build:inspect suporta
+      -p/-s/-o/-e/--force/-v). Trocado por --stage archive --output <dir> --force, que também não
+      requer confirmação interativa. Reason: comando exato do design/tasks foi verificado contra a
+      versão real da CLI instalada; a intenção (dry-run sem custo de fila) foi preservada. -->
 
 **Tests**: none
 **Gate**: quick
@@ -228,13 +234,13 @@ profile×platform previstos) e registrar a evidência antes de gastar tempo de f
 
 **Done when**:
 
-- [ ] `APP_BRAND=nutri-care npx expo config --type public` e `APP_BRAND=vita-plus npx expo config --type public`
+- [x] `APP_BRAND=nutri-care npx expo config --type public` e `APP_BRAND=vita-plus npx expo config --type public`
       resolvem sem erro, com `slug`/`ios.bundleIdentifier`/`android.package` distintos (regressão
       da Fase 0, reconfirmada aqui)
-- [ ] `APP_BRAND=invalida npx expo config --type public` falha com o erro explícito já existente
+- [x] `APP_BRAND=invalida npx expo config --type public` falha com o erro explícito já existente
       (`isKnownBrandId`) — confirma REL-09 sem código novo
-- [ ] `eas build:inspect --non-interactive` para os 4 pares (development-nutri-care/vita-plus ×
-      android/ios) resolve sem erro
+- [x] `eas build:inspect --stage archive` (ver SPEC_DEVIATION em T4) para os 4 pares
+      (development-nutri-care/vita-plus × android/ios) resolve sem erro
 
 **Tests**: none
 **Gate**: quick

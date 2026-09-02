@@ -179,10 +179,10 @@ mudança; reabrir o app da marca B e confirmar que ele NÃO mudou.
 | REL-03 | P1: Build de desenvolvimento por marca | Design | Pending |
 | REL-04 | P1: Build de desenvolvimento por marca | Design | Pending |
 | REL-05 | P2: expo-updates com canal por marca | Design | Implementing |
-| REL-06 | P2: expo-updates com canal por marca | Design | Pending |
-| REL-07 | P2: expo-updates com canal por marca | Design | Pending |
-| REL-08 | P2: expo-updates com canal por marca | Design | Pending |
-| REL-09 | P2: expo-updates com canal por marca | Design | Pending |
+| REL-06 | P2: expo-updates com canal por marca | Design | Implementing |
+| REL-07 | P2: expo-updates com canal por marca | Design | Implementing |
+| REL-08 | P2: expo-updates com canal por marca | Design | Implementing |
+| REL-09 | P2: expo-updates com canal por marca | Design | Implementing |
 | REL-10 | P3: Publicar e validar OTA | Design | Pending |
 | REL-11 | P3: Publicar e validar OTA | Design | Pending |
 | REL-12 | P3: Publicar e validar OTA | Design | Pending |
