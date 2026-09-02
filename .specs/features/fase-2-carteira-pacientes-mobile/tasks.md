@@ -187,13 +187,15 @@ a task em si só precisa que `apiPatch` exista; ordem sequencial dentro da fase 
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `fetchPatients` monta os query params (`brand`, `search` só se presente, `cursor` só se
+- [x] `fetchPatients` monta os query params (`brand`, `search` só se presente, `cursor` só se
       presente) e faz `.parse()` com `patientPageSchema`
-- [ ] `fetchPatientDetail`/`fetchPatientBiomarkers`/`patchPatientFollowUp` seguem o mesmo padrão
+- [x] `fetchPatientDetail`/`fetchPatientBiomarkers`/`patchPatientFollowUp` seguem o mesmo padrão
       (fetch mockado, `.parse()` obrigatório)
-- [ ] Nenhum componente importa `apiGet`/`apiPatch` diretamente — só estas 4 funções
-- [ ] Gate check passes: `npx tsc --noEmit && npm test -- patients.test`
-- [ ] Test count: 8+ tests novos (2 por função: sucesso + erro/schema inválido)
+- [x] Nenhum componente importa `apiGet`/`apiPatch` diretamente — só estas 4 funções (nenhum
+      componente existe ainda neste batch; verificação estrutural reafirmada nas tasks de tela,
+      T12/T13)
+- [x] Gate check passes: `npx tsc --noEmit && npm test -- patients.test`
+- [x] Test count: 8+ tests novos (2 por função: sucesso + erro/schema inválido)
 
 **Tests**: unit
 **Gate**: quick
