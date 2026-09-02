@@ -1,9 +1,16 @@
 # CLAUDE.md — Constituição do Projeto
 
-Este arquivo é a fonte de verdade da arquitetura. Vale para humanos e para agentes de IAtrabalhando no repositório. Toda geração de código deve ser verificada contra este documento antes de commitar.
+**Fonte de verdade suprema: `docs/requisitos-do-produto.md`** (o escopo acordado do produto). Este
+arquivo (`CLAUDE.md`) é a *implementação* desses requisitos — arquitetura, stack e convenções
+escolhidas para atendê-los. Onde `CLAUDE.md` exigir algo que `docs/requisitos-do-produto.md` não
+pede, direta ou indiretamente, essa exigência é opcional (boa prática, não bloqueio de entrega). Em
+caso de conflito real entre os dois, `docs/requisitos-do-produto.md` vence. Isso vale tanto para
+humanos quanto para agentes de IA trabalhando no repositório — antes de tratar algo abaixo como
+inegociável, confira se está mesmo ancorado nos requisitos ou se é só rigor adicionado por cima.
 
-**Regra zero:** na dúvida entre "mais bonito" e "mais aderente às regras abaixo", vence a regra.
-Este projeto é guiado por regra, não por gosto.
+**Regra zero:** na dúvida entre "mais bonito" e "mais aderente às regras abaixo", vence a regra —
+mas a regra por sua vez vence, ou perde, para `docs/requisitos-do-produto.md`. Este projeto é
+guiado por regra, não por gosto, e a regra é guiada pelo que foi acordado.
 
 ---
 
@@ -634,7 +641,14 @@ Regras:
 
 ---
 
-## 10. Testes: o mínimo que precisa existir
+## 10. Testes: caminho crítico, não checklist exaustivo
+
+Os requisitos pedem "cobertura mínima de testes" (backend) e testes só bloqueiam a entrega se
+**ausentes** ou se listas não forem virtualizadas — não exigem um número ou uma lista fechada de
+casos. A prioridade é: existe teste, ele cobre a regra de negócio central (`BiomarkerStatus`,
+kill switch, fronteira de marca) e ele falha de verdade se a regra quebrar. As listas abaixo são
+**exemplos do que é caminho crítico**, não um mínimo obrigatório item a item — se o tempo apertar,
+corte o exemplo mais periférico da lista antes de cortar o teste da regra de negócio central.
 
 ### Backend
 
@@ -767,13 +781,18 @@ Rode e confirme, na ordem:
 6. App instalado nas duas marcas, com ícone e nome distintos, rodando lado a lado.
 7. Kill switch virado no banco: botão de IA some no app e endpoint devolve 503.
 8. Modo avião: carteira continua legível.
-9. OTA publicado e aplicado num device.
+9. OTA publicado via `eas update` e aplicado num build de desenvolvimento/interno já instalado no
+   device (dev client ou build interno). **Não** exige publicação nas lojas (App Store/Play
+   Store) — os requisitos pedem só "OTA de bundle JS (justificar ferramenta)", não uma release
+   pública.
 10. README da raiz contém: como rodar, diagrama de arquitetura, justificativa de cada escolha de
     biblioteca, o que ficou de fora e por quê, e o relatório de uso de IA.
-11. ADRs escritas para: monorepo com duas pastas, camadas Domain/Application/Infrastructure dentro
-    do Laravel, OpenAPI como contrato no lugar de tipos compartilhados, TanStack Query,
-    expo-updates, biometria no lugar de HealthKit, paginação por cursor no lugar de offset,
-    servidor embutido no lugar de nginx + php-fpm.
+11. ADRs escritas, consolidadas em poucos documentos temáticos (não uma por decisão) — por
+    exemplo: (a) estrutura do repo e camadas do backend (monorepo, Domain/Application/Infrastructure,
+    OpenAPI como contrato), (b) stack e arquitetura mobile (TanStack Query, expo-updates, paginação
+    por cursor), (c) capacidade nativa (biometria no lugar de HealthKit) e infra (servidor embutido
+    no lugar de nginx + php-fpm). Três a quatro ADRs bem escritas defendem tão bem quanto oito
+    fragmentadas, e custam menos tempo.
 12. Vídeo de 3 a 5 minutos gravado, seguindo `docs/video-script.md`.
 
 ---

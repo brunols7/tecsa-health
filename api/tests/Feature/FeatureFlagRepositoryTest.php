@@ -31,4 +31,37 @@ class FeatureFlagRepositoryTest extends TestCase
         $this->assertSame($brand->id, $flag->brandId);
         $this->assertTrue($flag->enabled);
     }
+
+    public function test_all_for_brand_returns_every_flag_seeded_for_that_brand(): void
+    {
+        $this->seed(BrandSeeder::class);
+        $this->seed(FeatureFlagSeeder::class);
+
+        $brand = BrandModel::query()->where('slug', 'nutri-care')->firstOrFail();
+
+        $repository = $this->app->make(FeatureFlagRepository::class);
+
+        $flags = $repository->allForBrand($brand->id);
+
+        $this->assertCount(2, $flags);
+        $keys = array_map(fn ($flag) => $flag->key, $flags);
+        $this->assertContains('aiActionsEnabled', $keys);
+        $this->assertContains('offlineBanner', $keys);
+        foreach ($flags as $flag) {
+            $this->assertSame($brand->id, $flag->brandId);
+        }
+    }
+
+    public function test_all_for_brand_returns_empty_array_when_brand_has_no_flags(): void
+    {
+        $this->seed(BrandSeeder::class);
+
+        $brand = BrandModel::query()->where('slug', 'nutri-care')->firstOrFail();
+
+        $repository = $this->app->make(FeatureFlagRepository::class);
+
+        $flags = $repository->allForBrand($brand->id);
+
+        $this->assertSame([], $flags);
+    }
 }

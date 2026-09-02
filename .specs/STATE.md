@@ -2,6 +2,48 @@
 
 ## Decisions
 
+- **AD-013** (status: active) — `docker-compose.yml`, serviço `api` ganha bind mount
+  `./api/.env:/app/.env` (arquivo real do host, não cópia); `api/docker/entrypoint.sh` troca o gate
+  `[ ! -f .env ]` por `[ ! -s .env ]` (existe E não está vazio) para não pular a cópia de
+  `.env.example` num clone novo em que o bind mount cria um arquivo vazio. Rationale: reportado pelo
+  usuário — `GET /docs/api` devolvia 500 mesmo com `/up` e `/api/v1/feature-flags` respondendo 200.
+  Causa raiz em `storage/logs/laravel.log`: `MissingAppKeyException`. Cadeia completa: (1)
+  `.dockerignore` exclui `.env` do build (correto, por segurança), então o `entrypoint.sh` recriava
+  um `.env` do zero a partir de `.env.example` dentro do container, com `APP_KEY=` vazio; (2)
+  `env_file: api/.env` do compose só injeta as variáveis do host como env do processo, nunca escreve
+  o arquivo `.env` real dentro do container — então `config('app.key')` via env já resolvia pro valor
+  real do host, o que fazia o regex de `php artisan key:generate` (que substitui
+  `APP_KEY={valor-atual-do-config}` no arquivo) não bater contra o `APP_KEY=` vazio do arquivo,
+  falhando silenciosamente (Laravel retorna exit 0 mesmo falhando aqui, então `set -e` do
+  entrypoint não pegava); (3) o `php artisan serve`, ao detectar um `.env` presente, descarta as
+  variáveis herdadas do processo pai (exceto uma allowlist pequena — `PATH`, `APP_ENV` etc., ver
+  `Illuminate\Foundation\Console\ServeCommand::$passthroughVariables`) e força o processo servidor a
+  reler o `.env` **do arquivo em disco** — então a app servida via `php artisan serve` só via mesmo o
+  `APP_KEY=` vazio do arquivo, nunca o valor real injetado via `env_file`. `/up` e
+  `/api/v1/feature-flags` não quebravam porque essas rotas não passam por middleware que resolve o
+  `Encrypter` (`EncryptCookies`/sessão, restrito ao grupo `web`); `/docs/api` (UI HTML do Scramble)
+  passa, e quebrava. O bind mount elimina o split-brain: o arquivo `.env` dentro do container passa a
+  ser literalmente o `api/.env` do host, que já tem uma chave real — sem depender do
+  `key:generate` bugado nesse cenário. Verificado ao vivo:
+  `docker compose exec api grep '^APP_KEY=' .env` mostra a chave real, `curl localhost:9000/docs/api`
+  → 200.
+- **AD-012** (status: active) — `docker-compose.yml`, serviço `api` ganha volume nomeado
+  `tecsa_api_vendor:/app/vendor`; `api/docker/entrypoint.sh` troca o gate de instalação de
+  `[ ! -d vendor ]` para `[ ! -f vendor/autoload.php ]` e envolve `composer install` num retry loop
+  (6 tentativas, 10s de backoff). Rationale: reportado ao vivo pelo usuário rodando
+  `docker compose up -d --wait` pela primeira vez nesta máquina — `composer install` dentro do
+  container falhava reproduzivelmente com `HTTP/2 504` ao baixar zipballs de
+  `api.github.com/repos/.../zipball/...` (confirmado isolando a causa: `curl` direto desse endpoint
+  específico, de dentro de um container, deu 504 em ~11s, enquanto `codeload.github.com` e
+  `api.github.com` raiz responderam normalmente — não é um problema do projeto, é a rota de geração
+  de zipball do GitHub sendo lenta/instável sem token OAuth). Sem volume, todo `docker compose up`
+  refaz a instalação completa de ~116 pacotes do zero, multiplicando a exposição a esse endpoint
+  flaky a cada restart; o volume faz isso acontecer só uma vez (até um `down -v`). O retry loop cobre
+  o caso em que a instalação inicial ainda pega o 504 no meio do lote. Verificado ao vivo: 3ª
+  tentativa completou com sucesso e `curl localhost:9000/api/v1/feature-flags?brand=nutri-care`
+  respondeu 200 com o mapa correto. Confirmado que nada externo (cron, launchd, outro processo)
+  estava derrubando o container — o `exited(100)` das tentativas anteriores era só o próprio
+  `entrypoint.sh` (`set -euo pipefail`) propagando a falha do `composer install`.
 - **AD-001** (status: active) — Servidor HTTP do container `api` na Fase 0: `php artisan serve` em
   imagem `php:8.3-cli`, não nginx+php-fpm. Rationale: reprodutibilidade do ambiente de dev pesa mais
   que fidelidade de produção nesta fase; documentado em `docs/adr/0001-servidor-http-embutido.md`.
@@ -65,6 +107,15 @@
   (`mobile/src/app/_layout.tsx`, via `Constants.expoConfig.extra.brandId` + `resolveBrand`), que é o
   único lugar autorizado a importar de `brands/` fora do próprio `brands/index.ts`. Ver AD-005 para o
   fechamento do gap no guard-rail.
+
+- **AD-013** (status: active) — TanStack Query + `persistQueryClient`/MMKV antecipados da Fase 2
+  para a Fase 1 (`mobile/src/core/offline/queryClient.ts`, `storage.ts`). Rationale: o `useFlag`
+  desta fase já precisa persistir o último valor conhecido de flag entre sessões (CLAUDE.md §5.7);
+  escrever um cache MMKV artesanal só para isso seria descartado assim que a Fase 2 (carteira de
+  pacientes) chegasse. `queryClient` é o `QueryClient` único do projeto a partir de agora —
+  qualquer feature futura que precise de estado de servidor reusa esse módulo, não cria outro.
+  `createTestQueryClient()` (sem persistência, sem tocar MMKV) é o padrão oficial de teste para
+  qualquer hook de query.
 
 ## Handoff
 

@@ -44,6 +44,24 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: FNDBE-02 api/scripts/check-layer-boundary.sh:12 (api)
 - last seen: 2026-09-01T19:33:51Z
 
+### L-006 - When a spec requires a visible warning or message, assert that it renders in a state the wired app actually reaches, not just that the hook sets the value
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `mobile-ui` · harmful: 0
+- features: fase-1-feature-flags-mobile
+- evidence: mobile/src/core/ui/BiometricGateScreen.tsx:106 (FLAGSMOB-09, FLAGSMOB-10) (mobile-ui)
+- last seen: 2026-09-01T23:19:22Z
+
+### L-007 - When an AC describes a value replacing a previously stored one, seed the old value and assert the new one replaces it, rather than testing each half separately
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `mobile-query` · harmful: 0
+- features: fase-1-feature-flags-mobile
+- evidence: mobile/src/core/flags/__tests__/useFeatureFlagsQuery.test.tsx:60 (FLAGSMOB-05) (mobile-query)
+- last seen: 2026-09-01T23:19:28Z
+
+### L-008 - When an element is made to render independently of a state variable, assert it for every value of that state, not only the one the fix targeted
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `mobile-ui` · harmful: 0
+- features: fase-1-feature-flags-mobile
+- evidence: mobile/src/core/ui/BiometricGateScreen.tsx:114 (mutation 4, FLAGSMOB-09) (mobile-ui)
+- last seen: 2026-09-01T23:29:47Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

@@ -21,6 +21,9 @@ services:
       - api/.env
     ports:
       - "9000:9000"
+    volumes:
+      - tecsa_api_vendor:/app/vendor
+      - ./api/.env:/app/.env
     depends_on:
       db:
         condition: service_healthy
@@ -33,3 +36,4 @@ services:
 
 volumes:
   tecsa_db_data:
+  tecsa_api_vendor:

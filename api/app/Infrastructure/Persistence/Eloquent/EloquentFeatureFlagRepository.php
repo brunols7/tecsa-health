@@ -27,4 +27,17 @@ final class EloquentFeatureFlagRepository implements FeatureFlagRepository
             enabled: $model->enabled,
         );
     }
+
+    public function allForBrand(string $brandId): array
+    {
+        return FeatureFlagModel::query()
+            ->where('brand_id', $brandId)
+            ->get()
+            ->map(fn (FeatureFlagModel $model): FeatureFlag => new FeatureFlag(
+                key: $model->key,
+                brandId: $model->brand_id,
+                enabled: $model->enabled,
+            ))
+            ->all();
+    }
 }
