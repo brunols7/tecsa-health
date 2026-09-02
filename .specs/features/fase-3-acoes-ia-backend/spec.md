@@ -205,8 +205,8 @@ as 10 primeiras seguem o fluxo normal (gerando ou batendo cache), a 11ª devolve
 
 | Requirement ID | Story | Task | Status |
 | --- | --- | --- | --- |
-| AIBE-01 | P1: Gera ações novas quando não há hash existente | T1, T3 | Implementing |
-| AIBE-02 | P1: Cache hit devolve ações existentes, sem chamar LLM | - | Pending |
+| AIBE-01 | P1: Gera ações novas quando não há hash existente | T1, T3, T4 | Implementing |
+| AIBE-02 | P1: Cache hit devolve ações existentes, sem chamar LLM | T4 | Implementing |
 | AIBE-03 | P1: Paciente inexistente → 404 | - | Pending |
 | AIBE-04 | P1: Kill switch off → 503 | - | Pending |
 | AIBE-05 | P1: Timeout → 502 | - | Pending |

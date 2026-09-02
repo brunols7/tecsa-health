@@ -196,12 +196,12 @@ code, goal}`.
 
 **Done when**:
 
-- [ ] Mesmo array de biomarcadores em ordem diferente + mesmo `goal` produz o mesmo hash
-- [ ] `goal` diferente produz hash diferente
-- [ ] Um valor de biomarcador diferente produz hash diferente
-- [ ] Zero import de `Illuminate\`
-- [ ] Gate check passa: `php artisan test --testsuite=Unit --filter=InputHashCalculatorTest`
-- [ ] Test count: 3+ testes passam
+- [x] Mesmo array de biomarcadores em ordem diferente + mesmo `goal` produz o mesmo hash
+- [x] `goal` diferente produz hash diferente
+- [x] Um valor de biomarcador diferente produz hash diferente
+- [x] Zero import de `Illuminate\`
+- [x] Gate check passa: `php artisan test --testsuite=Unit --filter=InputHashCalculatorTest`
+- [x] Test count: 3+ testes passam — 3 testes passam
 
 **Tests**: unit
 **Gate**: quick
