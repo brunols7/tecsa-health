@@ -135,14 +135,57 @@ describe('AiActionsSection', () => {
     expect(queryByTestId('ai-actions-generate-button')).toBeNull();
   });
 
-  it('exibe o disclaimer e um card por ação, sem o botão "Gerar ações", quando o GET devolve itens', async () => {
+  it('exibe o disclaimer, um card por ação e o botão "Novas sugestões" (sem "Gerar ações"), quando o GET devolve itens', async () => {
     mockedFetchAiActions.mockResolvedValue([fakeAction]);
 
-    const { getByText, queryByTestId } = await renderSection();
+    const { getByText, getByTestId, queryByTestId } = await renderSection();
 
     await waitFor(() => expect(getByText('Reduzir consumo de açúcar')).toBeTruthy());
     expect(getByText('Revise as sugestões da IA antes de aceitar.')).toBeTruthy();
     expect(queryByTestId('ai-actions-generate-button')).toBeNull();
+    expect(getByTestId('ai-actions-refresh-button')).toBeTruthy();
+  });
+
+  it('ao tocar "Novas sugestões", chama generateAiActions com refresh:true e substitui a lista pelo resultado do servidor sem duplicar', async () => {
+    mockedFetchAiActions.mockResolvedValue([fakeAction]);
+    const secondAction: AiAction = { ...fakeAction, id: 'ai-action-2', title: 'Aumentar ingestão de fibras' };
+    let resolveGenerate: (value: AiAction[]) => void = () => {};
+    mockedGenerateAiActions.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveGenerate = resolve;
+        }),
+    );
+
+    const { getByTestId, getByText, queryAllByText } = await renderSection();
+
+    await waitFor(() => expect(getByText('Reduzir consumo de açúcar')).toBeTruthy());
+
+    await fireEvent.press(getByTestId('ai-actions-refresh-button'));
+
+    expect(mockedGenerateAiActions).toHaveBeenCalledWith('patient-1', true);
+    await waitFor(() => expect(getByTestId('ai-actions-refresh-loading')).toBeTruthy());
+    expect(getByTestId('ai-actions-refresh-button').props.accessibilityState?.disabled).toBe(true);
+
+    resolveGenerate([fakeAction, secondAction]);
+
+    await waitFor(() => expect(getByText('Aumentar ingestão de fibras')).toBeTruthy());
+    expect(queryAllByText('Reduzir consumo de açúcar')).toHaveLength(1);
+  });
+
+  it('erro ao buscar novas sugestões mostra mensagem isolada no botão, sem remover as ações já carregadas', async () => {
+    mockedFetchAiActions.mockResolvedValue([fakeAction]);
+    mockedGenerateAiActions.mockRejectedValue(new Error('refresh failed'));
+
+    const { getByTestId, getByText } = await renderSection();
+
+    await waitFor(() => expect(getByText('Reduzir consumo de açúcar')).toBeTruthy());
+
+    await fireEvent.press(getByTestId('ai-actions-refresh-button'));
+
+    await waitFor(() => expect(getByTestId('ai-actions-refresh-error')).toBeTruthy());
+    expect(getByText('Reduzir consumo de açúcar')).toBeTruthy();
+    expect(getByTestId('ai-actions-refresh-button').props.accessibilityState?.disabled).toBe(false);
   });
 
   it('exibe erro específico da seção com retry quando o GET falha, sem afetar o resto da tela', async () => {

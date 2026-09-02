@@ -13,6 +13,7 @@ const GET_ERROR_MESSAGE = 'Não foi possível carregar as ações de acompanhame
 const EMPTY_STATE_MESSAGE =
   'Nenhuma ação sugerida ainda. Gere ações personalizadas a partir dos biomarcadores mais recentes.';
 const GENERATE_ERROR_MESSAGE = 'Não foi possível gerar ações agora. Tente novamente.';
+const REFRESH_ERROR_MESSAGE = 'Não foi possível buscar novas sugestões agora. Tente novamente.';
 
 function AiActionsSkeleton() {
   const { colors, radii, spacing } = useTheme();
@@ -48,7 +49,7 @@ function AiActionsEmptyState({ patientId }: { patientId: string }) {
       <Pressable
         testID="ai-actions-generate-button"
         disabled={mutation.isPending}
-        onPress={() => mutation.mutate(patientId)}
+        onPress={() => mutation.mutate({ patientId })}
         style={{
           backgroundColor: mutation.isPending ? colors.surfaceMuted : colors.accent,
           borderRadius: radii.md,
@@ -81,6 +82,59 @@ function AiActionsEmptyState({ patientId }: { patientId: string }) {
           }}
         >
           {GENERATE_ERROR_MESSAGE}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
+function AiActionsRefreshButton({ patientId }: { patientId: string }) {
+  const { colors, radii, typography, spacing } = useTheme();
+  const mutation = useGenerateAiActionsMutation();
+
+  return (
+    <View style={{ gap: spacing(2) }}>
+      <Pressable
+        testID="ai-actions-refresh-button"
+        disabled={mutation.isPending}
+        onPress={() => mutation.mutate({ patientId, refresh: true })}
+        style={{
+          alignSelf: 'flex-start',
+          backgroundColor: mutation.isPending ? colors.surfaceMuted : colors.surface,
+          borderRadius: radii.md,
+          borderWidth: 1,
+          borderColor: colors.border,
+          paddingVertical: spacing(2),
+          paddingHorizontal: spacing(4),
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing(2),
+        }}
+      >
+        {mutation.isPending ? (
+          <ActivityIndicator testID="ai-actions-refresh-loading" color={colors.accent} />
+        ) : (
+          <Text
+            style={{
+              color: colors.accent,
+              fontFamily: typography.fontFamily.medium,
+              fontSize: typography.scale.sm,
+            }}
+          >
+            Novas sugestões
+          </Text>
+        )}
+      </Pressable>
+      {mutation.isError ? (
+        <Text
+          testID="ai-actions-refresh-error"
+          style={{
+            color: colors.danger,
+            fontFamily: typography.fontFamily.regular,
+            fontSize: typography.scale.sm,
+          }}
+        >
+          {REFRESH_ERROR_MESSAGE}
         </Text>
       ) : null}
     </View>
@@ -128,6 +182,7 @@ export function AiActionsSection({ patientId }: { patientId: string }) {
       >
         {(actions) => (
           <View style={{ gap: spacing(3) }}>
+            <AiActionsRefreshButton patientId={patientId} />
             {actions.map((action) => (
               <AiActionCard key={action.id} action={action} patientId={patientId} />
             ))}

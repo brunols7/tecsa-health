@@ -10,8 +10,8 @@ export async function fetchAiActions(patientId: string): Promise<AiAction[]> {
   return z.array(aiActionSchema).parse(raw);
 }
 
-export async function generateAiActions(patientId: string): Promise<AiAction[]> {
-  const raw = await apiPost(`/api/v1/patients/${patientId}/ai-actions`);
+export async function generateAiActions(patientId: string, refresh = false): Promise<AiAction[]> {
+  const raw = await apiPost(`/api/v1/patients/${patientId}/ai-actions`, refresh ? { refresh: true } : undefined);
 
   return z.array(aiActionSchema).parse(raw);
 }

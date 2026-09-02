@@ -42,7 +42,7 @@ describe('useGenerateAiActionsMutation', () => {
 
     const { result } = await renderMutation(queryClient);
 
-    result.current.mutate('patient-1');
+    result.current.mutate({ patientId: 'patient-1' });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
@@ -61,7 +61,7 @@ describe('useGenerateAiActionsMutation', () => {
 
     const { result } = await renderMutation(queryClient);
 
-    result.current.mutate('patient-1');
+    result.current.mutate({ patientId: 'patient-1' });
 
     await waitFor(() => expect(result.current.isPending).toBe(true));
 
@@ -81,10 +81,36 @@ describe('useGenerateAiActionsMutation', () => {
 
     const { result } = await renderMutation(queryClient);
 
-    result.current.mutate('patient-1');
+    result.current.mutate({ patientId: 'patient-1' });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
 
     expect(queryClient.getQueryData(['ai-actions', 'patient-1'])).toEqual([]);
+  });
+
+  it('repassa refresh: true para generateAiActions ao pedir novas sugestões', async () => {
+    mockedGenerateAiActions.mockResolvedValue([fakeAiAction]);
+    const queryClient = createTestQueryClient();
+
+    const { result } = await renderMutation(queryClient);
+
+    result.current.mutate({ patientId: 'patient-1', refresh: true });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(mockedGenerateAiActions).toHaveBeenCalledWith('patient-1', true);
+  });
+
+  it('não repassa refresh quando omitido (primeira geração)', async () => {
+    mockedGenerateAiActions.mockResolvedValue([fakeAiAction]);
+    const queryClient = createTestQueryClient();
+
+    const { result } = await renderMutation(queryClient);
+
+    result.current.mutate({ patientId: 'patient-1' });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(mockedGenerateAiActions).toHaveBeenCalledWith('patient-1', undefined);
   });
 });
