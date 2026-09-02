@@ -394,6 +394,127 @@ class AiActionControllerTest extends TestCase
         $this->assertSame('pending', $action->fresh()->status);
     }
 
+    public function test_delete_soft_deletes_an_accepted_action_and_returns_204(): void
+    {
+        $brand = $this->brand();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+        $action = AiActionModel::query()->create($this->rowFor($patient->id, status: 'accepted'));
+
+        $response = $this->deleteJson("/api/v1/ai-actions/{$action->id}");
+
+        $response->assertStatus(204);
+        $response->assertNoContent();
+        $this->assertSame('deleted', $action->fresh()->status);
+    }
+
+    public function test_delete_soft_deletes_a_dismissed_action_and_returns_204(): void
+    {
+        $brand = $this->brand();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+        $action = AiActionModel::query()->create($this->rowFor($patient->id, status: 'dismissed'));
+
+        $response = $this->deleteJson("/api/v1/ai-actions/{$action->id}");
+
+        $response->assertStatus(204);
+        $this->assertSame('deleted', $action->fresh()->status);
+    }
+
+    public function test_delete_returns_404_when_action_does_not_exist(): void
+    {
+        $response = $this->deleteJson('/api/v1/ai-actions/'.Uuid::uuid4()->toString());
+
+        $response->assertStatus(404);
+        $response->assertJsonPath('error.code', 'AI_ACTION_NOT_FOUND');
+    }
+
+    public function test_delete_returns_409_when_action_is_pending(): void
+    {
+        $brand = $this->brand();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+        $action = AiActionModel::query()->create($this->rowFor($patient->id));
+
+        $response = $this->deleteJson("/api/v1/ai-actions/{$action->id}");
+
+        $response->assertStatus(409);
+        $response->assertJsonPath('error.code', 'AI_ACTION_ALREADY_RESOLVED');
+        $this->assertSame('pending', $action->fresh()->status);
+    }
+
+    public function test_delete_returns_409_when_action_is_already_deleted(): void
+    {
+        $brand = $this->brand();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+        $action = AiActionModel::query()->create($this->rowFor($patient->id, status: 'deleted'));
+
+        $response = $this->deleteJson("/api/v1/ai-actions/{$action->id}");
+
+        $response->assertStatus(409);
+        $response->assertJsonPath('error.code', 'AI_ACTION_ALREADY_RESOLVED');
+    }
+
+    public function test_delete_returns_503_when_kill_switch_is_off(): void
+    {
+        $brand = $this->brand(aiEnabled: false);
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+        $action = AiActionModel::query()->create($this->rowFor($patient->id, status: 'accepted'));
+
+        $response = $this->deleteJson("/api/v1/ai-actions/{$action->id}");
+
+        $response->assertStatus(503);
+        $response->assertJsonPath('error.code', 'AI_DISABLED');
+        $this->assertSame('accepted', $action->fresh()->status);
+    }
+
+    public function test_get_excludes_deleted_actions_from_the_list(): void
+    {
+        $brand = $this->brand();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+        AiActionModel::query()->create($this->rowFor($patient->id, title: 'Ativa', status: 'accepted'));
+        AiActionModel::query()->create($this->rowFor($patient->id, title: 'Excluída', status: 'deleted'));
+
+        $response = $this->getJson("/api/v1/patients/{$patient->id}/ai-actions");
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1);
+        $response->assertJsonPath('0.title', 'Ativa');
+    }
+
+    public function test_post_after_deleting_the_only_action_no_longer_cache_hits_on_it(): void
+    {
+        $brand = $this->brand();
+        $patient = $this->patientWithBiomarker($brand);
+        $fake = $this->bindFakeLlm();
+        $fake->respondWith($this->suggestion());
+
+        $first = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions");
+        $first->assertStatus(201);
+        $deletedTitle = collect($first->json())->pluck('title')->first();
+        $actionId = collect($first->json())->pluck('id')->first();
+
+        $this->patchJson("/api/v1/ai-actions/{$actionId}", ['status' => 'accepted'])->assertStatus(200);
+        $this->deleteJson("/api/v1/ai-actions/{$actionId}")->assertStatus(204);
+
+        $fake->respondWith(new AiSuggestion(
+            riskLevel: 'low',
+            summary: 'Nova sugestão após exclusão.',
+            actions: [
+                new AiSuggestedAction(
+                    title: 'Reavaliar em 30 dias',
+                    rationale: 'Nenhuma ação ativa restante para este paciente.',
+                    biomarkers: ['glucose'],
+                    priority: 'low',
+                ),
+            ],
+        ));
+
+        $afterDelete = $this->postJson("/api/v1/patients/{$patient->id}/ai-actions");
+        $afterDelete->assertStatus(201);
+        $afterDelete->assertJsonCount(1);
+        $titles = collect($afterDelete->json())->pluck('title')->all();
+        $this->assertNotContains($deletedTitle, $titles);
+        $this->assertSame(['Reavaliar em 30 dias'], $titles);
+    }
+
     public function test_patch_ignores_fields_other_than_status(): void
     {
         $brand = $this->brand();

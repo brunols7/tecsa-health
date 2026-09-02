@@ -424,6 +424,56 @@ class AiActionServiceTest extends TestCase
         $this->assertSame(['Ação pendente', 'Ação aceita'], $llm->lastInput()?->existingTitles);
     }
 
+    public function test_refresh_excludes_deleted_titles_from_the_llm_prompt(): void
+    {
+        $accepted = new AiAction(
+            id: 'action-accepted',
+            patientId: self::PATIENT_ID,
+            title: 'Ação aceita',
+            rationale: 'r',
+            priority: 'low',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Accepted,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+        $deleted = new AiAction(
+            id: 'action-deleted',
+            patientId: self::PATIENT_ID,
+            title: 'Ação excluída',
+            rationale: 'r',
+            priority: 'low',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Deleted,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+        $history = [$accepted, $deleted];
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+        $biomarkers->shouldReceive('listForPatient')->with(self::PATIENT_ID)->andReturn($this->biomarkers());
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findByPatientAndHash')->once()->andReturn($history);
+        $aiActions->shouldReceive('listForPatient')->once()->with(self::PATIENT_ID)->andReturn($history);
+        $aiActions->shouldReceive('insertMany')->once();
+
+        $llm = new FakeLlmClient;
+        $llm->respondWith($this->suggestion());
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $service->generate(self::PATIENT_ID, refresh: true);
+
+        $this->assertSame(['Ação aceita'], $llm->lastInput()?->existingTitles);
+    }
+
     public function test_refresh_with_no_cache_hit_sends_empty_existing_titles(): void
     {
         $patients = Mockery::mock(PatientRepository::class);
@@ -729,6 +779,110 @@ class AiActionServiceTest extends TestCase
         $this->expectException(AiActionAlreadyResolved::class);
 
         $service->decide('33333333-3333-3333-3333-333333333333', AiActionStatus::Dismissed);
+    }
+
+    public function test_decide_soft_deletes_an_accepted_action(): void
+    {
+        $accepted = new AiAction(
+            id: '33333333-3333-3333-3333-333333333333',
+            patientId: self::PATIENT_ID,
+            title: 'Reduzir açúcar',
+            rationale: 'Glicemia acima da faixa.',
+            priority: 'high',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Accepted,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+        $deleted = new AiAction(
+            id: '33333333-3333-3333-3333-333333333333',
+            patientId: self::PATIENT_ID,
+            title: 'Reduzir açúcar',
+            rationale: 'Glicemia acima da faixa.',
+            priority: 'high',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Deleted,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findById')->with('33333333-3333-3333-3333-333333333333')->andReturn($accepted);
+        $aiActions->shouldReceive('updateStatus')->once()->with('33333333-3333-3333-3333-333333333333', AiActionStatus::Deleted)->andReturn($deleted);
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $result = $service->decide('33333333-3333-3333-3333-333333333333', AiActionStatus::Deleted);
+
+        $this->assertSame($deleted, $result);
+    }
+
+    public function test_decide_throws_ai_action_already_resolved_when_deleting_a_pending_action(): void
+    {
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findById')->with('33333333-3333-3333-3333-333333333333')->andReturn($this->pendingAction());
+        $aiActions->shouldNotReceive('updateStatus');
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $this->expectException(AiActionAlreadyResolved::class);
+
+        $service->decide('33333333-3333-3333-3333-333333333333', AiActionStatus::Deleted);
+    }
+
+    public function test_decide_throws_ai_action_already_resolved_when_deleting_an_already_deleted_action(): void
+    {
+        $deleted = new AiAction(
+            id: '33333333-3333-3333-3333-333333333333',
+            patientId: self::PATIENT_ID,
+            title: 'Reduzir açúcar',
+            rationale: 'Glicemia acima da faixa.',
+            priority: 'high',
+            biomarkers: ['glucose'],
+            status: AiActionStatus::Deleted,
+            inputHash: 'hash-1',
+            createdAt: '2026-01-01T00:00:00+00:00',
+        );
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with(self::PATIENT_ID)->andReturn($this->patient());
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $flags = Mockery::mock(FeatureFlagRepository::class);
+        $flags->shouldReceive('findByKeyAndBrand')->with('aiActionsEnabled', self::BRAND_ID)->andReturn($this->enabledFlag());
+
+        $aiActions = Mockery::mock(AiActionRepository::class);
+        $aiActions->shouldReceive('findById')->with('33333333-3333-3333-3333-333333333333')->andReturn($deleted);
+        $aiActions->shouldNotReceive('updateStatus');
+
+        $llm = new FakeLlmClient;
+
+        $service = new AiActionService($patients, $biomarkers, $flags, $aiActions, $llm);
+
+        $this->expectException(AiActionAlreadyResolved::class);
+
+        $service->decide('33333333-3333-3333-3333-333333333333', AiActionStatus::Deleted);
     }
 
     public function test_decide_throws_ai_disabled_when_kill_switch_is_off_without_updating(): void

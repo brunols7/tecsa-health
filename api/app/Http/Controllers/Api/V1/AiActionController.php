@@ -56,4 +56,15 @@ final class AiActionController extends Controller
 
         return (new AiActionResource($action))->response();
     }
+
+    #[DocResponse(204, description: 'Ai action soft-deleted')]
+    #[DocResponse(404, description: 'Ai action not found')]
+    #[DocResponse(409, description: 'Ai action cannot be deleted from its current status')]
+    #[DocResponse(503, description: 'Ai actions disabled')]
+    public function delete(string $actionId): JsonResponse
+    {
+        $this->aiActions->decide($actionId, AiActionStatus::Deleted);
+
+        return response()->json(null, 204);
+    }
 }

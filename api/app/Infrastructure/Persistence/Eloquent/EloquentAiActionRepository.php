@@ -27,6 +27,7 @@ final class EloquentAiActionRepository implements AiActionRepository
     {
         return AiActionModel::query()
             ->where('patient_id', $patientId)
+            ->where('status', '!=', AiActionStatus::Deleted->value())
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(fn (AiActionModel $model): AiAction => $this->toDomain($model))
@@ -38,6 +39,7 @@ final class EloquentAiActionRepository implements AiActionRepository
         return AiActionModel::query()
             ->where('patient_id', $patientId)
             ->where('input_hash', $inputHash)
+            ->where('status', '!=', AiActionStatus::Deleted->value())
             ->get()
             ->map(fn (AiActionModel $model): AiAction => $this->toDomain($model))
             ->all();

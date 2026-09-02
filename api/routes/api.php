@@ -17,4 +17,5 @@ Route::prefix('v1')->group(function () {
     Route::post('patients/{id}/ai-actions', [AiActionController::class, 'generate'])
         ->middleware('throttle:ai');
     Route::patch('ai-actions/{id}', [AiActionController::class, 'decide']);
+    Route::delete('ai-actions/{id}', [AiActionController::class, 'delete']);
 });
