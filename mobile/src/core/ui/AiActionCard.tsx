@@ -1,11 +1,16 @@
-import { Pressable, Text, View } from 'react-native';
+import { Trash2 } from 'lucide-react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 import type { AiAction, AiActionPriority } from '@/core/api/schemas/ai-action';
 import { useDecideAiActionMutation } from '@/core/patients/useDecideAiActionMutation';
+import { useDeleteAiActionMutation } from '@/core/patients/useDeleteAiActionMutation';
 import { useTheme } from '@/core/theme/useTheme';
 import type { Brand } from '@/core/theme/brand.types';
 
 const DECISION_ERROR_MESSAGE = 'Não foi possível registrar sua decisão. Tente novamente.';
+const DELETE_ERROR_MESSAGE = 'Não foi possível excluir esta ação. Tente novamente.';
+const DELETE_CONFIRM_TITLE = 'Excluir esta ação?';
+const DELETE_CONFIRM_MESSAGE = 'Esta ação sai da lista e não pode ser restaurada pelo app.';
 
 const STATUS_LABEL: Record<'accepted' | 'dismissed', string> = {
   accepted: 'Aceita',
@@ -25,9 +30,17 @@ function priorityColor(priority: AiActionPriority, colors: Brand['colors']): str
 export function AiActionCard({ action, patientId }: { action: AiAction; patientId: string }) {
   const { colors, radii, typography, spacing } = useTheme();
   const mutation = useDecideAiActionMutation(patientId);
+  const deleteMutation = useDeleteAiActionMutation(patientId);
 
   const isThisActionInFlight = mutation.isPending && mutation.variables?.actionId === action.id;
   const didThisActionFail = mutation.isError && mutation.variables?.actionId === action.id;
+
+  function confirmDelete() {
+    Alert.alert(DELETE_CONFIRM_TITLE, DELETE_CONFIRM_MESSAGE, [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Excluir', style: 'destructive', onPress: () => deleteMutation.mutate(action.id) },
+    ]);
+  }
 
   return (
     <View
@@ -142,25 +155,57 @@ export function AiActionCard({ action, patientId }: { action: AiAction; patientI
           ) : null}
         </View>
       ) : (
-        <View
-          testID={`ai-action-status-${action.id}`}
-          style={{
-            alignSelf: 'flex-start',
-            backgroundColor: colors.surfaceMuted,
-            borderRadius: radii.pill,
-            paddingVertical: spacing(1),
-            paddingHorizontal: spacing(3),
-          }}
-        >
-          <Text
-            style={{
-              color: colors.textPrimary,
-              fontFamily: typography.fontFamily.medium,
-              fontSize: typography.scale.xs,
-            }}
-          >
-            {STATUS_LABEL[action.status]}
-          </Text>
+        <View style={{ gap: spacing(2) }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View
+              testID={`ai-action-status-${action.id}`}
+              style={{
+                alignSelf: 'flex-start',
+                backgroundColor: colors.surfaceMuted,
+                borderRadius: radii.pill,
+                paddingVertical: spacing(1),
+                paddingHorizontal: spacing(3),
+              }}
+            >
+              <Text
+                style={{
+                  color: colors.textPrimary,
+                  fontFamily: typography.fontFamily.medium,
+                  fontSize: typography.scale.xs,
+                }}
+              >
+                {STATUS_LABEL[action.status]}
+              </Text>
+            </View>
+            <Pressable
+              testID={`ai-action-delete-${action.id}`}
+              disabled={deleteMutation.isPending}
+              onPress={confirmDelete}
+              hitSlop={spacing(2)}
+              style={{
+                paddingVertical: spacing(1),
+                paddingHorizontal: spacing(2),
+              }}
+            >
+              <Trash2
+                accessibilityLabel="Excluir ação"
+                size={typography.scale.md}
+                color={deleteMutation.isPending ? colors.textSecondary : colors.danger}
+              />
+            </Pressable>
+          </View>
+          {deleteMutation.isError ? (
+            <Text
+              testID={`ai-action-delete-error-${action.id}`}
+              style={{
+                color: colors.danger,
+                fontFamily: typography.fontFamily.regular,
+                fontSize: typography.scale.xs,
+              }}
+            >
+              {DELETE_ERROR_MESSAGE}
+            </Text>
+          ) : null}
         </View>
       )}
     </View>

@@ -152,6 +152,7 @@ Nada fora desta lista entra no projeto sem uma ADR justificando.
 | OTA | `expo-updates` + EAS Update | CodePush (App Center foi descontinuado) |
 | Biometria | `expo-local-authentication` | — |
 | Rede | `@react-native-community/netinfo` | — |
+| Ícones | `lucide-react-native` | emoji como ícone, glifo Unicode solto em `Text`, outra lib de ícone (Feather, Ionicons, `@expo/vector-icons`, SVG customizado por componente) |
 | Testes | Jest + React Native Testing Library | Enzyme, testes de snapshot como única cobertura |
 
 Proibido: qualquer biblioteca de UI pronta com tema próprio (NativeBase, React Native Paper,

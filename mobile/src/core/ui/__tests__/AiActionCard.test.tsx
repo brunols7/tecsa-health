@@ -1,14 +1,17 @@
 import type { UseMutationResult } from '@tanstack/react-query';
+import { Alert } from 'react-native';
 import { fireEvent, render } from '@testing-library/react-native';
 
 import { ApiError } from '@/core/api/http';
 import type { AiAction } from '@/core/api/schemas/ai-action';
 import { useDecideAiActionMutation } from '@/core/patients/useDecideAiActionMutation';
+import { useDeleteAiActionMutation } from '@/core/patients/useDeleteAiActionMutation';
 import { BrandProvider } from '@/core/theme/BrandProvider';
 import type { Brand } from '@/core/theme/brand.types';
 import { AiActionCard } from '@/core/ui/AiActionCard';
 
 jest.mock('@/core/patients/useDecideAiActionMutation');
+jest.mock('@/core/patients/useDeleteAiActionMutation');
 
 const fakeBrand: Brand = {
   id: 'brand-a',
@@ -40,9 +43,13 @@ const fakeBrand: Brand = {
 const mockedUseDecideAiActionMutation = useDecideAiActionMutation as jest.MockedFunction<
   typeof useDecideAiActionMutation
 >;
+const mockedUseDeleteAiActionMutation = useDeleteAiActionMutation as jest.MockedFunction<
+  typeof useDeleteAiActionMutation
+>;
 
 type DecideAiActionInput = { actionId: string; status: 'accepted' | 'dismissed' };
 type DecideMutation = UseMutationResult<AiAction, ApiError, DecideAiActionInput>;
+type DeleteMutation = UseMutationResult<void, ApiError, string>;
 
 function idleMutation(mutate: jest.Mock = jest.fn()): DecideMutation {
   return {
@@ -74,6 +81,18 @@ function erroredMutation(mutate: jest.Mock, variables: DecideAiActionInput): Dec
   } as unknown as DecideMutation;
 }
 
+function idleDeleteMutation(mutate: jest.Mock = jest.fn()): DeleteMutation {
+  return { mutate, isPending: false, isError: false, isSuccess: false } as unknown as DeleteMutation;
+}
+
+function pendingDeleteMutation(mutate: jest.Mock = jest.fn()): DeleteMutation {
+  return { mutate, isPending: true, isError: false, isSuccess: false } as unknown as DeleteMutation;
+}
+
+function erroredDeleteMutation(mutate: jest.Mock = jest.fn()): DeleteMutation {
+  return { mutate, isPending: false, isError: true, isSuccess: false } as unknown as DeleteMutation;
+}
+
 const pendingAction: AiAction = {
   id: 'ai-action-1',
   patientId: 'patient-1',
@@ -94,8 +113,13 @@ function renderCard(action: AiAction) {
 }
 
 describe('AiActionCard', () => {
+  beforeEach(() => {
+    mockedUseDeleteAiActionMutation.mockReturnValue(idleDeleteMutation());
+  });
+
   afterEach(() => {
     mockedUseDecideAiActionMutation.mockReset();
+    mockedUseDeleteAiActionMutation.mockReset();
   });
 
   it('ação pending renderiza os botões Aceitar e Descartar', async () => {
@@ -262,5 +286,73 @@ describe('AiActionCard', () => {
 
     expect(flatten(getByText(longTitleAction.title).props.style).flex).toBe(1);
     expect(flatten(getByTestId('ai-action-priority-ai-action-1').props.style).flexShrink).toBe(0);
+  });
+
+  it('ação "pending" não mostra o ícone de lixeira', async () => {
+    mockedUseDecideAiActionMutation.mockReturnValue(idleMutation());
+
+    const { queryByTestId } = await renderCard(pendingAction);
+
+    expect(queryByTestId('ai-action-delete-ai-action-1')).toBeNull();
+  });
+
+  it('ação "accepted" mostra o ícone de lixeira; ao confirmar no Alert, chama a mutation de excluir', async () => {
+    mockedUseDecideAiActionMutation.mockReturnValue(idleMutation());
+    const deleteMutate = jest.fn();
+    mockedUseDeleteAiActionMutation.mockReturnValue(idleDeleteMutation(deleteMutate));
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+      const confirmButton = buttons?.find((button) => button.text === 'Excluir');
+      confirmButton?.onPress?.();
+    });
+
+    const { getByTestId } = await renderCard({ ...pendingAction, status: 'accepted' });
+
+    await fireEvent.press(getByTestId('ai-action-delete-ai-action-1'));
+
+    expect(alertSpy).toHaveBeenCalledWith(
+      'Excluir esta ação?',
+      expect.any(String),
+      expect.arrayContaining([expect.objectContaining({ text: 'Excluir' })]),
+    );
+    expect(deleteMutate).toHaveBeenCalledWith('ai-action-1');
+
+    alertSpy.mockRestore();
+  });
+
+  it('ação "dismissed" mostra o ícone de lixeira; cancelar no Alert não chama a mutation de excluir', async () => {
+    mockedUseDecideAiActionMutation.mockReturnValue(idleMutation());
+    const deleteMutate = jest.fn();
+    mockedUseDeleteAiActionMutation.mockReturnValue(idleDeleteMutation(deleteMutate));
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+      const cancelButton = buttons?.find((button) => button.text === 'Cancelar');
+      cancelButton?.onPress?.();
+    });
+
+    const { getByTestId } = await renderCard({ ...pendingAction, status: 'dismissed' });
+
+    await fireEvent.press(getByTestId('ai-action-delete-ai-action-1'));
+
+    expect(deleteMutate).not.toHaveBeenCalled();
+
+    alertSpy.mockRestore();
+  });
+
+  it('exclusão em andamento desabilita o ícone de lixeira', async () => {
+    mockedUseDecideAiActionMutation.mockReturnValue(idleMutation());
+    mockedUseDeleteAiActionMutation.mockReturnValue(pendingDeleteMutation());
+
+    const { getByTestId } = await renderCard({ ...pendingAction, status: 'accepted' });
+
+    expect(getByTestId('ai-action-delete-ai-action-1').props.accessibilityState?.disabled).toBe(true);
+  });
+
+  it('erro ao excluir mostra mensagem isolada neste card, sem remover o status', async () => {
+    mockedUseDecideAiActionMutation.mockReturnValue(idleMutation());
+    mockedUseDeleteAiActionMutation.mockReturnValue(erroredDeleteMutation());
+
+    const { getByTestId, getByText } = await renderCard({ ...pendingAction, status: 'accepted' });
+
+    expect(getByTestId('ai-action-delete-error-ai-action-1')).toBeTruthy();
+    expect(getByText('Aceita')).toBeTruthy();
   });
 });
