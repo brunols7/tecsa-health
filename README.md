@@ -24,9 +24,12 @@ cp mobile/.env.example mobile/.env
 ```
 
 `api/.env` já vem com valores padrão que funcionam sem edição para rodar localmente via Docker
-(banco, filas e cache locais). A única chave que vale preencher se você for exercitar a geração de
-ações de IA de verdade é `ANTHROPIC_API_KEY` — vazia, ela não bloqueia o resto do app, só a
-geração de sugestões.
+(banco, filas e cache locais). Para exercitar a geração de ações de IA de verdade, preencha uma das
+duas chaves de LLM — `ANTHROPIC_API_KEY` ou `GEMINI_API_KEY` (free tier do Google AI Studio, sem
+custo). O backend escolhe o provedor sozinho no boot: se `ANTHROPIC_API_KEY` estiver preenchida,
+usa Anthropic; senão, usa Gemini. Com as duas vazias, a geração falha com `502 AI_UNAVAILABLE` —
+o resto do app não é afetado. Motivo e alternativas descartadas em
+[`docs/adr/0002-selecao-de-provedor-llm.md`](./docs/adr/0002-selecao-de-provedor-llm.md).
 
 `mobile/.env` precisa de `EXPO_PUBLIC_API_URL`. Em simulador iOS ou emulador Android, aponte para
 `http://localhost:9000`. **Em device físico**, `localhost` não alcança a máquina host — use o IP da

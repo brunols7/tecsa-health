@@ -188,12 +188,12 @@ LLMSEL-07/08
 
 **Done when**:
 
-- [ ] ADR novo explica o problema (custo da Anthropic), a decisão (Opção A — seleção no boot por env
+- [x] ADR novo explica o problema (custo da Anthropic), a decisão (Opção A — seleção no boot por env
       var, sem fallback em runtime), as alternativas consideradas (fallback em runtime, terceiro
       provedor, Ollama local) e por que foram descartadas
-- [ ] README raiz menciona `GEMINI_API_KEY`/`GEMINI_MODEL` ao lado de `ANTHROPIC_API_KEY`, com a
+- [x] README raiz menciona `GEMINI_API_KEY`/`GEMINI_MODEL` ao lado de `ANTHROPIC_API_KEY`, com a
       ordem de prioridade explícita
-- [ ] Gate check passa: `composer test && vendor/bin/pint --test && vendor/bin/phpstan analyse`
+- [x] Gate check passa: `composer test && vendor/bin/pint --test && vendor/bin/phpstan analyse`
 
 **Tests**: none
 **Gate**: build
