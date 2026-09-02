@@ -279,14 +279,14 @@ com mensagem no construtor)
 
 **Done when**:
 
-- [ ] `findById` devolve `null` quando não existe, entidade quando existe
-- [ ] `listForPatient` ordena por `created_at desc`
-- [ ] `findByPatientAndHash` devolve `[]` em cache miss, e as linhas certas em cache hit
-- [ ] `insertMany` persiste todas as linhas passadas numa única chamada
-- [ ] `updateStatus` altera e devolve a entidade atualizada
-- [ ] Binding `AiActionRepository::class → EloquentAiActionRepository::class` registrado
-- [ ] Gate check passa: `php artisan test --testsuite=Feature --filter=EloquentAiActionRepositoryTest`
-- [ ] Test count: 6+ testes passam
+- [x] `findById` devolve `null` quando não existe, entidade quando existe
+- [x] `listForPatient` ordena por `created_at desc`
+- [x] `findByPatientAndHash` devolve `[]` em cache miss, e as linhas certas em cache hit
+- [x] `insertMany` persiste todas as linhas passadas numa única chamada
+- [x] `updateStatus` altera e devolve a entidade atualizada
+- [x] Binding `AiActionRepository::class → EloquentAiActionRepository::class` registrado
+- [x] Gate check passa: `php artisan test --testsuite=Feature --filter=EloquentAiActionRepositoryTest`
+- [x] Test count: 6+ testes passam — 8 testes passam
 
 **Tests**: integration
 **Gate**: full
