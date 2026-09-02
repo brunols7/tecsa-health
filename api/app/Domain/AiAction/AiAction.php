@@ -6,6 +6,9 @@ namespace App\Domain\AiAction;
 
 final class AiAction
 {
+    /**
+     * @param  array<int, string>  $biomarkers
+     */
     public function __construct(
         public readonly string $id,
         public readonly string $patientId,

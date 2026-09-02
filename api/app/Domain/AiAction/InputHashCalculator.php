@@ -6,6 +6,9 @@ namespace App\Domain\AiAction;
 
 final class InputHashCalculator
 {
+    /**
+     * @param  array<int, array<string, mixed>>  $biomarkers
+     */
     public static function compute(array $biomarkers, string $goal): string
     {
         $sorted = $biomarkers;

@@ -249,11 +249,11 @@ com mensagem no construtor)
 
 **Done when**:
 
-- [ ] `AiActionRepository` declara `findById, listForPatient, findByPatientAndHash, insertMany,
+- [x] `AiActionRepository` declara `findById, listForPatient, findByPatientAndHash, insertMany,
       updateStatus`
-- [ ] `LlmClient` declara `generate(AiPromptInput): AiSuggestion`
-- [ ] Zero import de `Illuminate\`
-- [ ] Gate check passa: `php artisan test --testsuite=Unit` (nenhuma quebra)
+- [x] `LlmClient` declara `generate(AiPromptInput): AiSuggestion`
+- [x] Zero import de `Illuminate\`
+- [x] Gate check passa: `php artisan test --testsuite=Unit` (nenhuma quebra)
 
 **Tests**: none
 **Gate**: quick
