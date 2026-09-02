@@ -59,6 +59,21 @@ export async function apiGet(path: string, params?: Record<string, string>): Pro
   return response.json();
 }
 
+export async function apiPost(path: string, body?: unknown): Promise<unknown> {
+  const response = await fetch(buildUrl(path), {
+    method: 'POST',
+    ...(body !== undefined
+      ? { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+      : {}),
+  });
+
+  if (!response.ok) {
+    return handleErrorResponse(response);
+  }
+
+  return response.json();
+}
+
 export async function apiPatch(path: string, body: unknown): Promise<unknown> {
   const response = await fetch(buildUrl(path), {
     method: 'PATCH',
@@ -71,4 +86,12 @@ export async function apiPatch(path: string, body: unknown): Promise<unknown> {
   }
 
   return response.json();
+}
+
+export async function apiDelete(path: string): Promise<void> {
+  const response = await fetch(buildUrl(path), { method: 'DELETE' });
+
+  if (!response.ok) {
+    return handleErrorResponse(response);
+  }
 }

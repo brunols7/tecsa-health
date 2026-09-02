@@ -24,9 +24,12 @@ cp mobile/.env.example mobile/.env
 ```
 
 `api/.env` já vem com valores padrão que funcionam sem edição para rodar localmente via Docker
-(banco, filas e cache locais). A única chave que vale preencher se você for exercitar a geração de
-ações de IA de verdade é `ANTHROPIC_API_KEY` — vazia, ela não bloqueia o resto do app, só a
-geração de sugestões.
+(banco, filas e cache locais). Para exercitar a geração de ações de IA de verdade, preencha uma das
+duas chaves de LLM — `ANTHROPIC_API_KEY` ou `GEMINI_API_KEY` (free tier do Google AI Studio, sem
+custo). O backend escolhe o provedor sozinho no boot: se `ANTHROPIC_API_KEY` estiver preenchida,
+usa Anthropic; senão, usa Gemini. Com as duas vazias, a geração falha com `502 AI_UNAVAILABLE` —
+o resto do app não é afetado. Motivo e alternativas descartadas em
+[`docs/adr/0002-selecao-de-provedor-llm.md`](./docs/adr/0002-selecao-de-provedor-llm.md).
 
 `mobile/.env` precisa de `EXPO_PUBLIC_API_URL`. Em simulador iOS ou emulador Android, aponte para
 `http://localhost:9000`. **Em device físico**, `localhost` não alcança a máquina host — use o IP da
@@ -51,6 +54,11 @@ iniciar. Sem `--wait` (ou rodando `docker compose up` em foreground e testando a
 antes do `composer install`/migrations/seed terminarem e cair em `Connection reset by peer` — não é
 erro do backend, é corrida entre o comando e o entrypoint ainda rodando. Num clone limpo (sem cache
 de imagem), a primeira subida pode levar até ~1-2 minutos por causa do `composer install`.
+
+Só `api/.env` e a pasta `vendor/` são montados no container (`docker-compose.yml`) — o resto do
+código do backend é copiado na imagem no `build`. Depois de editar qualquer arquivo em `api/app/`
+(ou outro código-fonte), rode `docker compose up -d --build api` para a mudança valer; `docker
+compose restart api` só reinicia o processo com a imagem antiga, não recarrega código novo.
 
 Confirme com:
 

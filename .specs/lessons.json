@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 13,
+  "next_id": 21,
   "lessons": [
     {
       "id": "L-001",
@@ -220,6 +220,150 @@
       ],
       "created": "2026-09-02T02:49:58Z",
       "last_seen": "2026-09-02T02:49:58Z"
+    },
+    {
+      "id": "L-013",
+      "key": "surviving_mutant::test every scoping predicate in a repository query with a row that matches the other predicates but violates the scope so removing the filter fails a test",
+      "text": "Test every scoping predicate in a repository query with a row that matches the other predicates but violates the scope, so removing the filter fails a test",
+      "signal": "surviving_mutant",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "fase-3-acoes-ia-backend"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "api/app/Infrastructure/Persistence/Eloquent/EloquentAiActionRepository.php:40 (Mutation 4) (repo-layer)"
+      ],
+      "created": "2026-09-02T15:37:07Z",
+      "last_seen": "2026-09-02T15:37:07Z"
+    },
+    {
+      "id": "L-014",
+      "key": "ac_gap::give every listed spec edge case its own dedicated test even when an existing test touches the same method",
+      "text": "Give every listed spec edge case its own dedicated test, even when an existing test touches the same method",
+      "signal": "ac_gap",
+      "scope": "testing",
+      "status": "candidate",
+      "features": [
+        "fase-3-acoes-ia-backend"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md Edge Case 3 (cache nunca compartilhado entre pacientes) - no file:line evidence (testing)"
+      ],
+      "created": "2026-09-02T15:37:07Z",
+      "last_seen": "2026-09-02T15:37:07Z"
+    },
+    {
+      "id": "L-015",
+      "key": "spec_precision_gap::assert the configured numeric value of a timeout or limit constant not only the behavior it triggers",
+      "text": "Assert the configured numeric value of a timeout or limit constant, not only the behavior it triggers",
+      "signal": "spec_precision_gap",
+      "scope": "testing",
+      "status": "candidate",
+      "features": [
+        "fase-3-acoes-ia-backend"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "AIBE-05 / api/app/Infrastructure/Llm/AnthropicClient.php:20 (testing)"
+      ],
+      "created": "2026-09-02T15:37:07Z",
+      "last_seen": "2026-09-02T15:37:07Z"
+    },
+    {
+      "id": "L-016",
+      "key": "spec_precision_gap::when a spec edge case says a flag flip must remove ui on the next render add a rerender test that starts true flips to false and asserts the element is gone do not rely on inspection of an unconditional hook call as evidence",
+      "text": "When a spec edge case says a flag flip must remove UI on the next render, add a rerender test that starts true, flips to false, and asserts the element is gone -- do not rely on inspection of an unconditional hook call as evidence.",
+      "signal": "spec_precision_gap",
+      "scope": "mobile/feature-flags",
+      "status": "candidate",
+      "features": [
+        "fase-3-acoes-ia-mobile"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md edge case: flag muda de true para false com a tela aberta (mobile/feature-flags)"
+      ],
+      "created": "2026-09-02T17:57:16Z",
+      "last_seen": "2026-09-02T17:57:16Z"
+    },
+    {
+      "id": "L-017",
+      "key": "spec_precision_gap::when an acceptance criterion enumerates boundary sub cases empty over max assert each boundary explicitly instead of relying on one representative invalid payload",
+      "text": "When an acceptance criterion enumerates boundary sub-cases (empty, over-max), assert each boundary explicitly instead of relying on one representative invalid payload",
+      "signal": "spec_precision_gap",
+      "scope": "api-tests",
+      "status": "candidate",
+      "features": [
+        "fase-3-llm-provider-fallback"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "api/tests/Unit/GeminiClientTest.php:68 (api-tests)"
+      ],
+      "created": "2026-09-02T18:53:18Z",
+      "last_seen": "2026-09-02T18:53:18Z"
+    },
+    {
+      "id": "L-018",
+      "key": "spec_precision_gap::http client timeout values are invisible to laravel http fake assertions so record them as code inspection evidence in the spec rather than promising a test assertion",
+      "text": "HTTP client timeout values are invisible to Laravel Http::fake assertions, so record them as code-inspection evidence in the spec rather than promising a test assertion",
+      "signal": "spec_precision_gap",
+      "scope": "api-http-adapters",
+      "status": "candidate",
+      "features": [
+        "fase-3-llm-provider-fallback"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "api/app/Infrastructure/Llm/GeminiClient.php:32 (api-http-adapters)"
+      ],
+      "created": "2026-09-02T18:53:18Z",
+      "last_seen": "2026-09-02T18:53:18Z"
+    },
+    {
+      "id": "L-019",
+      "key": "spec_precision_gap::when a spec says a cache hit list shall exclude x write a test with a genuine mixed hit some x some not same cache key a scenario where deleting the only cached row forces a cache miss doesn t prove exclusion within a hit",
+      "text": "When a spec says 'a cache-hit list SHALL exclude X', write a test with a genuine mixed hit (some X, some not, same cache key) — a scenario where deleting the only cached row forces a cache miss doesn't prove exclusion within a hit.",
+      "signal": "spec_precision_gap",
+      "scope": "api/tests",
+      "status": "candidate",
+      "features": [
+        "acoes-ia-excluir"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "AIDEL-11 (api/tests)"
+      ],
+      "created": "2026-09-02T20:50:25Z",
+      "last_seen": "2026-09-02T20:50:25Z"
+    },
+    {
+      "id": "L-020",
+      "key": "ac_gap::when a ui edge case is deleting the last item falls back to the empty state add a direct integration test for it even if the empty state condition and the delete mutation are each unit tested separately composition isn t evidence",
+      "text": "When a UI edge case is 'deleting the last item falls back to the empty state', add a direct integration test for it even if the empty-state condition and the delete mutation are each unit-tested separately — composition isn't evidence.",
+      "signal": "ac_gap",
+      "scope": "mobile/src/core/ui",
+      "status": "candidate",
+      "features": [
+        "acoes-ia-excluir"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "Edge Case: última ação restante excluída cai no estado vazio (mobile/src/core/ui)"
+      ],
+      "created": "2026-09-02T20:50:25Z",
+      "last_seen": "2026-09-02T20:50:25Z"
     }
   ]
 }

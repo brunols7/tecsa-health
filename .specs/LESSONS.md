@@ -86,6 +86,54 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: src/app/patients/__tests__/[id].test.tsx:155 (mutation 2 survived at screen level) (mobile-tests)
 - last seen: 2026-09-02T02:49:58Z
 
+### L-013 - Test every scoping predicate in a repository query with a row that matches the other predicates but violates the scope, so removing the filter fails a test
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: fase-3-acoes-ia-backend
+- evidence: api/app/Infrastructure/Persistence/Eloquent/EloquentAiActionRepository.php:40 (Mutation 4) (repo-layer)
+- last seen: 2026-09-02T15:37:07Z
+
+### L-014 - Give every listed spec edge case its own dedicated test, even when an existing test touches the same method
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `testing` · harmful: 0
+- features: fase-3-acoes-ia-backend
+- evidence: spec.md Edge Case 3 (cache nunca compartilhado entre pacientes) - no file:line evidence (testing)
+- last seen: 2026-09-02T15:37:07Z
+
+### L-015 - Assert the configured numeric value of a timeout or limit constant, not only the behavior it triggers
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `testing` · harmful: 0
+- features: fase-3-acoes-ia-backend
+- evidence: AIBE-05 / api/app/Infrastructure/Llm/AnthropicClient.php:20 (testing)
+- last seen: 2026-09-02T15:37:07Z
+
+### L-016 - When a spec edge case says a flag flip must remove UI on the next render, add a rerender test that starts true, flips to false, and asserts the element is gone -- do not rely on inspection of an unconditional hook call as evidence.
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `mobile/feature-flags` · harmful: 0
+- features: fase-3-acoes-ia-mobile
+- evidence: spec.md edge case: flag muda de true para false com a tela aberta (mobile/feature-flags)
+- last seen: 2026-09-02T17:57:16Z
+
+### L-017 - When an acceptance criterion enumerates boundary sub-cases (empty, over-max), assert each boundary explicitly instead of relying on one representative invalid payload
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `api-tests` · harmful: 0
+- features: fase-3-llm-provider-fallback
+- evidence: api/tests/Unit/GeminiClientTest.php:68 (api-tests)
+- last seen: 2026-09-02T18:53:18Z
+
+### L-018 - HTTP client timeout values are invisible to Laravel Http::fake assertions, so record them as code-inspection evidence in the spec rather than promising a test assertion
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `api-http-adapters` · harmful: 0
+- features: fase-3-llm-provider-fallback
+- evidence: api/app/Infrastructure/Llm/GeminiClient.php:32 (api-http-adapters)
+- last seen: 2026-09-02T18:53:18Z
+
+### L-019 - When a spec says 'a cache-hit list SHALL exclude X', write a test with a genuine mixed hit (some X, some not, same cache key) — a scenario where deleting the only cached row forces a cache miss doesn't prove exclusion within a hit.
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `api/tests` · harmful: 0
+- features: acoes-ia-excluir
+- evidence: AIDEL-11 (api/tests)
+- last seen: 2026-09-02T20:50:25Z
+
+### L-020 - When a UI edge case is 'deleting the last item falls back to the empty state', add a direct integration test for it even if the empty-state condition and the delete mutation are each unit-tested separately — composition isn't evidence.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `mobile/src/core/ui` · harmful: 0
+- features: acoes-ia-excluir
+- evidence: Edge Case: última ação restante excluída cai no estado vazio (mobile/src/core/ui)
+- last seen: 2026-09-02T20:50:25Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
