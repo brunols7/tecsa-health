@@ -221,12 +221,12 @@ este hook (só de leitura), mas T3 já está concluída antes da Fase 2 começar
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Trocar o parâmetro de busca entre chamadas do hook (simulando digitação) produz uma query key
+- [x] Trocar o parâmetro de busca entre chamadas do hook (simulando digitação) produz uma query key
       diferente e não mistura páginas da busca anterior com a nova (teste com `createTestQueryClient`
       renderizando o hook duas vezes com buscas diferentes)
-- [ ] `nextCursor: null` da última página resulta em `hasNextPage: false`
-- [ ] Gate check passes: `npx tsc --noEmit && npm test -- patients`
-- [ ] Test count: 3+ tests novos em `usePatientsQuery.test.tsx`
+- [x] `nextCursor: null` da última página resulta em `hasNextPage: false`
+- [x] Gate check passes: `npx tsc --noEmit && npm test -- patients`
+- [x] Test count: 3+ tests novos em `usePatientsQuery.test.tsx`
 
 **Tests**: unit
 **Gate**: quick
