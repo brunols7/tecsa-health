@@ -361,17 +361,19 @@ cria pacientes `active` — inativar/concluir é ação de teste/uso, não de se
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `PatientFactory` usa os enums, nenhum array de string solto duplicado
-- [ ] `config('app.faker_locale')` resolve para `pt_BR` sem `APP_FAKER_LOCALE` setado
-- [ ] `.env.example` documenta a variável
-- [ ] `PatientSeederTest` (existente, ajustado se necessário) confirma ≥5.000 pacientes e todo `goal`
+- [x] `PatientFactory` usa os enums, nenhum array de string solto duplicado
+- [x] `config('app.faker_locale')` resolve para `pt_BR` sem `APP_FAKER_LOCALE` setado
+- [x] `.env.example` documenta a variável
+- [x] `PatientSeederTest` (existente, ajustado se necessário) confirma ≥5.000 pacientes e todo `goal`
       dentro de `PatientGoal::values()`
-- [ ] Gate check passes: `composer test`
+- [x] Gate check passes: `composer test`
 
 **Tests**: integration
 **Gate**: full
 
 **Commit**: `feat(patient-seed): use pt_BR locale and enum values in patient seeder`
+
+**Status**: ✅ Complete
 
 ---
 
