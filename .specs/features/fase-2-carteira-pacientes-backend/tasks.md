@@ -352,11 +352,11 @@ existente
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `PatientNotFound` → `404`, código `PATIENT_NOT_FOUND`
-- [ ] `InvalidCursor` → `400`, código `INVALID_CURSOR`
-- [ ] Teste Feature dedicado (rota de teste temporária ou o teste real de T12, se já existir)
+- [x] `PatientNotFound` → `404`, código `PATIENT_NOT_FOUND`
+- [x] `InvalidCursor` → `400`, código `INVALID_CURSOR`
+- [x] Teste Feature dedicado (rota de teste temporária ou o teste real de T12, se já existir)
       confirma o corpo exato das duas respostas
-- [ ] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
+- [x] Gate check passes: `bash scripts/check-layer-boundary.sh && php artisan test`
 
 **Tests**: integration
 **Gate**: full
