@@ -37,19 +37,37 @@ function buildUrl(path: string, params?: Record<string, string>): string {
   return `${baseUrl}${path}${separator}${query}`;
 }
 
+async function handleErrorResponse(response: Response): Promise<never> {
+  const body: unknown = await response.json().catch(() => undefined);
+  const code = isErrorEnvelope(body) ? body.error?.code : undefined;
+  const message = isErrorEnvelope(body) ? body.error?.message : undefined;
+
+  throw new ApiError(
+    message ?? `Requisição falhou com status ${response.status}`,
+    response.status,
+    code,
+  );
+}
+
 export async function apiGet(path: string, params?: Record<string, string>): Promise<unknown> {
   const response = await fetch(buildUrl(path, params));
 
   if (!response.ok) {
-    const body: unknown = await response.json().catch(() => undefined);
-    const code = isErrorEnvelope(body) ? body.error?.code : undefined;
-    const message = isErrorEnvelope(body) ? body.error?.message : undefined;
+    return handleErrorResponse(response);
+  }
 
-    throw new ApiError(
-      message ?? `Requisição falhou com status ${response.status}`,
-      response.status,
-      code,
-    );
+  return response.json();
+}
+
+export async function apiPatch(path: string, body: unknown): Promise<unknown> {
+  const response = await fetch(buildUrl(path), {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    return handleErrorResponse(response);
   }
 
   return response.json();

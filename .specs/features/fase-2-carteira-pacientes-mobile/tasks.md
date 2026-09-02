@@ -157,12 +157,12 @@ uma segunda função exportada).
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `apiPatch` serializa o corpo como JSON com `Content-Type: application/json`
-- [ ] Resposta não-2xx lança `ApiError` com `status`/`code`, mesmo padrão de `apiGet`
-- [ ] `http.test.ts` ganha casos novos para `apiPatch` (sucesso + erro), seguindo exatamente a forma
+- [x] `apiPatch` serializa o corpo como JSON com `Content-Type: application/json`
+- [x] Resposta não-2xx lança `ApiError` com `status`/`code`, mesmo padrão de `apiGet`
+- [x] `http.test.ts` ganha casos novos para `apiPatch` (sucesso + erro), seguindo exatamente a forma
       dos testes existentes de `apiGet`
-- [ ] Gate check passes: `npx tsc --noEmit && npm test -- http.test`
-- [ ] Test count: 2+ tests novos em `http.test.ts` (total do arquivo cresce de 3 para 5+)
+- [x] Gate check passes: `npx tsc --noEmit && npm test -- http.test`
+- [x] Test count: 2+ tests novos em `http.test.ts` (total do arquivo cresce de 3 para 5+)
 
 **Tests**: unit
 **Gate**: quick
