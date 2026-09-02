@@ -17,11 +17,11 @@ return new class extends Migration
         });
 
         DB::statement(
-            "ALTER TABLE patients ADD CONSTRAINT patients_goal_check ".
+            'ALTER TABLE patients ADD CONSTRAINT patients_goal_check '.
             "CHECK (goal IN ('lose_weight', 'gain_muscle', 'maintain', 'manage_condition'))"
         );
         DB::statement(
-            "ALTER TABLE patients ADD CONSTRAINT patients_status_check ".
+            'ALTER TABLE patients ADD CONSTRAINT patients_status_check '.
             "CHECK (status IN ('active', 'inactive', 'completed'))"
         );
     }
