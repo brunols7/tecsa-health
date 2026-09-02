@@ -4,12 +4,15 @@ import { useLocalSearchParams } from 'expo-router';
 
 import type { Biomarker } from '@/core/api/schemas/biomarker';
 import type { Patient } from '@/core/api/schemas/patient';
+import { useIsOffline } from '@/core/offline/network';
 import { usePatientBiomarkersQuery } from '@/core/patients/usePatientBiomarkersQuery';
 import { usePatientDetailQuery } from '@/core/patients/usePatientDetailQuery';
 import { useSetFollowUpMutation } from '@/core/patients/useSetFollowUpMutation';
 import { useTheme } from '@/core/theme/useTheme';
 
 const ERROR_MESSAGE = 'Não foi possível carregar o paciente.';
+const OFFLINE_ERROR_MESSAGE =
+  'Sem conexão. Abra este paciente pelo menos uma vez online para poder consultá-lo offline.';
 const EMPTY_BIOMARKERS_MESSAGE = 'Nenhum biomarcador registrado ainda';
 
 function DetailSkeleton() {
@@ -28,7 +31,7 @@ function DetailSkeleton() {
   );
 }
 
-function DetailErrorView({ onRetry }: { onRetry: () => void }) {
+function DetailErrorView({ message, onRetry }: { message: string; onRetry: () => void }) {
   const { colors, radii, typography, spacing } = useTheme();
 
   return (
@@ -43,7 +46,7 @@ function DetailErrorView({ onRetry }: { onRetry: () => void }) {
           textAlign: 'center',
         }}
       >
-        {ERROR_MESSAGE}
+        {message}
       </Text>
       <Pressable
         testID="patient-detail-retry"
@@ -220,9 +223,13 @@ export default function PatientDetailScreen() {
   const patientQuery = usePatientDetailQuery(id);
   const biomarkersQuery = usePatientBiomarkersQuery(id);
   const mutation = useSetFollowUpMutation();
+  const isOffline = useIsOffline();
+
+  const isOfflineWithoutCache =
+    isOffline && (patientQuery.data === undefined || biomarkersQuery.data === undefined);
 
   const status: 'pending' | 'error' | 'success' =
-    patientQuery.status === 'error' || biomarkersQuery.status === 'error'
+    patientQuery.status === 'error' || biomarkersQuery.status === 'error' || isOfflineWithoutCache
       ? 'error'
       : patientQuery.status === 'pending' || biomarkersQuery.status === 'pending'
         ? 'pending'
@@ -236,7 +243,12 @@ export default function PatientDetailScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       {status === 'pending' ? <DetailSkeleton /> : null}
-      {status === 'error' ? <DetailErrorView onRetry={handleRetry} /> : null}
+      {status === 'error' ? (
+        <DetailErrorView
+          message={isOfflineWithoutCache ? OFFLINE_ERROR_MESSAGE : ERROR_MESSAGE}
+          onRetry={handleRetry}
+        />
+      ) : null}
       {status === 'success' && patientQuery.data && biomarkersQuery.data ? (
         <ScrollView contentContainerStyle={{ padding: spacing(4), gap: spacing(4) }}>
           <PatientHeader

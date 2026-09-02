@@ -11,11 +11,13 @@ import {
 import type { Biomarker } from '@/core/api/schemas/biomarker';
 import type { Patient } from '@/core/api/schemas/patient';
 import { createTestQueryClient } from '@/core/offline/queryClient';
+import { useIsOffline } from '@/core/offline/network';
 import { BrandProvider } from '@/core/theme/BrandProvider';
 
 import PatientDetailScreen from '../[id]';
 
 jest.mock('@/core/api/patients');
+jest.mock('@/core/offline/network');
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn(),
 }));
@@ -30,6 +32,7 @@ const mockedPatchPatientFollowUp = patchPatientFollowUp as jest.MockedFunction<
 const mockedUseLocalSearchParams = useLocalSearchParams as jest.MockedFunction<
   typeof useLocalSearchParams
 >;
+const mockedUseIsOffline = useIsOffline as jest.MockedFunction<typeof useIsOffline>;
 
 const fakePatient: Patient = {
   id: 'patient-1',
@@ -70,6 +73,7 @@ describe('PatientDetailScreen', () => {
     mockedUseLocalSearchParams.mockReturnValue({ id: 'patient-1' } as unknown as ReturnType<
       typeof useLocalSearchParams
     >);
+    mockedUseIsOffline.mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -77,6 +81,7 @@ describe('PatientDetailScreen', () => {
     mockedFetchPatientBiomarkers.mockReset();
     mockedPatchPatientFollowUp.mockReset();
     mockedUseLocalSearchParams.mockReset();
+    mockedUseIsOffline.mockReset();
   });
 
   it('exibe o skeleton enquanto qualquer uma das duas buscas está pendente', async () => {
@@ -101,6 +106,23 @@ describe('PatientDetailScreen', () => {
     await fireEvent.press(getByTestId('patient-detail-retry'));
 
     await waitFor(() => expect(getByText('Maria Silva')).toBeTruthy());
+  });
+
+  it('exibe erro específico de offline em vez de skeleton infinito quando não há cache e a rede está pausada', async () => {
+    mockedUseIsOffline.mockReturnValue(true);
+    mockedFetchPatientDetail.mockReturnValue(new Promise(() => {}));
+    mockedFetchPatientBiomarkers.mockReturnValue(new Promise(() => {}));
+
+    const { getByText, queryByTestId } = await renderScreen();
+
+    await waitFor(() =>
+      expect(
+        getByText(
+          'Sem conexão. Abra este paciente pelo menos uma vez online para poder consultá-lo offline.',
+        ),
+      ).toBeTruthy(),
+    );
+    expect(queryByTestId('patient-detail-skeleton')).toBeNull();
   });
 
   it('exibe o estado vazio de biomarcadores com copy fixa quando a lista vem vazia', async () => {
