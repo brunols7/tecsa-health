@@ -3,7 +3,6 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
-import type { Href } from 'expo-router';
 
 import type { Patient } from '@/core/api/schemas/patient';
 import { useDebouncedValue } from '@/core/patients/useDebouncedValue';
@@ -173,13 +172,9 @@ export default function PatientsScreen() {
             data={data}
             keyExtractor={(patient) => patient.id}
             renderItem={({ item }) => (
-              // SPEC_DEVIATION: `as Href` narrows Expo Router's typed-routes union, which is
-              // generated from files under src/app/ and does not include patients/[id] until
-              // T13 creates that route. Once T13 lands, this string matches the generated
-              // pattern exactly - the cast stays safe, not a silenced type error.
               <PatientCard
                 patient={item}
-                onPress={() => router.push(`/patients/${item.id}` as Href)}
+                onPress={() => router.push(`/patients/${item.id}`)}
               />
             )}
             onEndReached={() => {

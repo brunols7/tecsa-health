@@ -1,12 +1,11 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import Constants from 'expo-constants';
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
 import { resolveBrand } from '@/brands';
 import { useBiometricGate } from '@/core/auth/useBiometricGate';
 import { setupNetworkStatusListener } from '@/core/offline/network';
@@ -38,7 +37,12 @@ function GatedContent() {
     );
   }
 
-  return <AppTabs />;
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="patients/[id]" options={{ headerShown: true, title: '' }} />
+    </Stack>
+  );
 }
 
 export default function TabLayout() {
