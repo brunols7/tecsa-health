@@ -524,14 +524,14 @@ seletor
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Validação local bloqueia envio com nome vazio, data em formato inválido, sem objetivo
+- [x] Validação local bloqueia envio com nome vazio, data em formato inválido, sem objetivo
       selecionado
-- [ ] `initialValues` pré-preenche em modo `edit`
-- [ ] `fieldErrors` externo aparece embaixo do campo certo
-- [ ] Botão de confirmar desabilita durante `submitting`
-- [ ] Teste cobrindo: validação local bloqueando envio, submit com sucesso, `fieldErrors` externo
+- [x] `initialValues` pré-preenche em modo `edit`
+- [x] `fieldErrors` externo aparece embaixo do campo certo
+- [x] Botão de confirmar desabilita durante `submitting`
+- [x] Teste cobrindo: validação local bloqueando envio, submit com sucesso, `fieldErrors` externo
       exibido
-- [ ] Gate check passes: `npm test`
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick
