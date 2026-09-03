@@ -45,6 +45,10 @@ function GatedContent() {
         name="patients/[id]/edit"
         options={{ headerShown: true, title: 'Editar paciente' }}
       />
+      <Stack.Screen
+        name="patients/[id]/biomarkers/new"
+        options={{ headerShown: true, title: 'Novo biomarcador' }}
+      />
     </Stack>
   );
 }
