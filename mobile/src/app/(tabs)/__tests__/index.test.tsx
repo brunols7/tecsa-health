@@ -23,9 +23,10 @@ function makePatient(id: string, overrides: Partial<{ needsFollowUp: boolean }> 
     id,
     name: `Paciente ${id}`,
     birthDate: '1990-01-01',
-    goal: 'Perda de peso',
-    status: 'active',
+    goal: 'lose_weight' as const,
+    status: 'active' as const,
     needsFollowUp: overrides.needsFollowUp ?? false,
+    statusChangedAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   };
 }

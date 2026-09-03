@@ -60,9 +60,10 @@ const fakePatient: Patient = {
   id: 'patient-1',
   name: 'Maria Silva',
   birthDate: '1990-01-01',
-  goal: 'Perda de peso',
+  goal: 'lose_weight',
   status: 'active',
   needsFollowUp: false,
+  statusChangedAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
 };
 

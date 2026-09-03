@@ -45,6 +45,8 @@ const fakeBrand: Brand = {
     patientsTitle: 'Patients',
     emptyPatients: 'No patients',
     aiDisclaimer: 'Revise as sugestões da IA antes de aceitar.',
+    emptyBiomarkers: 'No biomarkers',
+    emptyFilteredPatients: 'No filtered patients',
   },
   defaults: { aiActionsEnabled: true, offlineBanner: true },
 };

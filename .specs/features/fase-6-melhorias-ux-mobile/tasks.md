@@ -210,11 +210,11 @@ ganham os valores, com tom de voz consistente com `emptyPatients` de cada marca.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Tipo `Brand['copy']` exige as 2 chaves novas (TypeScript quebra se uma marca não preencher —
+- [x] Tipo `Brand['copy']` exige as 2 chaves novas (TypeScript quebra se uma marca não preencher —
       mesmo mecanismo de CLAUDE.md §5.2)
-- [ ] As duas marcas têm texto distinto (não copy idêntica reaproveitada)
-- [ ] `tsc --noEmit` limpo
-- [ ] Gate check passes: `npm run pretest && npx tsc --noEmit`
+- [x] As duas marcas têm texto distinto (não copy idêntica reaproveitada)
+- [x] `tsc --noEmit` limpo
+- [x] Gate check passes: `npm run pretest && npx tsc --noEmit`
 
 **Tests**: none
 **Gate**: full

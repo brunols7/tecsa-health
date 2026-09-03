@@ -35,7 +35,13 @@ const fakeBrand: Brand = {
   radii: { sm: 4, md: 8, lg: 12, pill: 999 },
   spacing: (n: number) => n * 4,
   assets: { logo: { uri: 'logo' }, splashIcon: { uri: 'splash' } },
-  copy: { patientsTitle: 'Patients', emptyPatients: 'No patients', aiDisclaimer: 'Disclaimer' },
+  copy: {
+    patientsTitle: 'Patients',
+    emptyPatients: 'No patients',
+    aiDisclaimer: 'Disclaimer',
+    emptyBiomarkers: 'No biomarkers',
+    emptyFilteredPatients: 'No filtered patients',
+  },
   defaults: { aiActionsEnabled: false, offlineBanner: true },
 };
 
