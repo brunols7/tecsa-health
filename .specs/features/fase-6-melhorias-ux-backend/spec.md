@@ -261,44 +261,45 @@ LIMIT 20` mostra nomes brasileiros; `INSERT` manual com `goal='invalid'` falha p
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| UXBE-01 | P1: Criar paciente | Design | Implementing |
-| UXBE-02 | P1: Criar paciente | Design | Implementing |
-| UXBE-03 | P1: Criar paciente | Design | Implementing |
-| UXBE-04 | P1: Criar paciente | Design | Implementing |
-| UXBE-05 | P1: Criar paciente | Design | Implementing |
-| UXBE-06 | P1: Criar paciente | Design | Implementing |
-| UXBE-31 | P1: Criar paciente | Design | Pending |
-| UXBE-07 | P2: Editar cadastro | Design | Implementing |
-| UXBE-08 | P2: Editar cadastro | Design | Implementing |
-| UXBE-09 | P2: Editar cadastro | Design | Implementing |
-| UXBE-10 | P2: Editar cadastro | Design | Implementing |
-| UXBE-11 | P2: Editar cadastro | Design | Implementing |
-| UXBE-12 | P3: Ciclo de vida | Design | Implementing |
-| UXBE-13 | P3: Ciclo de vida | Design | Implementing |
-| UXBE-14 | P3: Ciclo de vida | Design | Implementing |
-| UXBE-15 | P3: Ciclo de vida | Design | Implementing |
-| UXBE-16 | P3: Ciclo de vida | Design | Implementing |
-| UXBE-17 | P3: Ciclo de vida | Design | Pending |
-| UXBE-32 | P3: Ciclo de vida | Design | Implementing |
-| UXBE-18 | P4: Excluir (soft delete) | Design | Implementing |
-| UXBE-19 | P4: Excluir (soft delete) | Design | Pending |
-| UXBE-20 | P4: Excluir (soft delete) | Design | Pending |
-| UXBE-21 | P4: Excluir (soft delete) | Design | Implementing |
-| UXBE-22 | P5: Filtro por status | Design | Implementing |
-| UXBE-23 | P5: Filtro por status | Design | Implementing |
-| UXBE-24 | P5: Filtro por status | Design | Implementing |
-| UXBE-25 | P5: Filtro por status | Design | Implementing |
-| UXBE-26 | P5: Filtro por status | Design | Implementing |
-| UXBE-27 | P6: Seed pt_BR + enums | Design | Pending |
-| UXBE-28 | P6: Seed pt_BR + enums | Design | Pending |
-| UXBE-29 | P6: Seed pt_BR + enums | Design | Pending |
-| UXBE-30 | P6: Seed pt_BR + enums | Design | Implementing |
+| UXBE-01 | P1: Criar paciente | Design | Verified |
+| UXBE-02 | P1: Criar paciente | Design | Verified |
+| UXBE-03 | P1: Criar paciente | Design | Verified |
+| UXBE-04 | P1: Criar paciente | Design | Verified |
+| UXBE-05 | P1: Criar paciente | Design | Verified |
+| UXBE-06 | P1: Criar paciente | Design | Verified |
+| UXBE-31 | P1: Criar paciente | Design | Verified |
+| UXBE-07 | P2: Editar cadastro | Design | Verified |
+| UXBE-08 | P2: Editar cadastro | Design | Verified |
+| UXBE-09 | P2: Editar cadastro | Design | Verified |
+| UXBE-10 | P2: Editar cadastro | Design | Verified |
+| UXBE-11 | P2: Editar cadastro | Design | Verified |
+| UXBE-12 | P3: Ciclo de vida | Design | Verified |
+| UXBE-13 | P3: Ciclo de vida | Design | Verified |
+| UXBE-14 | P3: Ciclo de vida | Design | Verified |
+| UXBE-15 | P3: Ciclo de vida | Design | Verified |
+| UXBE-16 | P3: Ciclo de vida | Design | Verified |
+| UXBE-17 | P3: Ciclo de vida | Design | Verified |
+| UXBE-32 | P3: Ciclo de vida | Design | Verified |
+| UXBE-18 | P4: Excluir (soft delete) | Design | Verified |
+| UXBE-19 | P4: Excluir (soft delete) | Design | Verified |
+| UXBE-20 | P4: Excluir (soft delete) | Design | Verified |
+| UXBE-21 | P4: Excluir (soft delete) | Design | Verified |
+| UXBE-22 | P5: Filtro por status | Design | Verified |
+| UXBE-23 | P5: Filtro por status | Design | Verified |
+| UXBE-24 | P5: Filtro por status | Design | Verified |
+| UXBE-25 | P5: Filtro por status | Design | Verified |
+| UXBE-26 | P5: Filtro por status | Design | Verified |
+| UXBE-27 | P6: Seed pt_BR + enums | Design | Verified |
+| UXBE-28 | P6: Seed pt_BR + enums | Design | Verified |
+| UXBE-29 | P6: Seed pt_BR + enums | Design | Verified |
+| UXBE-30 | P6: Seed pt_BR + enums | Design | Verified |
 
 **ID format:** `UXBE-[NUMBER]` (Fase 6, Melhorias UX, Backend)
 
 **Status values:** Pending → In Design → In Tasks → Implementing → Verified
 
-**Coverage:** 32 total, 0 mapped to tasks, 32 unmapped ⚠️ (mapeamento acontece na fase Tasks)
+**Coverage:** 32 total, 32 mapped to tasks (T1-T22), 32 verified end-to-end (T22 Feature test suite +
+live `docker compose` verification)
 
 ---
 

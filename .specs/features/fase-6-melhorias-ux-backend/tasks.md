@@ -792,20 +792,37 @@ depois da wiring completa.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] Cada status code do spec (`201`, `200`, `204`, `400`, `404`, `409`, `422`) tem pelo menos um
+- [x] Cada status code do spec (`201`, `200`, `204`, `400`, `404`, `409`, `422`) tem pelo menos um
       teste que o produz de verdade
-- [ ] Teste específico para "paciente excluído desaparece de `GET`/`show`/`biomarkers`/`update`/
+- [x] Teste específico para "paciente excluído desaparece de `GET`/`show`/`biomarkers`/`update`/
       `updateStatus`" (spec P4 AC2)
-- [ ] Teste específico para "reenviar `DELETE` no mesmo id excluído dá 404" (spec P4 AC3)
-- [ ] `check-layer-boundary.sh` limpo
-- [ ] Gate check passes: `composer test && vendor/bin/phpstan analyse && vendor/bin/pint --test`
-- [ ] `docker compose down -v && docker compose up -d --wait` do zero sobe limpo, `curl -f
+- [x] Teste específico para "reenviar `DELETE` no mesmo id excluído dá 404" (spec P4 AC3)
+- [x] `check-layer-boundary.sh` limpo
+- [x] Gate check passes: `composer test && vendor/bin/phpstan analyse && vendor/bin/pint --test`
+- [x] `docker compose down -v && docker compose up -d --wait` do zero sobe limpo, `curl -f
       localhost:9000/up` 200, `Patient::count()` ≥ 5000 com nomes `pt_BR`
 
 **Tests**: e2e
 **Gate**: build
 
 **Commit**: `test(patient-http): cover new patient lifecycle endpoints end-to-end`
+
+**Status**: ✅ Complete — 34 new/updated Feature tests added to `PatientControllerTest.php` (46 total
+in the file), covering every new/changed endpoint's happy path and every listed edge case (see
+requirement traceability below). Full build gate green: `composer test` (all green, 0 failures),
+`phpstan analyse` (0 errors, run with `--memory-limit=512M` — default 128M crashes the parallel
+worker on this machine, unrelated to this feature's code), `pint --test` (passed), `check-layer-boundary.sh`
+(clean). `docker compose down -v && docker compose up -d --build --wait` from zero verified live:
+`curl -f localhost:9000/up` → 200, `Patient::count()` → 5000, first 10 names are Portuguese
+(`pt_BR`). Additionally smoke-tested the live container directly with `curl` against
+`POST/PATCH/PATCH .../status/DELETE /api/v1/patients` confirming the exact 201+Location/200/409/400/204/404
+sequence from the spec's independent tests.
+
+**Deviation noted**: the local (gitignored) `api/.env` still had `APP_FAKER_LOCALE=en_US` from
+before this feature — `.env.example` was already updated to `pt_BR` in T9, but the pre-existing local
+`.env` was never migrated (expected: each dev environment configures its own `.env`; the committed
+`.env.example` is what's authoritative). Updated the local `.env` to `pt_BR` and reseeded via
+`docker compose down -v && up` to actually demonstrate P6 AC1 end to end; no tracked file changed.
 
 ---
 
