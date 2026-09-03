@@ -39,7 +39,13 @@ const fakeBrand: Brand = {
   radii: { sm: 4, md: 8, lg: 12, pill: 999 },
   spacing: (n: number) => n * 4,
   assets: { logo: { uri: 'logo' }, splashIcon: { uri: 'splash' } },
-  copy: { patientsTitle: 'Patients', emptyPatients: 'No patients', aiDisclaimer: 'Disclaimer' },
+  copy: {
+    patientsTitle: 'Patients',
+    emptyPatients: 'No patients',
+    aiDisclaimer: 'Disclaimer',
+    emptyBiomarkers: 'No biomarkers',
+    emptyFilteredPatients: 'No filtered patients',
+  },
   defaults: { aiActionsEnabled: false, offlineBanner: true },
 };
 
@@ -47,9 +53,10 @@ const fakePatient: Patient = {
   id: 'patient-1',
   name: 'Maria Silva',
   birthDate: '1990-01-01',
-  goal: 'weight-loss',
+  goal: 'lose_weight',
   status: 'active',
   needsFollowUp: false,
+  statusChangedAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
 };
 

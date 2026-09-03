@@ -2,7 +2,7 @@
   "expo": {
     "name": "mobile",
     "slug": "mobile",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "mobile",
@@ -37,6 +37,15 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "brandId": "nutri-care",
+      "apiUrl": "",
+      "router": {},
+      "eas": {
+        "projectId": "9a7ed133-242f-47a6-b70f-ebc2bfeeb50b"
+      }
+    },
+    "owner": "brunols7"
   }
 }

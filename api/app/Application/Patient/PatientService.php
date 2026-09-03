@@ -11,11 +11,15 @@ use App\Domain\Biomarker\BiomarkerStatus;
 use App\Domain\Biomarker\CreateBiomarkerData;
 use App\Domain\Brand\BrandRepository;
 use App\Domain\FeatureFlag\Exceptions\BrandNotFound;
+use App\Domain\Patient\Exceptions\InvalidStatusFilter;
+use App\Domain\Patient\Exceptions\InvalidStatusTransition;
 use App\Domain\Patient\Exceptions\PatientNotFound;
 use App\Domain\Patient\Patient;
 use App\Domain\Patient\PatientCursor;
 use App\Domain\Patient\PatientPage;
 use App\Domain\Patient\PatientRepository;
+use App\Domain\Patient\PatientStatus;
+use Illuminate\Support\Carbon;
 use Ramsey\Uuid\Uuid;
 
 final class PatientService
@@ -37,6 +41,7 @@ final class PatientService
         ?string $search,
         ?string $rawCursor,
         ?int $limit,
+        ?string $rawStatuses = null,
     ): PatientPage {
         $brand = $this->brands->findBySlug($brandSlug);
 
@@ -46,7 +51,24 @@ final class PatientService
 
         $cursor = $rawCursor !== null ? PatientCursor::decode($rawCursor) : null;
 
-        return $this->patients->paginate($brand->id, $search, $cursor, $this->clampLimit($limit));
+        return $this->patients->paginate(
+            $brand->id,
+            $search,
+            $cursor,
+            $this->clampLimit($limit),
+            $this->resolveStatuses($rawStatuses),
+        );
+    }
+
+    public function create(string $name, string $birthDate, string $goal, string $brandSlug): Patient
+    {
+        $brand = $this->brands->findBySlug($brandSlug);
+
+        if ($brand === null) {
+            throw new BrandNotFound($brandSlug);
+        }
+
+        return $this->patients->insert($brand->id, $name, $birthDate, $goal);
     }
 
     public function getById(string $id): Patient
@@ -102,6 +124,43 @@ final class PatientService
         return $biomarker;
     }
 
+    /**
+     * @param  array<string, mixed>  $fields
+     */
+    public function update(string $id, array $fields): Patient
+    {
+        $this->assertValidId($id);
+
+        return $this->patients->update($id, $fields);
+    }
+
+    public function changeStatus(string $id, string $targetStatus): Patient
+    {
+        $this->assertValidId($id);
+
+        $current = $this->patients->findById($id);
+
+        if ($current === null) {
+            throw new PatientNotFound($id);
+        }
+
+        $from = PatientStatus::from($current->status);
+        $to = PatientStatus::from($targetStatus);
+
+        if (! $from->canTransitionTo($to)) {
+            throw new InvalidStatusTransition($from->value, $to->value);
+        }
+
+        return $this->patients->updateStatus($id, $to->value, Carbon::now()->toIso8601String());
+    }
+
+    public function delete(string $id): void
+    {
+        $this->assertValidId($id);
+
+        $this->patients->delete($id);
+    }
+
     public function setNeedsFollowUp(string $id, bool $value): Patient
     {
         $this->assertValidId($id);
@@ -114,6 +173,26 @@ final class PatientService
         if (preg_match(self::UUID_PATTERN, $id) !== 1) {
             throw new PatientNotFound($id);
         }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function resolveStatuses(?string $rawStatuses): array
+    {
+        if ($rawStatuses === null) {
+            return ['active'];
+        }
+
+        $values = array_map('trim', explode(',', $rawStatuses));
+
+        foreach ($values as $value) {
+            if (PatientStatus::tryFrom($value) === null) {
+                throw new InvalidStatusFilter($value);
+            }
+        }
+
+        return $values;
     }
 
     private function clampLimit(?int $limit): int

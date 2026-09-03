@@ -134,6 +134,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: Edge Case: última ação restante excluída cai no estado vazio (mobile/src/core/ui)
 - last seen: 2026-09-02T20:50:25Z
 
+### L-021 - When a spec requires two UI states to never share a component, add a test that asserts both testIDs/components exist and are distinct, not just that each renders its own copy separately.
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `mobile-ui-states` · harmful: 0
+- features: fase-6-melhorias-ux-mobile
+- evidence: P7 AC3 / validation.md#P7 (mobile-ui-states)
+- last seen: 2026-09-03T01:49:25Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

@@ -27,6 +27,7 @@ final class PatientResource extends JsonResource
             'goal' => $this->resource->goal,
             'status' => $this->resource->status,
             'needsFollowUp' => $this->resource->needsFollowUp,
+            'statusChangedAt' => $this->resource->statusChangedAt,
             'updatedAt' => $this->resource->updatedAt,
         ];
     }

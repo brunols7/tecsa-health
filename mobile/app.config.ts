@@ -9,6 +9,7 @@ type BrandBuildConfig = {
   icon: string;
   splashImage: string;
   splashBackgroundColor: string;
+  adaptiveIconBackgroundColor: string;
 };
 
 const BRAND_BUILD_CONFIG: Record<BrandId, BrandBuildConfig> = {
@@ -18,6 +19,7 @@ const BRAND_BUILD_CONFIG: Record<BrandId, BrandBuildConfig> = {
     icon: './src/brands/nutri-care/assets/logo.png',
     splashImage: './src/brands/nutri-care/assets/splash-icon.png',
     splashBackgroundColor: '#F2F5F7',
+    adaptiveIconBackgroundColor: '#0F6E63',
   },
   'vita-plus': {
     displayName: 'VitaPlus',
@@ -25,6 +27,7 @@ const BRAND_BUILD_CONFIG: Record<BrandId, BrandBuildConfig> = {
     icon: './src/brands/vita-plus/assets/logo.png',
     splashImage: './src/brands/vita-plus/assets/splash-icon.png',
     splashBackgroundColor: '#FBF3E9',
+    adaptiveIconBackgroundColor: '#F2734A',
   },
 };
 
@@ -65,6 +68,9 @@ function withBrandedSplash(
   });
 }
 
+const easProjectId = (config: ConfigContext['config']): string | undefined =>
+  (config.extra?.eas as { projectId?: string } | undefined)?.projectId;
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: build.displayName,
@@ -82,12 +88,26 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     adaptiveIcon: {
       ...config.android?.adaptiveIcon,
       foregroundImage: build.icon,
+      backgroundColor: build.adaptiveIconBackgroundColor,
+      backgroundImage: undefined,
+      monochromeImage: undefined,
     },
   },
   plugins: withBrandedSplash(config.plugins ?? [], build),
+  updates: {
+    ...config.updates,
+    url: `https://u.expo.dev/${easProjectId(config)}`,
+  },
+  runtimeVersion: {
+    policy: 'appVersion',
+  },
   extra: {
     ...config.extra,
     brandId,
     apiUrl,
+    eas: {
+      ...config.extra?.eas,
+      projectId: easProjectId(config),
+    },
   },
 });

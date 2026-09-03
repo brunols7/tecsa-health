@@ -64,7 +64,7 @@ describe('TabLayout', () => {
 
     const { queryByText } = await render(<TabLayout />);
 
-    expect(queryByText('Screen:(tabs)')).toBeNull();
+    expect(queryByText('Screen:index')).toBeNull();
   });
 
   it('renderiza a navegação principal assim que o gate biométrico resolve para unlocked', async () => {
@@ -77,8 +77,8 @@ describe('TabLayout', () => {
 
     const { queryByText } = await render(<TabLayout />);
 
-    expect(queryByText('Screen:(tabs)')).toBeTruthy();
-    expect(queryByText('Screen:patients/[id]')).toBeTruthy();
+    expect(queryByText('Screen:index')).toBeTruthy();
+    expect(queryByText('Screen:patients/new')).toBeTruthy();
   });
 
   it('mantém o aviso de segurança visível e só libera a navegação principal após o usuário confirmar', async () => {
@@ -94,7 +94,7 @@ describe('TabLayout', () => {
 
     const { queryByText, getByText } = await render(<TabLayout />);
 
-    expect(queryByText('Screen:(tabs)')).toBeNull();
+    expect(queryByText('Screen:index')).toBeNull();
     expect(
       getByText(
         'Este dispositivo não tem nenhum bloqueio de tela configurado (PIN, padrão, senha ou ' +
@@ -105,6 +105,6 @@ describe('TabLayout', () => {
 
     fireEvent.press(getByText('Entendi, continuar'));
 
-    await waitFor(() => expect(queryByText('Screen:(tabs)')).toBeTruthy());
+    await waitFor(() => expect(queryByText('Screen:index')).toBeTruthy());
   });
 });

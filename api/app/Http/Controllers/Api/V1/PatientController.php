@@ -8,7 +8,9 @@ use App\Application\Patient\PatientService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateBiomarkerRequest;
 use App\Http\Requests\ListPatientsRequest;
-use App\Http\Requests\UpdateFollowUpRequest;
+use App\Http\Requests\StorePatientRequest;
+use App\Http\Requests\UpdatePatientRequest;
+use App\Http\Requests\UpdatePatientStatusRequest;
 use App\Http\Resources\BiomarkerResource;
 use App\Http\Resources\PatientPageResource;
 use App\Http\Resources\PatientResource;
@@ -33,9 +35,27 @@ final class PatientController extends Controller
             $request->validated('search'),
             $request->validated('cursor'),
             $limit !== null ? (int) $limit : null,
+            $request->validated('status'),
         );
 
         return (new PatientPageResource($page))->response();
+    }
+
+    #[DocResponse(422, description: 'Invalid body')]
+    #[DocResponse(404, description: 'Brand not found')]
+    public function store(StorePatientRequest $request): JsonResponse
+    {
+        $patient = $this->patients->create(
+            $request->validated('name'),
+            $request->validated('birthDate'),
+            $request->validated('goal'),
+            $request->validated('brand'),
+        );
+
+        return (new PatientResource($patient))
+            ->response()
+            ->setStatusCode(201)
+            ->header('Location', "/api/v1/patients/{$patient->id}");
     }
 
     #[DocResponse(404, description: 'Patient not found')]
@@ -56,9 +76,9 @@ final class PatientController extends Controller
 
     #[DocResponse(422, description: 'Invalid body')]
     #[DocResponse(404, description: 'Patient not found')]
-    public function updateFollowUp(UpdateFollowUpRequest $request, string $id): JsonResponse
+    public function update(UpdatePatientRequest $request, string $id): JsonResponse
     {
-        $patient = $this->patients->setNeedsFollowUp($id, $request->boolean('needsFollowUp'));
+        $patient = $this->patients->update($id, $request->validated());
 
         return (new PatientResource($patient))->response();
     }
@@ -73,5 +93,23 @@ final class PatientController extends Controller
             ->response()
             ->setStatusCode(201)
             ->header('Location', "/api/v1/patients/{$id}/biomarkers");
+    }
+
+    #[DocResponse(422, description: 'Invalid body')]
+    #[DocResponse(404, description: 'Patient not found')]
+    #[DocResponse(409, description: 'Invalid status transition')]
+    public function updateStatus(UpdatePatientStatusRequest $request, string $id): JsonResponse
+    {
+        $patient = $this->patients->changeStatus($id, $request->validated('status'));
+
+        return (new PatientResource($patient))->response();
+    }
+
+    #[DocResponse(404, description: 'Patient not found')]
+    public function destroy(string $id): JsonResponse
+    {
+        $this->patients->delete($id);
+
+        return response()->json(null, 204);
     }
 }

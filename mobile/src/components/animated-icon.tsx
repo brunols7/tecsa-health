@@ -5,10 +5,13 @@ import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, { Easing, Keyframe } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
+import { useTheme } from '@/core/theme/useTheme';
+
 const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
 const DURATION = 600;
 
 export function AnimatedSplashOverlay() {
+  const { colors, assets } = useTheme();
   const [animate, setAnimate] = useState(false);
   const [visible, setVisible] = useState(true);
 
@@ -33,7 +36,10 @@ export function AnimatedSplashOverlay() {
     },
   });
 
-  const image = <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />;
+  const overlayStyle = [styles.splashOverlay, { backgroundColor: colors.background }];
+  const image = (
+    <Image testID="splash-overlay-image" style={styles.overlayImage} source={assets.splashIcon} />
+  );
 
   return animate ? (
     <Animated.View
@@ -43,7 +49,7 @@ export function AnimatedSplashOverlay() {
           scheduleOnRN(setVisible, false);
         }
       })}
-      style={styles.splashOverlay}>
+      style={overlayStyle}>
       {image}
     </Animated.View>
   ) : (
@@ -53,7 +59,7 @@ export function AnimatedSplashOverlay() {
           setAnimate(true);
         });
       }}
-      style={styles.splashOverlay}>
+      style={overlayStyle}>
       {image}
     </View>
   );
@@ -131,6 +137,10 @@ const styles = StyleSheet.create({
     width: 76,
     height: 71,
   },
+  overlayImage: {
+    width: 96,
+    height: 96,
+  },
   background: {
     borderRadius: 40,
     experimental_backgroundImage: `linear-gradient(180deg, #3C9FFE, #0274DF)`,
@@ -140,7 +150,6 @@ const styles = StyleSheet.create({
   },
   splashOverlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: '#208AEF',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,

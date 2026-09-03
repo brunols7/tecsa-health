@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 21,
+  "next_id": 22,
   "lessons": [
     {
       "id": "L-001",
@@ -364,6 +364,24 @@
       ],
       "created": "2026-09-02T20:50:25Z",
       "last_seen": "2026-09-02T20:50:25Z"
+    },
+    {
+      "id": "L-021",
+      "key": "spec_precision_gap::when a spec requires two ui states to never share a component add a test that asserts both testids components exist and are distinct not just that each renders its own copy separately",
+      "text": "When a spec requires two UI states to never share a component, add a test that asserts both testIDs/components exist and are distinct, not just that each renders its own copy separately.",
+      "signal": "spec_precision_gap",
+      "scope": "mobile-ui-states",
+      "status": "candidate",
+      "features": [
+        "fase-6-melhorias-ux-mobile"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "P7 AC3 / validation.md#P7 (mobile-ui-states)"
+      ],
+      "created": "2026-09-03T01:49:25Z",
+      "last_seen": "2026-09-03T01:49:25Z"
     }
   ]
 }

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -20,12 +21,14 @@ use Illuminate\Support\Carbon;
  * @property string $goal
  * @property string $status
  * @property bool $needs_follow_up
+ * @property Carbon|null $status_changed_at
  * @property Carbon $updated_at
+ * @property Carbon|null $deleted_at
  */
 final class Patient extends Model
 {
     /** @use HasFactory<PatientFactory> */
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, SoftDeletes;
 
     public $timestamps = false;
 
@@ -38,13 +41,16 @@ final class Patient extends Model
         'goal',
         'status',
         'needs_follow_up',
+        'status_changed_at',
         'updated_at',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
         'needs_follow_up' => 'boolean',
+        'status_changed_at' => 'datetime',
         'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     protected static function newFactory(): PatientFactory
