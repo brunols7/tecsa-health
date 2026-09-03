@@ -419,9 +419,9 @@ e explicação de escolhas de produto/arquitetura que não couberem no README p�
 - Skill: NONE
 
 **Done when**:
-- [ ] `.gitignore` tem a linha `docs-internal/`
-- [ ] `git status docs-internal/` não mostra a pasta como stageable
-- [ ] Pelo menos 2 arquivos escritos dentro (`roteiro-pessoal.md`, `explicacao-escolhas.md`)
+- [x] `.gitignore` tem a linha `docs-internal/`
+- [x] `git status docs-internal/` não mostra a pasta como stageable
+- [x] Pelo menos 2 arquivos escritos dentro (`roteiro-pessoal.md`, `explicacao-escolhas.md`)
 
 **Tests**: none
 **Gate**: quick
