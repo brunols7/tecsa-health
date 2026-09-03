@@ -447,13 +447,13 @@ final)
 - Skill: NONE
 
 **Done when**:
-- [ ] `docker compose down -v && docker compose up -d --wait` sobe a API na 9000 sem intervenção
+- [x] `docker compose down -v && docker compose up -d --wait` sobe a API na 9000 sem intervenção
       manual
-- [ ] `composer test` e `npm test` verdes
-- [ ] `tsc --noEmit`, `phpstan analyse`, `pint --test` limpos
-- [ ] Os dois scripts de fronteira passam
-- [ ] Grep de segredo e de marca não retornam nada
-- [ ] Resultado item a item reportado ao usuário
+- [x] `composer test` e `npm test` verdes
+- [x] `tsc --noEmit`, `phpstan analyse`, `pint --test` limpos
+- [x] Os dois scripts de fronteira passam
+- [x] Grep de segredo e de marca não retornam nada
+- [x] Resultado item a item reportado ao usuário
 
 **Tests**: integration
 **Gate**: build
@@ -477,8 +477,8 @@ concluídos pelo agente.
 - Skill: NONE
 
 **Done when**:
-- [ ] Arquivo criado com um passo a passo claro por item
-- [ ] Usuário informado explicitamente de que a Fase 5 depende dessa confirmação para fechar 100%
+- [x] Arquivo criado com um passo a passo claro por item
+- [x] Usuário informado explicitamente de que a Fase 5 depende dessa confirmação para fechar 100%
 
 **Tests**: none
 **Gate**: quick
