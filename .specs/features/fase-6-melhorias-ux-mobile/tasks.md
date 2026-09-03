@@ -608,11 +608,11 @@ nativo do React Native.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Seleção de "Inativos e concluídos" chama `onSelect('inactive_completed')` e fecha o modal
-- [ ] Seleção de "Ativos" chama `onSelect('active')` e fecha o modal
-- [ ] `current` selecionado aparece marcado visualmente
-- [ ] Teste cobrindo as 2 seleções + fechar sem selecionar
-- [ ] Gate check passes: `npm test`
+- [x] Seleção de "Inativos e concluídos" chama `onSelect('inactive_completed')` e fecha o modal
+- [x] Seleção de "Ativos" chama `onSelect('active')` e fecha o modal
+- [x] `current` selecionado aparece marcado visualmente
+- [x] Teste cobrindo as 2 seleções + fechar sem selecionar
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick
