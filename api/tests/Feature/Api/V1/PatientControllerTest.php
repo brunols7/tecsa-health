@@ -219,18 +219,38 @@ class PatientControllerTest extends TestCase
         $response->assertJsonPath('error.code', 'VALIDATION_ERROR');
     }
 
-    public function test_patch_ignores_fields_other_than_needs_follow_up(): void
+    public function test_patch_ignores_fields_outside_the_allowed_set(): void
     {
         $brand = BrandModel::factory()->create();
         $patient = PatientModel::factory()->create(['brand_id' => $brand->id, 'name' => 'Ana Silva', 'needs_follow_up' => false]);
 
         $response = $this->patchJson("/api/v1/patients/{$patient->id}", [
             'needsFollowUp' => true,
-            'name' => 'Hacked Name',
+            'status' => 'completed',
         ]);
 
         $response->assertStatus(200);
         $response->assertJsonPath('needsFollowUp', true);
-        $response->assertJsonPath('name', 'Ana Silva');
+        $response->assertJsonPath('status', 'active');
+    }
+
+    public function test_patch_updates_name_and_leaves_other_fields_unchanged(): void
+    {
+        $brand = BrandModel::factory()->create();
+        $patient = PatientModel::factory()->create([
+            'brand_id' => $brand->id,
+            'name' => 'Ana Silva',
+            'birth_date' => '1990-01-01',
+            'goal' => 'lose_weight',
+            'needs_follow_up' => false,
+        ]);
+
+        $response = $this->patchJson("/api/v1/patients/{$patient->id}", ['name' => 'Ana Silva Santos']);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('name', 'Ana Silva Santos');
+        $response->assertJsonPath('birthDate', '1990-01-01');
+        $response->assertJsonPath('goal', 'lose_weight');
+        $response->assertJsonPath('needsFollowUp', false);
     }
 }

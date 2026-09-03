@@ -269,10 +269,10 @@ LIMIT 20` mostra nomes brasileiros; `INSERT` manual com `goal='invalid'` falha p
 | UXBE-06 | P1: Criar paciente | Design | Pending |
 | UXBE-31 | P1: Criar paciente | Design | Pending |
 | UXBE-07 | P2: Editar cadastro | Design | Implementing |
-| UXBE-08 | P2: Editar cadastro | Design | Pending |
-| UXBE-09 | P2: Editar cadastro | Design | Pending |
+| UXBE-08 | P2: Editar cadastro | Design | Implementing |
+| UXBE-09 | P2: Editar cadastro | Design | Implementing |
 | UXBE-10 | P2: Editar cadastro | Design | Implementing |
-| UXBE-11 | P2: Editar cadastro | Design | Pending |
+| UXBE-11 | P2: Editar cadastro | Design | Implementing |
 | UXBE-12 | P3: Ciclo de vida | Design | Implementing |
 | UXBE-13 | P3: Ciclo de vida | Design | Implementing |
 | UXBE-14 | P3: Ciclo de vida | Design | Implementing |

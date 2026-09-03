@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Application\Patient\PatientService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ListPatientsRequest;
-use App\Http\Requests\UpdateFollowUpRequest;
+use App\Http\Requests\UpdatePatientRequest;
 use App\Http\Resources\BiomarkerResource;
 use App\Http\Resources\PatientPageResource;
 use App\Http\Resources\PatientResource;
@@ -55,9 +55,9 @@ final class PatientController extends Controller
 
     #[DocResponse(422, description: 'Invalid body')]
     #[DocResponse(404, description: 'Patient not found')]
-    public function updateFollowUp(UpdateFollowUpRequest $request, string $id): JsonResponse
+    public function updateFollowUp(UpdatePatientRequest $request, string $id): JsonResponse
     {
-        $patient = $this->patients->setNeedsFollowUp($id, $request->boolean('needsFollowUp'));
+        $patient = $this->patients->update($id, $request->validated());
 
         return (new PatientResource($patient))->response();
     }

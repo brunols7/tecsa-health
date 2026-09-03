@@ -578,15 +578,27 @@ aqui).
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] Todos os 4 campos são `sometimes`
-- [ ] Corpo vazio (nenhum campo) falha validação
-- [ ] `UpdateFollowUpRequest.php` não existe mais, nenhuma referência a ele sobra
-- [ ] Gate check passes: `composer test` (exercida via Feature test em T21)
+- [x] Todos os 4 campos são `sometimes`
+- [x] Corpo vazio (nenhum campo) falha validação
+- [x] `UpdateFollowUpRequest.php` não existe mais, nenhuma referência a ele sobra
+- [x] Gate check passes: `composer test` (exercida via Feature test em T21)
 
 **Tests**: none
 **Gate**: quick
 
 **Commit**: `feat(patient-http): consolidate UpdateFollowUpRequest into UpdatePatientRequest`
+
+**Status**: ✅ Complete — deviation: to keep `UpdateFollowUpRequest` fully removable in this commit
+without leaving the existing `PATCH /patients/:id` route broken, the controller's existing
+`updateFollowUp` method (kept under its current name until T19's planned rename) was retyped to
+`UpdatePatientRequest` and now delegates to `PatientService::update()`. This also required updating
+`tests/Feature/Api/V1/PatientControllerTest.php::test_patch_ignores_fields_other_than_needs_follow_up`,
+which asserted the old "ignore every field but needsFollowUp" behavior — that behavior is exactly
+what spec P2 AC1 replaces (`name`/`birthDate`/`goal` are now legitimately updatable). Replaced with
+`test_patch_ignores_fields_outside_the_allowed_set` (asserts a truly unknown field, e.g. `status`, is
+still ignored by mass-assignment control) and `test_patch_updates_name_and_leaves_other_fields_unchanged`
+(asserts the new partial-update behavior). This was anticipated by design.md's Risks table for this
+exact file.
 
 ---
 
