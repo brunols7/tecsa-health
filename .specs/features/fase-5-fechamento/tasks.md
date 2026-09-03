@@ -370,7 +370,7 @@ tela/comando exato a mostrar.
 - Skill: NONE
 
 **Done when**:
-- [ ] Arquivo criado com seções nomeadas por peso de rubrica e tempo estimado por seção somando
+- [x] Arquivo criado com seções nomeadas por peso de rubrica e tempo estimado por seção somando
       3-5 minutos
 
 **Tests**: none
