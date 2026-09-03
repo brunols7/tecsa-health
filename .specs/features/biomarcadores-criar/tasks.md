@@ -487,10 +487,10 @@ onSuccess={() => router.back()} />`.
 - Skill: NONE
 
 **Done when**:
-- [ ] Tela renderiza `BiomarkerForm` com o `patientId` correto vindo da rota
-- [ ] `onSuccess` chama `router.back()`
-- [ ] Gate check passa: `cd mobile && npx tsc --noEmit && npm run pretest && npm test`
-- [ ] Contagem de testes: 2+ novos em `new.test.tsx`
+- [x] Tela renderiza `BiomarkerForm` com o `patientId` correto vindo da rota
+- [x] `onSuccess` chama `router.back()`
+- [x] Gate check passa: `cd mobile && npx tsc --noEmit && npm run pretest && npm test`
+- [x] Contagem de testes: 2+ novos em `new.test.tsx`
 
 **Tests**: unit
 **Gate**: build
