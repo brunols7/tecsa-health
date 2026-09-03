@@ -62,16 +62,19 @@ const fakeAction: AiAction = {
   createdAt: '2026-01-01T10:00:00Z',
 };
 
-function renderSection() {
+function renderSection(prepareCache?: (queryClient: ReturnType<typeof createTestQueryClient>) => void) {
   const queryClient = createTestQueryClient();
+  prepareCache?.(queryClient);
 
-  return render(
+  const view = render(
     <QueryClientProvider client={queryClient}>
       <BrandProvider brand={fakeBrand}>
         <AiActionsSection patientId="patient-1" />
       </BrandProvider>
     </QueryClientProvider>,
   );
+
+  return Object.assign(view, { queryClient });
 }
 
 describe('AiActionsSection', () => {
@@ -86,7 +89,7 @@ describe('AiActionsSection', () => {
     mockedUseFlag.mockReset();
   });
 
-  it('não renderiza nada e não chama o GET quando a flag aiActionsEnabled está desligada', async () => {
+  it('não renderiza nada e não chama o GET quando a flag está desligada e não há ações em cache', async () => {
     mockedUseFlag.mockReturnValue(false);
     mockedFetchAiActions.mockResolvedValue([]);
 
@@ -94,6 +97,31 @@ describe('AiActionsSection', () => {
 
     expect(queryByTestId('ai-actions-section')).toBeNull();
     expect(queryByText('Ações de acompanhamento')).toBeNull();
+    expect(mockedFetchAiActions).not.toHaveBeenCalled();
+  });
+
+  it('mantém as ações já carregadas em cache visíveis quando a flag está desligada, escondendo só gerar/atualizar', async () => {
+    mockedUseFlag.mockReturnValue(false);
+
+    const { getByText, queryByTestId } = await renderSection((queryClient) =>
+      queryClient.setQueryData(['ai-actions', 'patient-1'], [fakeAction]),
+    );
+
+    await waitFor(() => expect(getByText('Reduzir consumo de açúcar')).toBeTruthy());
+    expect(getByText('Ações de acompanhamento')).toBeTruthy();
+    expect(queryByTestId('ai-actions-refresh-button')).toBeNull();
+    expect(queryByTestId('ai-actions-generate-button')).toBeNull();
+    expect(mockedFetchAiActions).not.toHaveBeenCalled();
+  });
+
+  it('não mostra o estado de erro/tentar novamente quando a flag está desligada e não há cache (evita "sumir para erro")', async () => {
+    mockedUseFlag.mockReturnValue(false);
+    mockedFetchAiActions.mockRejectedValue(new Error('boom'));
+
+    const { queryByTestId, queryByText } = await renderSection();
+
+    expect(queryByTestId('ai-actions-section')).toBeNull();
+    expect(queryByText('Não foi possível carregar as ações de acompanhamento.')).toBeNull();
     expect(mockedFetchAiActions).not.toHaveBeenCalled();
   });
 

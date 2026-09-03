@@ -7,6 +7,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { resolveBrand } from '@/brands';
 import { deletePatient, fetchPatientDetail } from '@/core/api/patients';
 import type { Patient } from '@/core/api/schemas/patient';
+import { useFlag } from '@/core/flags/useFlag';
 import { createTestQueryClient } from '@/core/offline/queryClient';
 import { useIsOffline } from '@/core/offline/network';
 import { BrandProvider } from '@/core/theme/BrandProvider';
@@ -19,8 +20,14 @@ type TabsScreenOptions = {
   headerRight?: () => ReactNode;
 };
 
+type TabsScreenMockProps = {
+  name: string;
+  options?: { title?: string; href?: string | null };
+};
+
 jest.mock('@/core/api/patients');
 jest.mock('@/core/offline/network');
+jest.mock('@/core/flags/useFlag');
 jest.mock('expo-router', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports -- jest.mock factories can only reference identifiers required inside them
   const { Text, View } = require('react-native');
@@ -41,8 +48,12 @@ jest.mock('expo-router', () => {
       </View>
     );
   }
-  function TabsScreenMock() {
-    return null;
+  function TabsScreenMock({ name, options }: TabsScreenMockProps) {
+    if (options?.href === null) {
+      return null;
+    }
+
+    return <Text testID={`tab-screen-${name}`}>{options?.title}</Text>;
   }
   TabsMock.Screen = TabsScreenMock;
 
@@ -60,6 +71,7 @@ const mockedUseLocalSearchParams = useLocalSearchParams as jest.MockedFunction<
 >;
 const mockedUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
 const mockedUseIsOffline = useIsOffline as jest.MockedFunction<typeof useIsOffline>;
+const mockedUseFlag = useFlag as jest.MockedFunction<typeof useFlag>;
 
 const mockRouterBack = jest.fn();
 const mockRouterPush = jest.fn();
@@ -93,6 +105,7 @@ describe('PatientTabsLayout', () => {
       typeof useLocalSearchParams
     >);
     mockedUseIsOffline.mockReturnValue(false);
+    mockedUseFlag.mockReturnValue(true);
     mockedUseRouter.mockReturnValue({
       back: mockRouterBack,
       push: mockRouterPush,
@@ -105,6 +118,7 @@ describe('PatientTabsLayout', () => {
     mockedUseLocalSearchParams.mockReset();
     mockedUseRouter.mockReset();
     mockedUseIsOffline.mockReset();
+    mockedUseFlag.mockReset();
     mockRouterBack.mockReset();
     mockRouterPush.mockReset();
   });
@@ -156,6 +170,26 @@ describe('PatientTabsLayout', () => {
     expect(getByTestId('patient-detail-header-title').props.children).toBe('Maria Silva');
     expect(getByTestId('patient-detail-back-button')).toBeTruthy();
     expect(getByTestId('patient-detail-menu-trigger')).toBeTruthy();
+  });
+
+  it('esconde a aba de acompanhamento e mantém só a de informações quando o kill switch de IA está desligado', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedUseFlag.mockReturnValue(false);
+
+    const { findByTestId, queryByTestId } = await renderLayout();
+
+    await findByTestId('tab-screen-index');
+    expect(queryByTestId('tab-screen-follow-up')).toBeNull();
+  });
+
+  it('mostra a aba de acompanhamento quando o kill switch de IA está ligado', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedUseFlag.mockReturnValue(true);
+
+    const { findByTestId } = await renderLayout();
+
+    await findByTestId('tab-screen-index');
+    await findByTestId('tab-screen-follow-up');
   });
 
   it('botão de voltar do header chama router.back()', async () => {

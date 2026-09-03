@@ -4,7 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Tabs, useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, EllipsisVertical, Sparkles, User } from 'lucide-react-native';
 
+import { useFlag } from '@/core/flags/useFlag';
 import { useIsOffline } from '@/core/offline/network';
+import { useAiActionsQuery } from '@/core/patients/useAiActionsQuery';
 import { useDeletePatientMutation } from '@/core/patients/useDeletePatientMutation';
 import { usePatientDetailQuery } from '@/core/patients/usePatientDetailQuery';
 import { useTheme } from '@/core/theme/useTheme';
@@ -78,6 +80,9 @@ export default function PatientTabsLayout() {
   const patientQuery = usePatientDetailQuery(id);
   const deleteMutation = useDeletePatientMutation();
   const isOffline = useIsOffline();
+  const aiActionsEnabled = useFlag('aiActionsEnabled');
+  const aiActionsQuery = useAiActionsQuery(id);
+  const hasLoadedAiActions = (aiActionsQuery.data?.length ?? 0) > 0;
   const [menuVisible, setMenuVisible] = useState(false);
 
   const isOfflineWithoutCache = isOffline && patientQuery.data === undefined;
@@ -169,6 +174,7 @@ export default function PatientTabsLayout() {
             options={{
               title: 'Acompanhamento',
               tabBarIcon: ({ color, size }) => <Sparkles color={color} size={size} />,
+              href: aiActionsEnabled || hasLoadedAiActions ? undefined : null,
             }}
           />
         </Tabs>

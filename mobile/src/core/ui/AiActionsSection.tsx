@@ -146,7 +146,9 @@ export function AiActionsSection({ patientId }: { patientId: string }) {
   const query = useAiActionsQuery(patientId);
   const { colors, typography, spacing, copy } = useTheme();
 
-  if (!aiActionsEnabled) {
+  const hasLoadedActions = (query.data?.length ?? 0) > 0;
+
+  if (!aiActionsEnabled && !hasLoadedActions) {
     return null;
   }
 
@@ -176,13 +178,13 @@ export function AiActionsSection({ patientId }: { patientId: string }) {
         isEmpty={(query.data?.length ?? 0) === 0}
         onRetry={() => query.refetch()}
         skeleton={<AiActionsSkeleton />}
-        emptyState={<AiActionsEmptyState patientId={patientId} />}
+        emptyState={aiActionsEnabled ? <AiActionsEmptyState patientId={patientId} /> : null}
         errorMessage={GET_ERROR_MESSAGE}
         data={query.data}
       >
         {(actions) => (
           <View style={{ gap: spacing(3) }}>
-            <AiActionsRefreshButton patientId={patientId} />
+            {aiActionsEnabled ? <AiActionsRefreshButton patientId={patientId} /> : null}
             {actions.map((action) => (
               <AiActionCard key={action.id} action={action} patientId={patientId} />
             ))}
