@@ -1,66 +1,100 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# tecsa-health — api
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Backend Laravel 11 do app white-label de nutricionista. Domínio isolado de framework,
+Eloquent confinado à camada de infraestrutura, contrato de API exposto via OpenAPI gerado a
+partir do código. Ver a arquitetura completa e as regras invioláveis em
+[`CLAUDE.md`](../CLAUDE.md).
 
-## About Laravel
+## Arquitetura em camadas
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```
+Http\Controllers  →  Application\Services  →  Domain\...\Repository (interface)
+                            ↓                          ↑
+                  Domain\...\LlmClient          Infrastructure\Persistence\Eloquent
+                     (interface)                        ↓
+                            ↑                        Postgres
+              Infrastructure\Llm\AnthropicClient / GeminiClient
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Camada | Pode | Não pode |
+|---|---|---|
+| Controller | FormRequest, chamar Service, devolver Resource e status | Eloquent, query, regra, cálculo, `if` de negócio |
+| Service (`Application/`) | Regra de negócio, orquestração, chamar interfaces do Domain | `Model::`, `DB::`, `Request`, `response()` |
+| Domain | Entidades, enums, objetos de valor, interfaces, regra pura | Laravel, Eloquent, HTTP, facades |
+| Repository (impl, `Infrastructure/`) | Eloquent, query, mapear Model → entidade de domínio | regra de negócio, chamar Service |
+| Adapter LLM (`Infrastructure/Llm/`) | HTTP para o provedor, parse e validação de forma | decidir o que fazer com o resultado |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Interfaces vivem em `Domain/`, implementações em `Infrastructure/`, e o binding entre as duas
+fica isolado em `app/Providers/DomainServiceProvider.php`. O Repository sempre devolve entidade
+de domínio, nunca Model do Eloquent — isso é o que permite o Service nunca conhecer Eloquent.
 
-## Learning Laravel
+A fronteira é garantida mecanicamente, não só por convenção: `composer test` roda
+`scripts/check-layer-boundary.sh` no `pretest`, que falha se `Illuminate\` aparecer em
+`app/Domain/`, se `DB::`/`Models\` aparecerem em `app/Application/` ou
+`app/Http/Controllers/`, ou se `$request->all()` aparecer em qualquer controller.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Como rodar os testes
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+composer test        # pretest (guard-rail de camada) + suíte Pest completa
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+`tests/Unit/` roda sem banco (inclui `BiomarkerStatus::from()`, regra pura de faixa de
+referência). `tests/Feature/` usa `RefreshDatabase` contra o Postgres configurado em
+`.env.testing`.
 
-## Laravel Sponsors
+## Lint e análise estática
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer lint         # Laravel Pint — PSR-12
+composer stan          # PHPStan/Larastan nível 6+
+```
 
-### Premium Partners
+Rode os dois antes de qualquer commit. Nenhum dos dois é opcional para considerar uma mudança
+pronta — ver `CLAUDE.md` §13 (Definition of Done).
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Endpoints principais
 
-## Contributing
+Todos sob o prefixo `/api/v1`. Fonte de verdade: `routes/api.php`.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/feature-flags` | Flags de feature com escopo por marca (`aiActionsEnabled` é o kill switch de IA) |
+| `GET` | `/patients` | Lista paginada por cursor, com busca |
+| `POST` | `/patients` | Cria paciente |
+| `GET` | `/patients/{id}` | Detalhe do paciente |
+| `PATCH` | `/patients/{id}` | Atualiza dados do paciente |
+| `PATCH` | `/patients/{id}/status` | Transição de ciclo de vida (`active`/`inactive`/`completed`) |
+| `DELETE` | `/patients/{id}` | Soft delete |
+| `GET` | `/patients/{id}/biomarkers` | Biomarcadores do paciente, com status derivado da faixa de referência |
+| `POST` | `/patients/{id}/biomarkers` | Cria biomarcador manualmente |
+| `GET` | `/patients/{id}/ai-actions` | Lista ações de acompanhamento sugeridas por IA |
+| `POST` | `/patients/{id}/ai-actions` | Gera novas ações via LLM (rate limit `throttle:ai`, kill switch aplicado) |
+| `PATCH` | `/ai-actions/{id}` | Aceita ou descarta uma ação sugerida |
+| `DELETE` | `/ai-actions/{id}` | Remove uma ação |
 
-## Code of Conduct
+Status HTTP seguem a tabela de `CLAUDE.md` §6.3 (201 com `Location` na criação, 204 sem corpo,
+422 para corpo inválido, 503 quando o kill switch de IA está desligado, etc.). Erros sempre no
+mesmo envelope (`{ "error": { "code", "message", "details" } }`), produzido pelo
+`Exceptions\Handler` global a partir de exceções de domínio — nenhum controller monta erro à
+mão.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Documentação OpenAPI
 
-## Security Vulnerabilities
+A API expõe um contrato OpenAPI gerado automaticamente a partir dos Controllers, FormRequests e
+API Resources via [`dedoc/scramble`](https://scramble.dedoc.co/) — não é escrito à mão, então
+não diverge do código.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Com a API rodando (`docker compose up -d --wait` ou `php artisan serve --port=9000`):
 
-## License
+```
+http://localhost:9000/docs/api
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Provedor de LLM
+
+O adapter (`Infrastructure/Llm/AnthropicClient.php` ou `GeminiClient.php`) é escolhido no boot
+por presença de env var: `ANTHROPIC_API_KEY` preenchida usa Anthropic, senão usa
+`GEMINI_API_KEY` (free tier). Ver
+[`docs/adr/0002-selecao-de-provedor-llm.md`](../docs/adr/0002-selecao-de-provedor-llm.md) para
+o racional completo.

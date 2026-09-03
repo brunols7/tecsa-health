@@ -272,8 +272,8 @@ principais, link para `/docs/api` (Scramble).
 - Skill: NONE
 
 **Done when**:
-- [ ] `grep -i "About Laravel" api/README.md` não retorna nada
-- [ ] Contém seções: arquitetura, como rodar testes, lint/análise estática, endpoints
+- [x] `grep -i "About Laravel" api/README.md` não retorna nada
+- [x] Contém seções: arquitetura, como rodar testes, lint/análise estática, endpoints
 
 **Tests**: none
 **Gate**: quick
