@@ -669,18 +669,25 @@ adiciona `destroy(string $id): JsonResponse` (`204`).
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `store` responde `201` com header `Location: /api/v1/patients/{id}`
-- [ ] `update` mantém compatibilidade com chamada só de `needsFollowUp` (spec P2 AC5)
-- [ ] `updateStatus` e `destroy` retornam os status corretos (`200`/`204`)
-- [ ] `check-layer-boundary.sh` continua limpo (nenhum `DB::`/`Models\`/`$request->all()` no
+- [x] `store` responde `201` com header `Location: /api/v1/patients/{id}`
+- [x] `update` mantém compatibilidade com chamada só de `needsFollowUp` (spec P2 AC5)
+- [x] `updateStatus` e `destroy` retornam os status corretos (`200`/`204`)
+- [x] `check-layer-boundary.sh` continua limpo (nenhum `DB::`/`Models\`/`$request->all()` no
       controller)
-- [ ] Gate check passes: `composer test && vendor/bin/phpstan analyse`
+- [x] Gate check passes: `composer test && vendor/bin/phpstan analyse`
 
 **Tests**: none (o Controller em si não tem teste unitário próprio no projeto — cobertura via Feature
 test em T21, mesma convenção já usada para os métodos existentes)
 **Gate**: full
 
 **Commit**: `feat(patient-http): add store, updateStatus and destroy controller actions`
+
+**Status**: ✅ Complete — deviation: also renamed the pre-existing `updateFollowUp` controller method
+to `update` (was already retyped to `UpdatePatientRequest` in T16) and updated the one-line existing
+`PATCH patients/{id}` route registration in `routes/api.php` to reference the new method name.
+Leaving the route pointing at a renamed-away method would have broken the already-passing PATCH
+Feature tests between this commit and T20; this is the direct, unavoidable consequence of the rename
+this task's own "What" calls for, not new route wiring (the 3 new routes are still added in T20).
 
 ---
 

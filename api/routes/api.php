@@ -12,7 +12,7 @@ Route::prefix('v1')->group(function () {
     Route::get('patients', [PatientController::class, 'index']);
     Route::get('patients/{id}', [PatientController::class, 'show']);
     Route::get('patients/{id}/biomarkers', [PatientController::class, 'biomarkers']);
-    Route::patch('patients/{id}', [PatientController::class, 'updateFollowUp']);
+    Route::patch('patients/{id}', [PatientController::class, 'update']);
     Route::get('patients/{id}/ai-actions', [AiActionController::class, 'index']);
     Route::post('patients/{id}/ai-actions', [AiActionController::class, 'generate'])
         ->middleware('throttle:ai');
