@@ -1,6 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { resolveBrand } from '@/brands';
 import { fetchAiActions } from '@/core/api/ai-actions';
@@ -24,6 +24,7 @@ jest.mock('@/core/flags/useFlag');
 jest.mock('@/core/offline/network');
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn(),
+  useRouter: jest.fn(),
 }));
 
 const mockedFetchPatientDetail = fetchPatientDetail as jest.MockedFunction<typeof fetchPatientDetail>;
@@ -39,6 +40,7 @@ const mockedUseLocalSearchParams = useLocalSearchParams as jest.MockedFunction<
   typeof useLocalSearchParams
 >;
 const mockedUseIsOffline = useIsOffline as jest.MockedFunction<typeof useIsOffline>;
+const mockedUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
 
 function flattenText(node: unknown): string[] {
   if (node === null || node === undefined || typeof node === 'boolean') {
@@ -98,6 +100,7 @@ describe('PatientDetailScreen', () => {
     mockedUseIsOffline.mockReturnValue(false);
     mockedUseFlag.mockReturnValue(true);
     mockedFetchAiActions.mockResolvedValue([]);
+    mockedUseRouter.mockReturnValue({ push: jest.fn() } as unknown as ReturnType<typeof useRouter>);
   });
 
   afterEach(() => {
@@ -108,6 +111,7 @@ describe('PatientDetailScreen', () => {
     mockedUseFlag.mockReset();
     mockedUseLocalSearchParams.mockReset();
     mockedUseIsOffline.mockReset();
+    mockedUseRouter.mockReset();
   });
 
   it('exibe o skeleton enquanto qualquer uma das duas buscas está pendente', async () => {
@@ -160,6 +164,37 @@ describe('PatientDetailScreen', () => {
     await waitFor(() =>
       expect(getByText('Nenhum biomarcador registrado ainda')).toBeTruthy(),
     );
+  });
+
+  it('exibe o botão "+ Adicionar" tanto no estado vazio quanto no estado com itens', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([]);
+
+    const { getByTestId } = await renderScreen();
+
+    await waitFor(() => expect(getByTestId('biomarkers-add-button')).toBeTruthy());
+
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+
+    const { getByTestId: getByTestIdWithItems } = await renderScreen();
+
+    await waitFor(() => expect(getByTestIdWithItems('biomarkers-add-button')).toBeTruthy());
+  });
+
+  it('navega para a tela de criação de biomarcador ao tocar em "+ Adicionar"', async () => {
+    const push = jest.fn();
+    mockedUseRouter.mockReturnValue({ push } as unknown as ReturnType<typeof useRouter>);
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+
+    const { getByTestId } = await renderScreen();
+
+    await waitFor(() => expect(getByTestId('biomarkers-add-button')).toBeTruthy());
+    await act(async () => {
+      fireEvent.press(getByTestId('biomarkers-add-button'));
+    });
+
+    expect(push).toHaveBeenCalledWith('/patients/patient-1/biomarkers/new');
   });
 
   it('exibe label, valor, unidade, faixa de referência e status de cada biomarcador sem recalculá-lo', async () => {

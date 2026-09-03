@@ -462,11 +462,11 @@ vazia ou não), que navega para `/patients/${id}/biomarkers/new` via `router.pus
 - Skill: NONE
 
 **Done when**:
-- [ ] Botão "+ Adicionar" renderiza tanto no estado vazio quanto no estado com itens
-- [ ] Toque no botão chama `router.push('/patients/${id}/biomarkers/new')`
-- [ ] Nenhuma regressão nos testes existentes da tela (lista, estados de erro/loading, follow-up)
-- [ ] Gate check passa: `cd mobile && npm test`
-- [ ] Contagem de testes: 2+ novos em `index.test.tsx` (ex-`[id].test.tsx`), suíte total sem queda
+- [x] Botão "+ Adicionar" renderiza tanto no estado vazio quanto no estado com itens
+- [x] Toque no botão chama `router.push('/patients/${id}/biomarkers/new')`
+- [x] Nenhuma regressão nos testes existentes da tela (lista, estados de erro/loading, follow-up)
+- [x] Gate check passa: `cd mobile && npm test`
+- [x] Contagem de testes: 2+ novos em `index.test.tsx` (ex-`[id].test.tsx`), suíte total sem queda
 
 **Tests**: unit
 **Gate**: quick

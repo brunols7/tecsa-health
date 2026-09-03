@@ -1,6 +1,6 @@
 import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import type { Biomarker } from '@/core/api/schemas/biomarker';
 import type { Patient } from '@/core/api/schemas/patient';
@@ -199,6 +199,68 @@ function BiomarkerRow({ biomarker }: { biomarker: Biomarker }) {
   );
 }
 
+function BiomarkersSection({
+  patientId,
+  biomarkers,
+}: {
+  patientId: string;
+  biomarkers: Biomarker[];
+}) {
+  const { colors, radii, typography, spacing } = useTheme();
+  const router = useRouter();
+
+  return (
+    <View style={{ gap: spacing(3) }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Text
+          style={{
+            color: colors.textPrimary,
+            fontFamily: typography.fontFamily.bold,
+            fontSize: typography.scale.lg,
+          }}
+        >
+          Biomarcadores
+        </Text>
+        <Pressable
+          testID="biomarkers-add-button"
+          onPress={() => router.push(`/patients/${patientId}/biomarkers/new`)}
+          style={{
+            backgroundColor: colors.accent,
+            borderRadius: radii.md,
+            paddingVertical: spacing(2),
+            paddingHorizontal: spacing(4),
+          }}
+        >
+          <Text
+            style={{
+              color: colors.accentContrast,
+              fontFamily: typography.fontFamily.medium,
+              fontSize: typography.scale.sm,
+            }}
+          >
+            + Adicionar
+          </Text>
+        </Pressable>
+      </View>
+      {biomarkers.length === 0 ? (
+        <BiomarkersEmptyState />
+      ) : (
+        <View style={{ gap: spacing(3) }}>
+          {biomarkers.map((biomarker) => (
+            <BiomarkerRow key={biomarker.id} biomarker={biomarker} />
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
 function BiomarkersEmptyState() {
   const { colors, typography, spacing } = useTheme();
 
@@ -257,15 +319,7 @@ export default function PatientDetailScreen() {
             toggleDisabled={mutation.isPending}
             onToggleFollowUp={(value) => mutation.mutate({ id, needsFollowUp: value })}
           />
-          {biomarkersQuery.data.length === 0 ? (
-            <BiomarkersEmptyState />
-          ) : (
-            <View style={{ gap: spacing(3) }}>
-              {biomarkersQuery.data.map((biomarker) => (
-                <BiomarkerRow key={biomarker.id} biomarker={biomarker} />
-              ))}
-            </View>
-          )}
+          <BiomarkersSection patientId={id} biomarkers={biomarkersQuery.data} />
           <AiActionsSection patientId={id} />
         </ScrollView>
       ) : null}
