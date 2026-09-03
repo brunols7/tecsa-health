@@ -73,7 +73,7 @@ describe('EditPatientScreen', () => {
 
     await waitFor(() => expect(getByTestId('patient-form-name-input')).toBeTruthy());
     expect(getByTestId('patient-form-name-input').props.value).toBe('Maria Silva');
-    expect(getByTestId('patient-form-birthdate-input').props.value).toBe('1990-05-05');
+    expect(getByTestId('patient-form-birthdate-input').props.value).toBe('05/05/1990');
   });
 
   it('envia só os campos alterados e, com sucesso, volta para o detalhe atualizado', async () => {
@@ -101,7 +101,7 @@ describe('EditPatientScreen', () => {
     const { getByTestId, getByText } = await renderScreen();
 
     await waitFor(() => expect(getByTestId('patient-form-name-input')).toBeTruthy());
-    await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '1990-05-06');
+    await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '06051990');
     await fireEvent.press(getByTestId('patient-form-submit'));
 
     await waitFor(() => expect(getByTestId('patient-form-birthdate-error')).toBeTruthy());

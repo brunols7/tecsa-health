@@ -45,7 +45,7 @@ function renderScreen() {
 
 async function fillValidForm(getByTestId: Awaited<ReturnType<typeof renderScreen>>['getByTestId']) {
   await fireEvent.changeText(getByTestId('patient-form-name-input'), 'Maria Silva');
-  await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '1990-05-05');
+  await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '05051990');
   await fireEvent.press(getByTestId('patient-form-goal-lose_weight'));
 }
 
@@ -101,7 +101,7 @@ describe('NewPatientScreen', () => {
 
     await waitFor(() => expect(getByTestId('patient-new-error')).toBeTruthy());
     expect(getByTestId('patient-form-name-input').props.value).toBe('Maria Silva');
-    expect(getByTestId('patient-form-birthdate-input').props.value).toBe('1990-05-05');
+    expect(getByTestId('patient-form-birthdate-input').props.value).toBe('05/05/1990');
     expect(mockRouterPush).not.toHaveBeenCalled();
   });
 });

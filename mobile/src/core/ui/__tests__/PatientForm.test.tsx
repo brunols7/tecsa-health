@@ -57,24 +57,34 @@ function renderForm(props: {
 }
 
 describe('PatientForm', () => {
-  it('bloqueia o envio e mostra o erro do campo quando o nome está vazio', async () => {
+  it('mantém o botão de confirmar desabilitado até o nome ser preenchido', async () => {
     const onSubmit = jest.fn().mockResolvedValue(undefined);
     const { getByTestId } = await renderForm({ mode: 'create', onSubmit, submitting: false });
 
-    await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '1990-05-05');
-    await fireEvent.press(getByTestId('patient-form-goal-lose_weight'));
-    await fireEvent.press(getByTestId('patient-form-submit'));
+    expect(getByTestId('patient-form-submit').props.accessibilityState?.disabled).toBe(true);
 
-    await waitFor(() => expect(getByTestId('patient-form-name-error')).toBeTruthy());
-    expect(onSubmit).not.toHaveBeenCalled();
+    await fireEvent.changeText(getByTestId('patient-form-name-input'), 'Maria Silva');
+
+    await waitFor(() =>
+      expect(getByTestId('patient-form-submit').props.accessibilityState?.disabled).toBe(false),
+    );
   });
 
-  it('bloqueia o envio e mostra o erro do campo quando a data de nascimento tem formato inválido', async () => {
+  it('formata a data de nascimento automaticamente em DD/MM/AAAA enquanto o usuário digita', async () => {
+    const onSubmit = jest.fn().mockResolvedValue(undefined);
+    const { getByTestId } = await renderForm({ mode: 'create', onSubmit, submitting: false });
+
+    await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '05051990');
+
+    expect(getByTestId('patient-form-birthdate-input').props.value).toBe('05/05/1990');
+  });
+
+  it('bloqueia o envio e mostra o erro do campo quando a data de nascimento está incompleta', async () => {
     const onSubmit = jest.fn().mockResolvedValue(undefined);
     const { getByTestId } = await renderForm({ mode: 'create', onSubmit, submitting: false });
 
     await fireEvent.changeText(getByTestId('patient-form-name-input'), 'Maria Silva');
-    await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '05/05/1990');
+    await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '0505');
     await fireEvent.press(getByTestId('patient-form-goal-lose_weight'));
     await fireEvent.press(getByTestId('patient-form-submit'));
 
@@ -87,19 +97,19 @@ describe('PatientForm', () => {
     const { getByTestId } = await renderForm({ mode: 'create', onSubmit, submitting: false });
 
     await fireEvent.changeText(getByTestId('patient-form-name-input'), 'Maria Silva');
-    await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '1990-05-05');
+    await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '05051990');
     await fireEvent.press(getByTestId('patient-form-submit'));
 
     await waitFor(() => expect(getByTestId('patient-form-goal-error')).toBeTruthy());
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it('chama onSubmit com os valores exatos quando todos os campos são válidos', async () => {
+  it('chama onSubmit com os valores exatos (data convertida para AAAA-MM-DD) quando todos os campos são válidos', async () => {
     const onSubmit = jest.fn().mockResolvedValue(undefined);
     const { getByTestId } = await renderForm({ mode: 'create', onSubmit, submitting: false });
 
     await fireEvent.changeText(getByTestId('patient-form-name-input'), 'Maria Silva');
-    await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '1990-05-05');
+    await fireEvent.changeText(getByTestId('patient-form-birthdate-input'), '05051990');
     await fireEvent.press(getByTestId('patient-form-goal-gain_muscle'));
     await fireEvent.press(getByTestId('patient-form-submit'));
 
@@ -115,7 +125,7 @@ describe('PatientForm', () => {
     );
   });
 
-  it('modo edit pré-preenche os campos com os valores de initialValues', async () => {
+  it('modo edit pré-preenche os campos, mostrando a data em DD/MM/AAAA e enviando em AAAA-MM-DD', async () => {
     const onSubmit = jest.fn().mockResolvedValue(undefined);
     const { getByTestId } = await renderForm({
       mode: 'edit',
@@ -125,7 +135,7 @@ describe('PatientForm', () => {
     });
 
     expect(getByTestId('patient-form-name-input').props.value).toBe('João Souza');
-    expect(getByTestId('patient-form-birthdate-input').props.value).toBe('1985-02-10');
+    expect(getByTestId('patient-form-birthdate-input').props.value).toBe('10/02/1985');
 
     await fireEvent.press(getByTestId('patient-form-submit'));
 
@@ -156,7 +166,12 @@ describe('PatientForm', () => {
 
   it('desabilita o botão de confirmar enquanto submitting é true', async () => {
     const onSubmit = jest.fn().mockResolvedValue(undefined);
-    const { getByTestId } = await renderForm({ mode: 'create', onSubmit, submitting: true });
+    const { getByTestId } = await renderForm({
+      mode: 'edit',
+      initialValues: { name: 'João Souza', birthDate: '1985-02-10', goal: 'maintain' },
+      onSubmit,
+      submitting: true,
+    });
 
     expect(getByTestId('patient-form-submit').props.accessibilityState?.disabled).toBe(true);
   });
