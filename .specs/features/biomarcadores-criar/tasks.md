@@ -320,12 +320,12 @@ aninhada `biomarkers/new` (Expo Router não permite arquivo e pasta coexistindo 
 - Skill: NONE
 
 **Done when**:
-- [ ] Schema aceita um input válido completo
-- [ ] Rejeita: `label` vazio, `value` não numérico ou `<= 0`, `refMin` negativo, `refMax <= refMin`
+- [x] Schema aceita um input válido completo
+- [x] Rejeita: `label` vazio, `value` não numérico ou `<= 0`, `refMin` negativo, `refMax <= refMin`
       — um teste por regra
-- [ ] `tsc --noEmit` limpo
-- [ ] Gate check passa: `cd mobile && npm test`
-- [ ] Contagem de testes: 5+ novos em `biomarker.test.ts`
+- [x] `tsc --noEmit` limpo
+- [x] Gate check passa: `cd mobile && npm test`
+- [x] Contagem de testes: 5+ novos em `biomarker.test.ts`
 
 **Tests**: unit
 **Gate**: quick
