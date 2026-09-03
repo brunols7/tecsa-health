@@ -1,13 +1,16 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { Alert } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { resolveBrand } from '@/brands';
 import { fetchAiActions } from '@/core/api/ai-actions';
 import {
+  deletePatient,
   fetchPatientBiomarkers,
   fetchPatientDetail,
   patchPatientFollowUp,
+  updatePatientStatus,
 } from '@/core/api/patients';
 import type { Biomarker } from '@/core/api/schemas/biomarker';
 import type { Patient } from '@/core/api/schemas/patient';
@@ -24,6 +27,7 @@ jest.mock('@/core/flags/useFlag');
 jest.mock('@/core/offline/network');
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn(),
+  useRouter: jest.fn(),
 }));
 
 const mockedFetchPatientDetail = fetchPatientDetail as jest.MockedFunction<typeof fetchPatientDetail>;
@@ -33,12 +37,19 @@ const mockedFetchPatientBiomarkers = fetchPatientBiomarkers as jest.MockedFuncti
 const mockedPatchPatientFollowUp = patchPatientFollowUp as jest.MockedFunction<
   typeof patchPatientFollowUp
 >;
+const mockedDeletePatient = deletePatient as jest.MockedFunction<typeof deletePatient>;
+const mockedUpdatePatientStatus = updatePatientStatus as jest.MockedFunction<
+  typeof updatePatientStatus
+>;
 const mockedFetchAiActions = fetchAiActions as jest.MockedFunction<typeof fetchAiActions>;
 const mockedUseFlag = useFlag as jest.MockedFunction<typeof useFlag>;
 const mockedUseLocalSearchParams = useLocalSearchParams as jest.MockedFunction<
   typeof useLocalSearchParams
 >;
+const mockedUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
 const mockedUseIsOffline = useIsOffline as jest.MockedFunction<typeof useIsOffline>;
+const mockRouterBack = jest.fn();
+const mockRouterPush = jest.fn();
 
 function flattenText(node: unknown): string[] {
   if (node === null || node === undefined || typeof node === 'boolean') {
@@ -99,16 +110,25 @@ describe('PatientDetailScreen', () => {
     mockedUseIsOffline.mockReturnValue(false);
     mockedUseFlag.mockReturnValue(true);
     mockedFetchAiActions.mockResolvedValue([]);
+    mockedUseRouter.mockReturnValue({
+      back: mockRouterBack,
+      push: mockRouterPush,
+    } as unknown as ReturnType<typeof useRouter>);
   });
 
   afterEach(() => {
     mockedFetchPatientDetail.mockReset();
     mockedFetchPatientBiomarkers.mockReset();
     mockedPatchPatientFollowUp.mockReset();
+    mockedDeletePatient.mockReset();
+    mockedUpdatePatientStatus.mockReset();
     mockedFetchAiActions.mockReset();
     mockedUseFlag.mockReset();
     mockedUseLocalSearchParams.mockReset();
+    mockedUseRouter.mockReset();
     mockedUseIsOffline.mockReset();
+    mockRouterBack.mockReset();
+    mockRouterPush.mockReset();
   });
 
   it('exibe o skeleton enquanto qualquer uma das duas buscas está pendente', async () => {
@@ -267,5 +287,113 @@ describe('PatientDetailScreen', () => {
     await waitFor(() =>
       expect(getByText('Não foi possível carregar as ações de acompanhamento.')).toBeTruthy(),
     );
+  });
+
+  it('toque em excluir abre Alert citando o nome do paciente; confirmar chama DELETE e volta para a lista', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+    mockedDeletePatient.mockResolvedValue(undefined);
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+      const confirmButton = buttons?.find((button) => button.text === 'Excluir');
+      confirmButton?.onPress?.();
+    });
+
+    const { getByTestId } = await renderScreen();
+
+    await waitFor(() => expect(getByTestId('patient-detail-delete-button')).toBeTruthy());
+    await fireEvent.press(getByTestId('patient-detail-delete-button'));
+
+    expect(alertSpy).toHaveBeenCalledWith(
+      'Excluir Maria Silva?',
+      expect.any(String),
+      expect.arrayContaining([expect.objectContaining({ text: 'Excluir', style: 'destructive' })]),
+    );
+    await waitFor(() => expect(mockedDeletePatient).toHaveBeenCalledWith('patient-1'));
+    await waitFor(() => expect(mockRouterBack).toHaveBeenCalled());
+
+    alertSpy.mockRestore();
+  });
+
+  it('cancelar o Alert de exclusão não chama DELETE e mantém o paciente na tela', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+      const cancelButton = buttons?.find((button) => button.text === 'Cancelar');
+      cancelButton?.onPress?.();
+    });
+
+    const { getByTestId, getByText } = await renderScreen();
+
+    await waitFor(() => expect(getByTestId('patient-detail-delete-button')).toBeTruthy());
+    await fireEvent.press(getByTestId('patient-detail-delete-button'));
+
+    expect(mockedDeletePatient).not.toHaveBeenCalled();
+    expect(mockRouterBack).not.toHaveBeenCalled();
+    expect(getByText('Maria Silva')).toBeTruthy();
+
+    alertSpy.mockRestore();
+  });
+
+  it('exibe erro e mantém o paciente visível quando a exclusão falha', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+    mockedDeletePatient.mockRejectedValue(new Error('delete failed'));
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+      const confirmButton = buttons?.find((button) => button.text === 'Excluir');
+      confirmButton?.onPress?.();
+    });
+
+    const { getByTestId, getByText } = await renderScreen();
+
+    await waitFor(() => expect(getByTestId('patient-detail-delete-button')).toBeTruthy());
+    await fireEvent.press(getByTestId('patient-detail-delete-button'));
+
+    await waitFor(() => expect(getByTestId('patient-detail-delete-error')).toBeTruthy());
+    expect(mockRouterBack).not.toHaveBeenCalled();
+    expect(getByText('Maria Silva')).toBeTruthy();
+
+    alertSpy.mockRestore();
+  });
+
+  it('tocar num botão de ciclo de vida com sucesso atualiza o status exibido e o conjunto de botões', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+    mockedUpdatePatientStatus.mockResolvedValue({ ...fakePatient, status: 'inactive' });
+
+    const { getByTestId, getByText, queryByText } = await renderScreen();
+
+    await waitFor(() => expect(getByTestId('lifecycle-action-inactivate')).toBeTruthy());
+    await fireEvent.press(getByTestId('lifecycle-action-inactivate'));
+
+    expect(mockedUpdatePatientStatus).toHaveBeenCalledWith('patient-1', 'inactive');
+    await waitFor(() => expect(getByText('Reativar')).toBeTruthy());
+    expect(queryByText('Marcar como inativo')).toBeNull();
+  });
+
+  it('mudança de status com erro mantém o status e os botões anteriores visíveis, com mensagem de erro', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+    mockedUpdatePatientStatus.mockRejectedValue(new Error('status change failed'));
+
+    const { getByTestId, getByText } = await renderScreen();
+
+    await waitFor(() => expect(getByTestId('lifecycle-action-inactivate')).toBeTruthy());
+    await fireEvent.press(getByTestId('lifecycle-action-inactivate'));
+
+    await waitFor(() => expect(getByTestId('patient-status-error')).toBeTruthy());
+    expect(getByText('Marcar como inativo')).toBeTruthy();
+    expect(getByText('Concluir acompanhamento')).toBeTruthy();
+  });
+
+  it('botão "Editar" navega para a rota de edição do paciente', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+
+    const { getByTestId } = await renderScreen();
+
+    await waitFor(() => expect(getByTestId('patient-detail-edit-link')).toBeTruthy());
+    await fireEvent.press(getByTestId('patient-detail-edit-link'));
+
+    expect(mockRouterPush).toHaveBeenCalledWith('/patients/patient-1/edit');
   });
 });

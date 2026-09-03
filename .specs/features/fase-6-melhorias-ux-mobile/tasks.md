@@ -461,14 +461,14 @@ sucesso; ganha também um botão/link "Editar" para `patients/[id]/edit` (rota c
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `Alert.alert` de exclusão cita o nome do paciente, confirmar chama `DELETE`, cancelar não
+- [x] `Alert.alert` de exclusão cita o nome do paciente, confirmar chama `DELETE`, cancelar não
       chama nada
-- [ ] Sucesso na exclusão navega de volta para a lista
-- [ ] `PatientLifecycleActions` funcional na tela real (mudança de status reflete no cabeçalho)
-- [ ] Botão "Editar" navega para `patients/[id]/edit`
-- [ ] Teste cobrindo: confirmar exclusão, cancelar exclusão, mudar status com sucesso, mudar status
+- [x] Sucesso na exclusão navega de volta para a lista
+- [x] `PatientLifecycleActions` funcional na tela real (mudança de status reflete no cabeçalho)
+- [x] Botão "Editar" navega para `patients/[id]/edit`
+- [x] Teste cobrindo: confirmar exclusão, cancelar exclusão, mudar status com sucesso, mudar status
       com erro
-- [ ] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
+- [x] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
 
 **Tests**: unit
 **Gate**: full

@@ -1,20 +1,26 @@
-import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import type { Biomarker } from '@/core/api/schemas/biomarker';
 import type { Patient } from '@/core/api/schemas/patient';
 import { useIsOffline } from '@/core/offline/network';
+import { useChangePatientStatusMutation } from '@/core/patients/useChangePatientStatusMutation';
+import { useDeletePatientMutation } from '@/core/patients/useDeletePatientMutation';
 import { usePatientBiomarkersQuery } from '@/core/patients/usePatientBiomarkersQuery';
 import { usePatientDetailQuery } from '@/core/patients/usePatientDetailQuery';
 import { useSetFollowUpMutation } from '@/core/patients/useSetFollowUpMutation';
 import { useTheme } from '@/core/theme/useTheme';
 import { AiActionsSection } from '@/core/ui/AiActionsSection';
+import { PatientLifecycleActions } from '@/core/ui/PatientLifecycleActions';
 
 const ERROR_MESSAGE = 'Não foi possível carregar o paciente.';
 const OFFLINE_ERROR_MESSAGE =
   'Sem conexão. Abra este paciente pelo menos uma vez online para poder consultá-lo offline.';
 const EMPTY_BIOMARKERS_MESSAGE = 'Nenhum biomarcador registrado ainda';
+const STATUS_CHANGE_ERROR_MESSAGE =
+  'Não foi possível atualizar o status. Atualize a tela e tente de novo.';
+const DELETE_ERROR_MESSAGE = 'Não foi possível excluir este paciente. Tente novamente.';
 
 function DetailSkeleton() {
   const { colors, radii, spacing } = useTheme();
@@ -218,13 +224,107 @@ function BiomarkersEmptyState() {
   );
 }
 
+function PatientActionsFooter({
+  patient,
+  onEdit,
+  onDelete,
+  deletePending,
+  deleteFailed,
+}: {
+  patient: Patient;
+  onEdit: () => void;
+  onDelete: () => void;
+  deletePending: boolean;
+  deleteFailed: boolean;
+}) {
+  const { colors, radii, typography, spacing } = useTheme();
+
+  return (
+    <View style={{ gap: spacing(2) }}>
+      <Pressable
+        testID="patient-detail-edit-link"
+        onPress={onEdit}
+        style={{
+          backgroundColor: colors.surface,
+          borderRadius: radii.md,
+          paddingVertical: spacing(3),
+          paddingHorizontal: spacing(4),
+          alignItems: 'center',
+        }}
+      >
+        <Text
+          style={{
+            color: colors.textPrimary,
+            fontFamily: typography.fontFamily.medium,
+            fontSize: typography.scale.sm,
+          }}
+        >
+          Editar
+        </Text>
+      </Pressable>
+      <Pressable
+        testID="patient-detail-delete-button"
+        disabled={deletePending}
+        onPress={onDelete}
+        style={{
+          backgroundColor: deletePending ? colors.surfaceMuted : colors.danger,
+          borderRadius: radii.md,
+          paddingVertical: spacing(3),
+          paddingHorizontal: spacing(4),
+          alignItems: 'center',
+        }}
+      >
+        <Text
+          style={{
+            color: colors.accentContrast,
+            fontFamily: typography.fontFamily.medium,
+            fontSize: typography.scale.sm,
+          }}
+        >
+          Excluir
+        </Text>
+      </Pressable>
+      {deleteFailed ? (
+        <Text
+          testID="patient-detail-delete-error"
+          style={{
+            color: colors.danger,
+            fontFamily: typography.fontFamily.regular,
+            fontSize: typography.scale.xs,
+          }}
+        >
+          {DELETE_ERROR_MESSAGE}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
 export default function PatientDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { colors, spacing } = useTheme();
+  const { colors, typography, spacing } = useTheme();
+  const router = useRouter();
   const patientQuery = usePatientDetailQuery(id);
   const biomarkersQuery = usePatientBiomarkersQuery(id);
   const mutation = useSetFollowUpMutation();
+  const statusMutation = useChangePatientStatusMutation();
+  const deleteMutation = useDeletePatientMutation();
   const isOffline = useIsOffline();
+
+  const handleDelete = (patientName: string) => {
+    Alert.alert(`Excluir ${patientName}?`, 'Esta ação remove o paciente da carteira.', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Excluir',
+        style: 'destructive',
+        onPress: () => {
+          deleteMutation.mutate(id, {
+            onSuccess: () => router.back(),
+          });
+        },
+      },
+    ]);
+  };
 
   const isOfflineWithoutCache =
     isOffline && (patientQuery.data === undefined || biomarkersQuery.data === undefined);
@@ -266,6 +366,33 @@ export default function PatientDetailScreen() {
               ))}
             </View>
           )}
+          <View style={{ gap: spacing(2) }}>
+            <PatientLifecycleActions
+              status={patientQuery.data.status}
+              statusChangedAt={patientQuery.data.statusChangedAt}
+              pending={statusMutation.isPending}
+              onChangeStatus={(target) => statusMutation.mutate({ id, status: target })}
+            />
+            {statusMutation.isError ? (
+              <Text
+                testID="patient-status-error"
+                style={{
+                  color: colors.danger,
+                  fontFamily: typography.fontFamily.regular,
+                  fontSize: typography.scale.xs,
+                }}
+              >
+                {STATUS_CHANGE_ERROR_MESSAGE}
+              </Text>
+            ) : null}
+          </View>
+          <PatientActionsFooter
+            patient={patientQuery.data}
+            onEdit={() => router.push(`/patients/${id}/edit`)}
+            onDelete={() => handleDelete(patientQuery.data.name)}
+            deletePending={deleteMutation.isPending}
+            deleteFailed={deleteMutation.isError}
+          />
           <AiActionsSection patientId={id} />
         </ScrollView>
       ) : null}
