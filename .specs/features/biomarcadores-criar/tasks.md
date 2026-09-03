@@ -176,12 +176,12 @@ incluindo `id` explícito; adicionar `'id'` ao `$fillable` de `Infrastructure/Pe
 - Skill: NONE
 
 **Done when**:
-- [ ] `save()` persiste todos os campos, incluindo `id` explícito (gerado fora deste método)
-- [ ] Teste de integração cria um biomarcador via `save()` e confirma via `listForPatient()` /
+- [x] `save()` persiste todos os campos, incluindo `id` explícito (gerado fora deste método)
+- [x] Teste de integração cria um biomarcador via `save()` e confirma via `listForPatient()` /
       leitura direta do model que os campos batem
-- [ ] `listForPatient()` continua funcionando sem regressão (suíte existente verde)
-- [ ] Gate check passa: `cd api && php artisan test --testsuite=Feature`
-- [ ] Contagem de testes: 2+ novos em `EloquentBiomarkerRepositoryTest.php`, suíte total sem queda
+- [x] `listForPatient()` continua funcionando sem regressão (suíte existente verde)
+- [x] Gate check passa: `cd api && php artisan test --testsuite=Feature`
+- [x] Contagem de testes: 2+ novos em `EloquentBiomarkerRepositoryTest.php`, suíte total sem queda
 
 **Tests**: integration
 **Gate**: full

@@ -10,4 +10,6 @@ interface BiomarkerRepository
      * @return array<int, Biomarker>
      */
     public function listForPatient(string $patientId): array;
+
+    public function save(Biomarker $biomarker): void;
 }

@@ -32,6 +32,7 @@ final class Biomarker extends Model
     protected $table = 'biomarkers';
 
     protected $fillable = [
+        'id',
         'patient_id',
         'code',
         'label',

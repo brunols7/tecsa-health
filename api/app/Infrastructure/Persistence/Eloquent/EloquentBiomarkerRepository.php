@@ -31,4 +31,19 @@ final class EloquentBiomarkerRepository implements BiomarkerRepository
             ))
             ->all();
     }
+
+    public function save(Biomarker $biomarker): void
+    {
+        BiomarkerModel::query()->create([
+            'id' => $biomarker->id,
+            'patient_id' => $biomarker->patientId,
+            'code' => $biomarker->code,
+            'label' => $biomarker->label,
+            'value' => $biomarker->value,
+            'unit' => $biomarker->unit,
+            'ref_min' => $biomarker->refMin,
+            'ref_max' => $biomarker->refMax,
+            'measured_at' => $biomarker->measuredAt,
+        ]);
+    }
 }
