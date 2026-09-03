@@ -106,9 +106,9 @@ código que precise de fix.
 - Skill: `tlc-spec-driven` (fluxo de validação)
 
 **Done when**:
-- [ ] `validation.md` novo com verdict PASS, evidência `file:line` por AC
-- [ ] Qualquer gap bloqueante do FAIL anterior corrigido e commitado
-- [ ] `composer test` e `npm test` continuam verdes após qualquer fix
+- [x] `validation.md` novo com verdict PASS, evidência `file:line` por AC
+- [x] Qualquer gap bloqueante do FAIL anterior corrigido e commitado
+- [x] `composer test` e `npm test` continuam verdes após qualquer fix
 
 **Tests**: integration
 **Gate**: full
@@ -129,8 +129,8 @@ código que precise de fix.
 - Skill: `tlc-spec-driven`
 
 **Done when**:
-- [ ] `validation.md` novo com verdict PASS
-- [ ] Qualquer gap bloqueante corrigido e commitado
+- [x] `validation.md` novo com verdict PASS
+- [x] Qualquer gap bloqueante corrigido e commitado
 
 **Tests**: integration
 **Gate**: full
@@ -151,8 +151,8 @@ código que precise de fix.
 - Skill: `tlc-spec-driven`
 
 **Done when**:
-- [ ] `validation.md` novo com verdict PASS
-- [ ] Qualquer gap bloqueante corrigido e commitado
+- [x] `validation.md` novo com verdict PASS
+- [x] Qualquer gap bloqueante corrigido e commitado
 
 **Tests**: integration
 **Gate**: full
