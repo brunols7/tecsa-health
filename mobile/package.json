@@ -49,6 +49,7 @@
     "eslint-config-expo": "~57.0.2",
     "jest": "~29.7.0",
     "jest-expo": "~57.0.5",
+    "patch-package": "^8.0.1",
     "test-renderer": "^1.2.0",
     "typescript": "~6.0.3"
   },
@@ -60,7 +61,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "pretest": "npm run lint && bash scripts/check-brand-boundary.sh",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "patch-package"
   },
   "private": true,
   "jest": {
