@@ -17,6 +17,8 @@ import type { Patient } from '@/core/api/schemas/patient';
 import { useFlag } from '@/core/flags/useFlag';
 import { createTestQueryClient } from '@/core/offline/queryClient';
 import { useIsOffline } from '@/core/offline/network';
+import { calculateAge, formatDateBR } from '@/core/patients/date';
+import { GOAL_LABELS } from '@/core/patients/labels';
 import { BrandProvider } from '@/core/theme/BrandProvider';
 
 import PatientDetailScreen from '../index';
@@ -90,12 +92,12 @@ const fakeBiomarker: Biomarker = {
   status: 'high',
 };
 
-function renderScreen() {
+function renderScreen(brandId: 'nutri-care' | 'vita-plus' = 'nutri-care') {
   const queryClient = createTestQueryClient();
 
   return render(
     <QueryClientProvider client={queryClient}>
-      <BrandProvider brand={resolveBrand('nutri-care')}>
+      <BrandProvider brand={resolveBrand(brandId)}>
         <PatientDetailScreen />
       </BrandProvider>
     </QueryClientProvider>,
@@ -147,7 +149,7 @@ describe('PatientDetailScreen', () => {
     const { getByText, getByTestId } = await renderScreen();
 
     await waitFor(() => expect(getByText('Não foi possível carregar o paciente.')).toBeTruthy());
-    expect(() => getByText('Nenhum biomarcador registrado ainda')).toThrow();
+    expect(() => getByText(resolveBrand('nutri-care').copy.emptyBiomarkers)).toThrow();
 
     mockedFetchPatientDetail.mockResolvedValue(fakePatient);
     await fireEvent.press(getByTestId('patient-detail-retry'));
@@ -172,14 +174,25 @@ describe('PatientDetailScreen', () => {
     expect(queryByTestId('patient-detail-skeleton')).toBeNull();
   });
 
-  it('exibe o estado vazio de biomarcadores com copy fixa quando a lista vem vazia', async () => {
+  it('exibe a copy de biomarcador vazio da marca quando a lista vem vazia', async () => {
     mockedFetchPatientDetail.mockResolvedValue(fakePatient);
     mockedFetchPatientBiomarkers.mockResolvedValue([]);
 
-    const { getByText } = await renderScreen();
+    const { getByText } = await renderScreen('nutri-care');
 
     await waitFor(() =>
-      expect(getByText('Nenhum biomarcador registrado ainda')).toBeTruthy(),
+      expect(getByText(resolveBrand('nutri-care').copy.emptyBiomarkers)).toBeTruthy(),
+    );
+  });
+
+  it('exibe a copy de biomarcador vazio própria da marca vita-plus (distinta de nutri-care)', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([]);
+
+    const { getByText } = await renderScreen('vita-plus');
+
+    await waitFor(() =>
+      expect(getByText(resolveBrand('vita-plus').copy.emptyBiomarkers)).toBeTruthy(),
     );
   });
 
@@ -395,5 +408,55 @@ describe('PatientDetailScreen', () => {
     await fireEvent.press(getByTestId('patient-detail-edit-link'));
 
     expect(mockRouterPush).toHaveBeenCalledWith('/patients/patient-1/edit');
+  });
+
+  it('renderiza o objetivo como badge traduzido, sem texto cru em inglês na tela', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+
+    const { getByTestId, getByText, queryByText } = await renderScreen();
+
+    await waitFor(() => expect(getByTestId('patient-goal-badge')).toBeTruthy());
+    expect(getByText(GOAL_LABELS.lose_weight)).toBeTruthy();
+    expect(queryByText('lose_weight')).toBeNull();
+  });
+
+  it('calcula e exibe a idade do paciente ao lado do badge de objetivo', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+
+    const { getByTestId } = await renderScreen();
+
+    await waitFor(() => expect(getByTestId('patient-age')).toBeTruthy());
+    expect(getByTestId('patient-age').props.children.join('')).toBe(
+      `${calculateAge(fakePatient.birthDate)} anos`,
+    );
+  });
+
+  it('exibe a data de nascimento formatada em dd/MM/yyyy, nunca no formato ISO cru', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+
+    const { getByTestId, queryByText } = await renderScreen();
+
+    await waitFor(() => expect(getByTestId('patient-birth-date')).toBeTruthy());
+    expect(getByTestId('patient-birth-date').props.children.join('')).toBe(
+      `Nascimento: ${formatDateBR(fakePatient.birthDate)}`,
+    );
+    expect(queryByText(fakePatient.birthDate)).toBeNull();
+  });
+
+  it('renderiza o status do biomarcador com a cor neutra única do Badge, não mais a cor por status', async () => {
+    mockedFetchPatientDetail.mockResolvedValue(fakePatient);
+    mockedFetchPatientBiomarkers.mockResolvedValue([fakeBiomarker]);
+
+    const { getByTestId } = await renderScreen('nutri-care');
+
+    await waitFor(() => expect(getByTestId('biomarker-status-bio-1')).toBeTruthy());
+    const style = getByTestId('biomarker-status-bio-1').props.style as { backgroundColor?: string };
+    const nutriCareColors = resolveBrand('nutri-care').colors;
+
+    expect(style.backgroundColor).toBe(nutriCareColors.surfaceMuted);
+    expect(style.backgroundColor).not.toBe(nutriCareColors.danger);
   });
 });

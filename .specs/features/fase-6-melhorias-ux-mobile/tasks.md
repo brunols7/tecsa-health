@@ -494,13 +494,13 @@ sucesso; ganha também um botão/link "Editar" para `patients/[id]/edit` (rota c
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Nenhum texto cru de `goal` em inglês na tela
-- [ ] Idade calculada correta ao lado do badge
-- [ ] `birthDate` exibida em `dd/MM/yyyy`
-- [ ] Pill de biomarcador agora é `<Badge>` (mesmo componente, sem duplicar estilo)
-- [ ] Empty state de biomarcador usa a copy da marca
-- [ ] Teste atualizado confirmando os 4 pontos acima nas duas marcas
-- [ ] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
+- [x] Nenhum texto cru de `goal` em inglês na tela
+- [x] Idade calculada correta ao lado do badge
+- [x] `birthDate` exibida em `dd/MM/yyyy`
+- [x] Pill de biomarcador agora é `<Badge>` (mesmo componente, sem duplicar estilo)
+- [x] Empty state de biomarcador usa a copy da marca
+- [x] Teste atualizado confirmando os 4 pontos acima nas duas marcas
+- [x] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
 
 **Tests**: unit
 **Gate**: full

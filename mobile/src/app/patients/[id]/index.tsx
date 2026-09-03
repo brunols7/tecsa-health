@@ -5,6 +5,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import type { Biomarker } from '@/core/api/schemas/biomarker';
 import type { Patient } from '@/core/api/schemas/patient';
 import { useIsOffline } from '@/core/offline/network';
+import { calculateAge, formatDateBR } from '@/core/patients/date';
+import { GOAL_LABELS } from '@/core/patients/labels';
 import { useChangePatientStatusMutation } from '@/core/patients/useChangePatientStatusMutation';
 import { useDeletePatientMutation } from '@/core/patients/useDeletePatientMutation';
 import { usePatientBiomarkersQuery } from '@/core/patients/usePatientBiomarkersQuery';
@@ -12,12 +14,12 @@ import { usePatientDetailQuery } from '@/core/patients/usePatientDetailQuery';
 import { useSetFollowUpMutation } from '@/core/patients/useSetFollowUpMutation';
 import { useTheme } from '@/core/theme/useTheme';
 import { AiActionsSection } from '@/core/ui/AiActionsSection';
+import { Badge } from '@/core/ui/Badge';
 import { PatientLifecycleActions } from '@/core/ui/PatientLifecycleActions';
 
 const ERROR_MESSAGE = 'Não foi possível carregar o paciente.';
 const OFFLINE_ERROR_MESSAGE =
   'Sem conexão. Abra este paciente pelo menos uma vez online para poder consultá-lo offline.';
-const EMPTY_BIOMARKERS_MESSAGE = 'Nenhum biomarcador registrado ainda';
 const STATUS_CHANGE_ERROR_MESSAGE =
   'Não foi possível atualizar o status. Atualize a tela e tente de novo.';
 const DELETE_ERROR_MESSAGE = 'Não foi possível excluir este paciente. Tente novamente.';
@@ -108,14 +110,28 @@ function PatientHeader({
       >
         {patient.name}
       </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing(2) }}>
+        <Badge testID="patient-goal-badge" label={GOAL_LABELS[patient.goal]} />
+        <Text
+          testID="patient-age"
+          style={{
+            color: colors.textSecondary,
+            fontFamily: typography.fontFamily.regular,
+            fontSize: typography.scale.sm,
+          }}
+        >
+          {calculateAge(patient.birthDate)} anos
+        </Text>
+      </View>
       <Text
+        testID="patient-birth-date"
         style={{
           color: colors.textSecondary,
           fontFamily: typography.fontFamily.regular,
           fontSize: typography.scale.sm,
         }}
       >
-        {patient.goal}
+        Nascimento: {formatDateBR(patient.birthDate)}
       </Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing(3), marginTop: spacing(2) }}>
         <Text
@@ -140,16 +156,6 @@ function PatientHeader({
   );
 }
 
-function biomarkerStatusColor(status: Biomarker['status'], colors: ReturnType<typeof useTheme>['colors']) {
-  if (status === 'high') {
-    return colors.danger;
-  }
-  if (status === 'low') {
-    return colors.warning;
-  }
-  return colors.success;
-}
-
 function BiomarkerRow({ biomarker }: { biomarker: Biomarker }) {
   const { colors, radii, typography, spacing } = useTheme();
 
@@ -172,25 +178,7 @@ function BiomarkerRow({ biomarker }: { biomarker: Biomarker }) {
         >
           {biomarker.label}
         </Text>
-        <View
-          testID={`biomarker-status-${biomarker.id}`}
-          style={{
-            backgroundColor: biomarkerStatusColor(biomarker.status, colors),
-            borderRadius: radii.pill,
-            paddingVertical: spacing(1),
-            paddingHorizontal: spacing(2),
-          }}
-        >
-          <Text
-            style={{
-              color: colors.accentContrast,
-              fontFamily: typography.fontFamily.medium,
-              fontSize: typography.scale.xs,
-            }}
-          >
-            {biomarker.status}
-          </Text>
-        </View>
+        <Badge testID={`biomarker-status-${biomarker.id}`} label={biomarker.status} />
       </View>
       <Text
         style={{
@@ -206,7 +194,7 @@ function BiomarkerRow({ biomarker }: { biomarker: Biomarker }) {
 }
 
 function BiomarkersEmptyState() {
-  const { colors, typography, spacing } = useTheme();
+  const { colors, typography, spacing, copy } = useTheme();
 
   return (
     <View style={{ padding: spacing(4), alignItems: 'center' }}>
@@ -218,7 +206,7 @@ function BiomarkersEmptyState() {
           textAlign: 'center',
         }}
       >
-        {EMPTY_BIOMARKERS_MESSAGE}
+        {copy.emptyBiomarkers}
       </Text>
     </View>
   );
