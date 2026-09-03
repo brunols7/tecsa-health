@@ -5,13 +5,22 @@ import { fetchPatients } from '@/core/api/patients';
 import type { PatientPage } from '@/core/api/schemas/patient';
 import { useTheme } from '@/core/theme/useTheme';
 
-export function usePatientsQuery(search: string): UseInfiniteQueryResult<InfiniteData<PatientPage>> {
+export type PatientStatusFilter = 'active' | 'inactive_completed';
+
+function statusFilterToParams(statusFilter: PatientStatusFilter): string[] {
+  return statusFilter === 'active' ? ['active'] : ['inactive', 'completed'];
+}
+
+export function usePatientsQuery(
+  search: string,
+  statusFilter: PatientStatusFilter,
+): UseInfiniteQueryResult<InfiniteData<PatientPage>> {
   const brand = useTheme();
 
   return useInfiniteQuery({
-    queryKey: ['patients', brand.id, search],
+    queryKey: ['patients', brand.id, search, statusFilter],
     queryFn: ({ pageParam }: { pageParam: string | undefined }) =>
-      fetchPatients(brand.id, search || undefined, pageParam),
+      fetchPatients(brand.id, search || undefined, pageParam, statusFilterToParams(statusFilter)),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage: PatientPage) => lastPage.nextCursor ?? undefined,
   });

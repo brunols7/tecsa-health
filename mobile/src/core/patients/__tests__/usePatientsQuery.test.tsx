@@ -73,13 +73,13 @@ describe('usePatientsQuery', () => {
       </QueryClientProvider>
     );
 
-    const { result } = await renderHook(() => usePatientsQuery('joao'), { wrapper });
+    const { result } = await renderHook(() => usePatientsQuery('joao', 'active'), { wrapper });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(mockedFetchPatients).toHaveBeenCalledWith('brand-a', 'joao', undefined);
+    expect(mockedFetchPatients).toHaveBeenCalledWith('brand-a', 'joao', undefined, ['active']);
     expect(
-      queryClient.getQueryState(['patients', 'brand-a', 'joao'])?.status,
+      queryClient.getQueryState(['patients', 'brand-a', 'joao', 'active'])?.status,
     ).toBe('success');
   });
 
@@ -92,7 +92,7 @@ describe('usePatientsQuery', () => {
       </QueryClientProvider>
     );
 
-    const { result } = await renderHook(() => usePatientsQuery(''), { wrapper });
+    const { result } = await renderHook(() => usePatientsQuery('', 'active'), { wrapper });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
@@ -110,7 +110,7 @@ describe('usePatientsQuery', () => {
       </QueryClientProvider>
     );
 
-    const { result } = await renderHook(() => usePatientsQuery(''), { wrapper });
+    const { result } = await renderHook(() => usePatientsQuery('', 'active'), { wrapper });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.hasNextPage).toBe(true);
@@ -118,7 +118,13 @@ describe('usePatientsQuery', () => {
     await result.current.fetchNextPage();
 
     await waitFor(() => expect(result.current.data?.pages).toHaveLength(2));
-    expect(mockedFetchPatients).toHaveBeenNthCalledWith(2, 'brand-a', undefined, 'cursor-2');
+    expect(mockedFetchPatients).toHaveBeenNthCalledWith(
+      2,
+      'brand-a',
+      undefined,
+      'cursor-2',
+      ['active'],
+    );
   });
 
   it('trocar o termo de busca entre renders usa uma query key diferente e não mistura páginas da busca anterior', async () => {
@@ -136,7 +142,7 @@ describe('usePatientsQuery', () => {
     );
 
     const { result, rerender } = await renderHook(
-      ({ search }: { search: string }) => usePatientsQuery(search),
+      ({ search }: { search: string }) => usePatientsQuery(search, 'active'),
       {
         wrapper,
         initialProps: { search: 'joao' },
@@ -154,11 +160,61 @@ describe('usePatientsQuery', () => {
 
     expect(result.current.data?.pages).toHaveLength(1);
     expect(
-      queryClient.getQueryState(['patients', 'brand-a', 'joao'])?.data,
+      queryClient.getQueryState(['patients', 'brand-a', 'joao', 'active'])?.data,
     ).not.toBeUndefined();
     expect(
-      (queryClient.getQueryState(['patients', 'brand-a', 'joao'])?.data as { pages: unknown[] })
-        .pages,
+      (
+        queryClient.getQueryState(['patients', 'brand-a', 'joao', 'active'])?.data as {
+          pages: unknown[];
+        }
+      ).pages,
     ).toHaveLength(1);
+  });
+
+  it('trocar o filtro de status entre renders usa uma query key diferente e não mistura o cache das duas visões', async () => {
+    mockedFetchPatients.mockImplementation((_brandId, _search, _cursor, status) =>
+      Promise.resolve({
+        data: [makePatient(status?.[0] === 'active' ? 'active-1' : 'inactive-1')],
+        nextCursor: null,
+      }),
+    );
+    const queryClient = createTestQueryClient();
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <BrandProvider brand={fakeBrand}>{children}</BrandProvider>
+      </QueryClientProvider>
+    );
+
+    const { result, rerender } = await renderHook(
+      ({ statusFilter }: { statusFilter: 'active' | 'inactive_completed' }) =>
+        usePatientsQuery('', statusFilter),
+      {
+        wrapper,
+        initialProps: { statusFilter: 'active' as const },
+      },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.pages[0]?.data[0]?.id).toBe('active-1');
+    expect(mockedFetchPatients).toHaveBeenLastCalledWith('brand-a', undefined, undefined, [
+      'active',
+    ]);
+
+    rerender({ statusFilter: 'inactive_completed' });
+
+    await waitFor(() =>
+      expect(result.current.data?.pages[0]?.data[0]?.id).toBe('inactive-1'),
+    );
+    expect(mockedFetchPatients).toHaveBeenLastCalledWith('brand-a', undefined, undefined, [
+      'inactive',
+      'completed',
+    ]);
+
+    expect(
+      queryClient.getQueryState(['patients', 'brand-a', '', 'active'])?.data,
+    ).not.toBeUndefined();
+    expect(
+      queryClient.getQueryState(['patients', 'brand-a', '', 'inactive_completed'])?.data,
+    ).not.toBeUndefined();
   });
 });

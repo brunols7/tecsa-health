@@ -123,7 +123,7 @@ export default function PatientsScreen() {
   const router = useRouter();
   const [searchText, setSearchText] = useState('');
   const debouncedSearch = useDebouncedValue(searchText, 300);
-  const query = usePatientsQuery(debouncedSearch);
+  const query = usePatientsQuery(debouncedSearch, 'active');
 
   const patients = useMemo(
     () => query.data?.pages.flatMap((page) => page.data) ?? [],

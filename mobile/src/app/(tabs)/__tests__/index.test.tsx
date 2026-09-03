@@ -197,13 +197,13 @@ describe('PatientsScreen', () => {
 
     await fireEvent.changeText(getByTestId('patients-search-input'), 'maria');
 
-    expect(mockedUsePatientsQuery).toHaveBeenLastCalledWith('');
+    expect(mockedUsePatientsQuery).toHaveBeenLastCalledWith('', 'active');
 
     await act(() => {
       jest.advanceTimersByTime(300);
     });
 
-    expect(mockedUsePatientsQuery).toHaveBeenLastCalledWith('maria');
+    expect(mockedUsePatientsQuery).toHaveBeenLastCalledWith('maria', 'active');
 
     jest.useRealTimers();
   });

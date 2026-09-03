@@ -373,10 +373,10 @@ statusFilter]`).
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `statusFilter: 'active'` (default) busca só ativos
-- [ ] `statusFilter: 'inactive_completed'` busca `inactive,completed`
-- [ ] Teste cobrindo os 2 filtros com query keys diferentes (não colidem no cache)
-- [ ] Gate check passes: `npm test`
+- [x] `statusFilter: 'active'` (default) busca só ativos
+- [x] `statusFilter: 'inactive_completed'` busca `inactive,completed`
+- [x] Teste cobrindo os 2 filtros com query keys diferentes (não colidem no cache)
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick
