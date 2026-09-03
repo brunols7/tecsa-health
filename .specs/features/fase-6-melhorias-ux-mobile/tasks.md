@@ -238,13 +238,13 @@ que vira alias fino), `updatePatientStatus`, `deletePatient`; `fetchPatients` ga
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Toda função nova chama `.parse()` sobre a resposta (nunca confia em `unknown`)
-- [ ] `patchPatientFollowUp` continua exportada e funcionando (agora como wrapper de
+- [x] Toda função nova chama `.parse()` sobre a resposta (nunca confia em `unknown`)
+- [x] `patchPatientFollowUp` continua exportada e funcionando (agora como wrapper de
       `updatePatient`)
-- [ ] `fetchPatients` propaga `status` como query param `status=a,b`
-- [ ] Teste unitário cobrindo as 4 funções novas + a assinatura nova de `fetchPatients` (mock de
+- [x] `fetchPatients` propaga `status` como query param `status=a,b`
+- [x] Teste unitário cobrindo as 4 funções novas + a assinatura nova de `fetchPatients` (mock de
       `apiGet`/`apiPost`/`apiPatch`/`apiDelete`)
-- [ ] Gate check passes: `npm test`
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick

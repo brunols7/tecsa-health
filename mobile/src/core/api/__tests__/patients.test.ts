@@ -1,9 +1,13 @@
 import { ApiError } from '@/core/api/http';
 import {
+  createPatient,
+  deletePatient,
   fetchPatientBiomarkers,
   fetchPatientDetail,
   fetchPatients,
   patchPatientFollowUp,
+  updatePatient,
+  updatePatientStatus,
 } from '@/core/api/patients';
 
 const validPatient = {
@@ -54,6 +58,19 @@ describe('fetchPatients', () => {
     }) as unknown as typeof fetch;
 
     await expect(fetchPatients('brand-a', undefined, undefined)).rejects.toThrow();
+  });
+
+  it('propaga o filtro de status como query param único separado por vírgula', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: [validPatient], nextCursor: null }),
+    }) as unknown as typeof fetch;
+
+    await fetchPatients('brand-a', undefined, undefined, ['inactive', 'completed']);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('status=inactive%2Ccompleted'),
+    );
   });
 });
 
@@ -145,5 +162,153 @@ describe('patchPatientFollowUp', () => {
     }) as unknown as typeof fetch;
 
     await expect(patchPatientFollowUp('patient-1', true)).rejects.toBeInstanceOf(ApiError);
+  });
+});
+
+describe('createPatient', () => {
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('envia o POST com os dados do paciente e valida a resposta com patientSchema', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => validPatient,
+    }) as unknown as typeof fetch;
+
+    const input = {
+      name: 'Maria Souza',
+      birthDate: '1990-05-12',
+      goal: 'lose_weight' as const,
+      brand: 'brand-a',
+    };
+    const result = await createPatient(input);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ method: 'POST', body: JSON.stringify(input) }),
+    );
+    expect(result).toEqual(validPatient);
+  });
+
+  it('propaga ApiError quando o POST falha (422)', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 422,
+      json: async () => ({ error: { code: 'VALIDATION_ERROR', message: 'Corpo inválido' } }),
+    }) as unknown as typeof fetch;
+
+    await expect(
+      createPatient({
+        name: '',
+        birthDate: '1990-05-12',
+        goal: 'lose_weight',
+        brand: 'brand-a',
+      }),
+    ).rejects.toBeInstanceOf(ApiError);
+  });
+});
+
+describe('updatePatient', () => {
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('envia o PATCH só com os campos alterados e valida a resposta com patientSchema', async () => {
+    const updatedPatient = { ...validPatient, name: 'Maria Nova' };
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => updatedPatient,
+    }) as unknown as typeof fetch;
+
+    const result = await updatePatient('patient-1', { name: 'Maria Nova' });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ method: 'PATCH', body: JSON.stringify({ name: 'Maria Nova' }) }),
+    );
+    expect(result).toEqual(updatedPatient);
+  });
+
+  it('propaga ApiError quando o PATCH falha (404 - paciente excluído por outra sessão)', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: async () => ({ error: { code: 'PATIENT_NOT_FOUND', message: 'Paciente não encontrado' } }),
+    }) as unknown as typeof fetch;
+
+    await expect(updatePatient('patient-1', { name: 'Maria Nova' })).rejects.toBeInstanceOf(
+      ApiError,
+    );
+  });
+});
+
+describe('updatePatientStatus', () => {
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('envia o PATCH de status para /patients/:id/status e valida a resposta com patientSchema', async () => {
+    const updatedPatient = { ...validPatient, status: 'inactive' as const };
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => updatedPatient,
+    }) as unknown as typeof fetch;
+
+    const result = await updatePatientStatus('patient-1', 'inactive');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('/patients/patient-1/status'),
+      expect.objectContaining({ method: 'PATCH', body: JSON.stringify({ status: 'inactive' }) }),
+    );
+    expect(result).toEqual(updatedPatient);
+  });
+
+  it('propaga ApiError quando a transição de status é inválida (409)', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 409,
+      json: async () => ({ error: { code: 'INVALID_STATUS_TRANSITION', message: 'Transição inválida' } }),
+    }) as unknown as typeof fetch;
+
+    await expect(updatePatientStatus('patient-1', 'active')).rejects.toBeInstanceOf(ApiError);
+  });
+});
+
+describe('deletePatient', () => {
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('envia o DELETE para /patients/:id', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => undefined,
+    }) as unknown as typeof fetch;
+
+    await deletePatient('patient-1');
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('/patients/patient-1'),
+      expect.objectContaining({ method: 'DELETE' }),
+    );
+  });
+
+  it('propaga ApiError quando o DELETE falha', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: { code: 'SERVER_ERROR', message: 'Falha ao excluir' } }),
+    }) as unknown as typeof fetch;
+
+    await expect(deletePatient('patient-1')).rejects.toBeInstanceOf(ApiError);
   });
 });
