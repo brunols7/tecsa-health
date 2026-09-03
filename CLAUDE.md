@@ -205,7 +205,9 @@ tecsa-health/
 ├── .env.example
 ├── .claude/skills/              ← skills do projeto, versionadas
 ├── docs/
-│   ├── adr/                     ← 0001-....md, 0002-....md
+│   └── adr/                     ← 0001-....md, 0002-....md
+│
+├── docs-internal/                ← gitignored, material de apoio pessoal (não é entregável)
 │   └── video-script.md
 │
 ├── api/
@@ -794,7 +796,8 @@ Rode e confirme, na ordem:
     por cursor), (c) capacidade nativa (biometria no lugar de HealthKit) e infra (servidor embutido
     no lugar de nginx + php-fpm). Três a quatro ADRs bem escritas defendem tão bem quanto oito
     fragmentadas, e custam menos tempo.
-12. Vídeo de 3 a 5 minutos gravado, seguindo `docs/video-script.md`.
+12. Vídeo de 3 a 5 minutos gravado, seguindo `docs-internal/video-script.md` (roteiro é material de
+    apoio pessoal, gitignored — não é entregável em si, só o vídeo final é).
 
 ---
 

@@ -183,9 +183,15 @@
   **Próximo passo**: usuário roda o checklist manual de `docs-internal/checklist-manual-dispositivo.md`
   nos devices/simuladores disponíveis e confirma os 5 itens (ou aceita algum como risco, se o
   hardware não permitir); depois disso a Fase 5 — e o projeto inteiro — fecha 100%. Gravação do
-  vídeo (`docs/video-script.md`) e publicação de OTA real seguem como ações do usuário fora do
-  escopo de agente. Nenhum `git push` feito — commits só locais em `feat/fase-5-fechamento`, `main`
+  vídeo (`docs-internal/video-script.md`) e publicação de OTA real seguem como ações do usuário fora
+  do escopo de agente. Nenhum `git push` feito — commits só locais em `feat/fase-5-fechamento`, `main`
   intocado.
+- **Correção pós-handoff (mesma sessão)**: usuário pediu para o roteiro de vídeo não ficar público —
+  `docs/video-script.md` movido para `docs-internal/video-script.md` (gitignored, nunca commitado
+  daqui pra frente) e removido do git via `git rm`. `CLAUDE.md` atualizado nos dois pontos que citavam
+  o caminho antigo (árvore de pastas §4, item 12 do checklist §14) para refletir o novo local. O
+  roteiro em si nunca foi um entregável do desafio (`docs/requisitos-do-produto.md` só pede o link do
+  vídeo gravado) — só o vídeo final é.
 - **Feature (histórico)**: `fase-6-melhorias-ux-backend` e `fase-6-melhorias-ux-mobile`
   **especificadas e depois implementadas** em sessão anterior a esta — ver AD-015 acima
   (`fase-6-melhorias-ux-backend` já referenciada como código real existente, não só spec, pelas
