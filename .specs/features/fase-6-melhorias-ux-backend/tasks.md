@@ -490,16 +490,18 @@ lança `InvalidStatusTransition` se `false`, senão delega a `PatientRepository:
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] As 4 transições válidas funcionam
-- [ ] Transições inválidas (incluindo mesmo status) lançam `InvalidStatusTransition`
-- [ ] Paciente inexistente/excluído lança `PatientNotFound`
-- [ ] Teste unitário cobrindo as 4 transições válidas + pelo menos 2 inválidas + not-found
-- [ ] Gate check passes: `composer test`
+- [x] As 4 transições válidas funcionam
+- [x] Transições inválidas (incluindo mesmo status) lançam `InvalidStatusTransition`
+- [x] Paciente inexistente/excluído lança `PatientNotFound`
+- [x] Teste unitário cobrindo as 4 transições válidas + pelo menos 2 inválidas + not-found
+- [x] Gate check passes: `composer test`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(patient-service): add changeStatus method with transition validation`
+
+**Status**: ✅ Complete
 
 ---
 

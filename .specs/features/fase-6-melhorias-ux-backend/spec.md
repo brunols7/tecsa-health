@@ -273,13 +273,13 @@ LIMIT 20` mostra nomes brasileiros; `INSERT` manual com `goal='invalid'` falha p
 | UXBE-09 | P2: Editar cadastro | Design | Pending |
 | UXBE-10 | P2: Editar cadastro | Design | Implementing |
 | UXBE-11 | P2: Editar cadastro | Design | Pending |
-| UXBE-12 | P3: Ciclo de vida | Design | Pending |
-| UXBE-13 | P3: Ciclo de vida | Design | Pending |
-| UXBE-14 | P3: Ciclo de vida | Design | Pending |
-| UXBE-15 | P3: Ciclo de vida | Design | Pending |
-| UXBE-16 | P3: Ciclo de vida | Design | Pending |
+| UXBE-12 | P3: Ciclo de vida | Design | Implementing |
+| UXBE-13 | P3: Ciclo de vida | Design | Implementing |
+| UXBE-14 | P3: Ciclo de vida | Design | Implementing |
+| UXBE-15 | P3: Ciclo de vida | Design | Implementing |
+| UXBE-16 | P3: Ciclo de vida | Design | Implementing |
 | UXBE-17 | P3: Ciclo de vida | Design | Pending |
-| UXBE-32 | P3: Ciclo de vida | Design | Pending |
+| UXBE-32 | P3: Ciclo de vida | Design | Implementing |
 | UXBE-18 | P4: Excluir (soft delete) | Design | Pending |
 | UXBE-19 | P4: Excluir (soft delete) | Design | Pending |
 | UXBE-20 | P4: Excluir (soft delete) | Design | Pending |

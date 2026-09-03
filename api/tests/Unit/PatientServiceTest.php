@@ -12,6 +12,7 @@ use App\Domain\Brand\Brand;
 use App\Domain\Brand\BrandRepository;
 use App\Domain\FeatureFlag\Exceptions\BrandNotFound;
 use App\Domain\Patient\Exceptions\InvalidCursor;
+use App\Domain\Patient\Exceptions\InvalidStatusTransition;
 use App\Domain\Patient\Exceptions\PatientNotFound;
 use App\Domain\Patient\Patient;
 use App\Domain\Patient\PatientCursor;
@@ -232,6 +233,140 @@ class PatientServiceTest extends TestCase
         $this->expectException(PatientNotFound::class);
 
         $service->update('not-a-uuid', ['name' => 'X']);
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function validTransitions(): array
+    {
+        return [
+            'active to inactive' => ['active', 'inactive'],
+            'active to completed' => ['active', 'completed'],
+            'inactive to active' => ['inactive', 'active'],
+            'completed to active' => ['completed', 'active'],
+        ];
+    }
+
+    /**
+     * @dataProvider validTransitions
+     */
+    public function test_change_status_applies_each_valid_transition(string $from, string $to): void
+    {
+        $current = new Patient(
+            id: '11111111-1111-1111-1111-111111111111',
+            brandId: 'brand-1',
+            name: 'Ana Silva',
+            birthDate: '1990-01-01',
+            goal: 'lose_weight',
+            status: $from,
+            needsFollowUp: false,
+            updatedAt: '2026-01-01T00:00:00+00:00',
+        );
+
+        $updated = new Patient(
+            id: '11111111-1111-1111-1111-111111111111',
+            brandId: 'brand-1',
+            name: 'Ana Silva',
+            birthDate: '1990-01-01',
+            goal: 'lose_weight',
+            status: $to,
+            needsFollowUp: false,
+            statusChangedAt: '2026-02-01T00:00:00+00:00',
+            updatedAt: '2026-02-01T00:00:00+00:00',
+        );
+
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with('11111111-1111-1111-1111-111111111111')->andReturn($current);
+        $patients->shouldReceive('updateStatus')
+            ->with('11111111-1111-1111-1111-111111111111', $to, Mockery::type('string'))
+            ->andReturn($updated);
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $result = $service->changeStatus('11111111-1111-1111-1111-111111111111', $to);
+
+        $this->assertSame($updated, $result);
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function invalidTransitions(): array
+    {
+        return [
+            'inactive to completed' => ['inactive', 'completed'],
+            'completed to inactive' => ['completed', 'inactive'],
+            'active to active' => ['active', 'active'],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidTransitions
+     */
+    public function test_change_status_rejects_each_invalid_transition(string $from, string $to): void
+    {
+        $current = new Patient(
+            id: '11111111-1111-1111-1111-111111111111',
+            brandId: 'brand-1',
+            name: 'Ana Silva',
+            birthDate: '1990-01-01',
+            goal: 'lose_weight',
+            status: $from,
+            needsFollowUp: false,
+            updatedAt: '2026-01-01T00:00:00+00:00',
+        );
+
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with('11111111-1111-1111-1111-111111111111')->andReturn($current);
+        $patients->shouldNotReceive('updateStatus');
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(InvalidStatusTransition::class);
+
+        $service->changeStatus('11111111-1111-1111-1111-111111111111', $to);
+    }
+
+    public function test_change_status_throws_patient_not_found_when_patient_does_not_exist(): void
+    {
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with('22222222-2222-2222-2222-222222222222')->andReturn(null);
+        $patients->shouldNotReceive('updateStatus');
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(PatientNotFound::class);
+
+        $service->changeStatus('22222222-2222-2222-2222-222222222222', 'inactive');
+    }
+
+    public function test_change_status_throws_patient_not_found_when_id_is_not_a_well_formed_uuid(): void
+    {
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldNotReceive('findById');
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(PatientNotFound::class);
+
+        $service->changeStatus('not-a-uuid', 'inactive');
     }
 
     public function test_get_by_id_returns_the_patient_when_it_exists(): void

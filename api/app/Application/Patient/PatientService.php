@@ -8,11 +8,14 @@ use App\Domain\Biomarker\Biomarker;
 use App\Domain\Biomarker\BiomarkerRepository;
 use App\Domain\Brand\BrandRepository;
 use App\Domain\FeatureFlag\Exceptions\BrandNotFound;
+use App\Domain\Patient\Exceptions\InvalidStatusTransition;
 use App\Domain\Patient\Exceptions\PatientNotFound;
 use App\Domain\Patient\Patient;
 use App\Domain\Patient\PatientCursor;
 use App\Domain\Patient\PatientPage;
 use App\Domain\Patient\PatientRepository;
+use App\Domain\Patient\PatientStatus;
+use Illuminate\Support\Carbon;
 
 final class PatientService
 {
@@ -91,6 +94,26 @@ final class PatientService
         $this->assertValidId($id);
 
         return $this->patients->update($id, $fields);
+    }
+
+    public function changeStatus(string $id, string $targetStatus): Patient
+    {
+        $this->assertValidId($id);
+
+        $current = $this->patients->findById($id);
+
+        if ($current === null) {
+            throw new PatientNotFound($id);
+        }
+
+        $from = PatientStatus::from($current->status);
+        $to = PatientStatus::from($targetStatus);
+
+        if (! $from->canTransitionTo($to)) {
+            throw new InvalidStatusTransition($from->value, $to->value);
+        }
+
+        return $this->patients->updateStatus($id, $to->value, Carbon::now()->toIso8601String());
     }
 
     public function setNeedsFollowUp(string $id, bool $value): Patient
