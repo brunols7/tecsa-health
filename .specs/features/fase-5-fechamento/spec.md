@@ -217,23 +217,23 @@ nada.
 
 | Requirement ID | Story | Phase | Status |
 |---|---|---|---|
-| FASE5-01 | P1: Fechar gate de verificação | Tasks | Pending |
-| FASE5-02 | P1: Fechar gate de verificação | Tasks | Pending |
-| FASE5-03 | P1: Fechar gate de verificação | Tasks | Pending |
-| FASE5-04 | P1: Fechar gate de verificação | Tasks | Pending |
-| FASE5-05 | P1: ADRs temáticas | Tasks | Pending |
-| FASE5-06 | P1: ADRs temáticas | Tasks | Pending |
-| FASE5-07 | P1: ADRs temáticas | Tasks | Pending |
-| FASE5-08 | P1: ADRs temáticas | Tasks | Pending |
-| FASE5-09 | P1: READMEs completas | Tasks | Pending |
-| FASE5-10 | P1: READMEs completas | Tasks | Pending |
-| FASE5-11 | P1: READMEs completas | Tasks | Pending |
-| FASE5-12 | P1: READMEs completas | Tasks | Pending |
-| FASE5-13 | P2: Roteiro de vídeo e checklist | Tasks | Pending |
-| FASE5-14 | P2: Roteiro de vídeo e checklist | Tasks | Pending |
-| FASE5-15 | P2: Roteiro de vídeo e checklist | Tasks | Pending |
-| FASE5-16 | P3: Limpeza de ambiente | Tasks | Pending |
-| FASE5-17 | P3: Limpeza de ambiente | Tasks | Pending |
+| FASE5-01 | P1: Fechar gate de verificação | Tasks   | Verified |
+| FASE5-02 | P1: Fechar gate de verificação | Tasks   | Verified |
+| FASE5-03 | P1: Fechar gate de verificação | Tasks   | Verified |
+| FASE5-04 | P1: Fechar gate de verificação | Tasks   | Verified |
+| FASE5-05 | P1: ADRs temáticas | Tasks   | Verified |
+| FASE5-06 | P1: ADRs temáticas | Tasks   | Verified |
+| FASE5-07 | P1: ADRs temáticas | Tasks   | Verified |
+| FASE5-08 | P1: ADRs temáticas | Tasks   | Verified |
+| FASE5-09 | P1: READMEs completas | Tasks   | Verified |
+| FASE5-10 | P1: READMEs completas | Tasks   | Verified |
+| FASE5-11 | P1: READMEs completas | Tasks   | Verified |
+| FASE5-12 | P1: READMEs completas | Tasks   | Verified |
+| FASE5-13 | P2: Roteiro de vídeo e checklist | Tasks   | Verified |
+| FASE5-14 | P2: Roteiro de vídeo e checklist | Tasks   | Verified |
+| FASE5-15 | P2: Roteiro de vídeo e checklist | Tasks   | Verified |
+| FASE5-16 | P3: Limpeza de ambiente | Tasks   | Verified |
+| FASE5-17 | P3: Limpeza de ambiente | Tasks   | Verified |
 
 **ID format:** `FASE5-NN`
 

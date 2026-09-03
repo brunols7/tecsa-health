@@ -147,12 +147,58 @@
 
 ## Handoff
 
-- **Current**: `fase-6-melhorias-ux-backend` e `fase-6-melhorias-ux-mobile` **especificadas
-  integralmente nesta sessão** (Specify + Discuss + Design + Tasks, via `tlc-spec-driven`) —
+- **Current**: `fase-5-fechamento` **executada e verificada PASS** nesta sessão, na branch
+  `feat/fase-5-fechamento` (18 commits à frente de `main`, `1547520`..`64fdbe0`). Todas as 16 tasks
+  (T1-T16) commitadas individualmente. T1-T3 re-verificaram as 3 features sem gate fechado —
+  `fase-0-fundacao` (PASS, blockers antigos do FAIL confirmados já corrigidos por trabalho
+  posterior), `fase-4-release-ota-mobile` (PASS escopado — itens de device físico deferidos para o
+  checklist manual, decisão já prevista em `context.md`), `detalhe-paciente-abas-mobile` (PASS) —
+  zero fix task precisou ser aberta, os três já estavam corretos. T4-T7 adicionaram 3 ADRs novas
+  (`0003` estrutura/camadas backend, `0004` stack mobile, `0005` ciclo de vida do paciente,
+  formalizando AD-015) e expandiram `0001` com a decisão de biometria — 5 ADRs no total. T8-T11
+  reescreveram `api/README.md`/`mobile/README.md` (boilerplate de scaffold eliminado) e completaram
+  o README raiz (diagrama mermaid, tabela de 22 linhas de justificativa de biblioteca, seção "o que
+  fica de fora", relatório de uso de IA). T12 criou `docs/video-script.md` (roteiro cronometrado
+  ~3m40s-4min, ordenado pelo peso da rubrica). T13-T14 limparam `api/.env.example`/`api/.env` de
+  vars de scaffold não usadas e criaram `docs-internal/` (gitignored) com roteiro pessoal e
+  explicação de escolhas. T15 rodou o checklist final consolidado numa sessão só, do zero
+  (`docker compose down -v && up -d --wait` com os dois volumes removidos, rebuild completo,
+  `curl /up` e `/api/v1/feature-flags?brand=nutri-care` 200 ao vivo; `composer test` 272 testes;
+  `npm test` 294/294; `tsc --noEmit`/`phpstan analyse`/`pint --test` limpos; os dois scripts de
+  fronteira limpos quando rodados do diretório correto — **achado desta sessão**: os dois scripts
+  (`check-layer-boundary.sh`, `check-brand-boundary.sh`) resolvem o diretório-alvo como caminho
+  relativo ao `cwd` de onde são chamados, não relativo à raiz do repo — rodá-los a partir da raiz dá
+  um falso-positivo "OK" porque o `grep`/`test` falha silenciosamente ao não achar o diretório; os
+  dois só validam de verdade quando chamados de dentro de `api/`/`mobile/` respectivamente; nenhum
+  segredo real no histórico do git, nenhuma marca vazando em `mobile/src/core/`). Zero fix de
+  produto foi necessário — o checklist passou de primeira. T16 entregou
+  `docs-internal/checklist-manual-dispositivo.md` (gitignored, confirmado via `git status
+  --porcelain` vazio) com os 5 itens de device físico (duas marcas lado a lado, kill switch visual,
+  modo avião, OTA aplicado, gate biométrico sem cadastro) — todos **ainda pendentes de confirmação
+  do usuário**, nenhum marcado como concluído. Verifier de feature completo rodado em contexto
+  (não sub-agente, por limitação da sessão) sobre as 17 requirements (FASE5-01..17): **PASS**, todas
+  com evidência `file:line` re-derivada de forma independente — relatório completo em
+  `.specs/features/fase-5-fechamento/validation.md`. `spec.md` traceability atualizada de "Pending"
+  para "Verified" nas 17 linhas. `validate_spec.py`/`validate_state.py` confirmam 0 erros.
+  **Próximo passo**: usuário roda o checklist manual de `docs-internal/checklist-manual-dispositivo.md`
+  nos devices/simuladores disponíveis e confirma os 5 itens (ou aceita algum como risco, se o
+  hardware não permitir); depois disso a Fase 5 — e o projeto inteiro — fecha 100%. Gravação do
+  vídeo (`docs/video-script.md`) e publicação de OTA real seguem como ações do usuário fora do
+  escopo de agente. Nenhum `git push` feito — commits só locais em `feat/fase-5-fechamento`, `main`
+  intocado.
+- **Feature (histórico)**: `fase-6-melhorias-ux-backend` e `fase-6-melhorias-ux-mobile`
+  **especificadas e depois implementadas** em sessão anterior a esta — ver AD-015 acima
+  (`fase-6-melhorias-ux-backend` já referenciada como código real existente, não só spec, pelas
+  decisões desta sessão de Fase 5). Histórico original do handoff daquela sessão de planejamento
+  mantido abaixo para contexto de como as decisões de produto foram fechadas.
+- **Feature (histórico)**: `fase-6-melhorias-ux-backend` e `fase-6-melhorias-ux-mobile`
+  **especificadas integralmente** (Specify + Discuss + Design + Tasks, via `tlc-spec-driven`) —
   `spec.md`/`context.md`/`design.md`/`tasks.md` das duas escritos e validados limpos por
   `validate_spec.py`/`validate_tasks.py` (0 erros nas duas; alguns warnings de granularidade/"Tests:
-  none" já justificados inline nos próprios documentos). **Execute ainda não rodou** — nenhum código
-  desta fase foi implementado; usuário pediu explicitamente para completar toda a documentação antes
+  none" já justificados inline nos próprios documentos). **Execute ainda não tinha rodado nesta
+  sessão de planejamento** — nenhum código desta fase tinha sido implementado ainda naquele
+  momento (foi implementado depois, ver bullet "Current" acima e AD-015); usuário pediu
+  explicitamente para completar toda a documentação antes
   de revisar e autorizar o início do código ("Pode fazer a spec completa sem pedir para seguir por
   fases, completa ela, depois eu reviso e aviso para desenvolver"). `main`/branch atual
   (`feat/fase-4-release-ota-mobile`) não tocados por código — só arquivos em `.specs/`.
