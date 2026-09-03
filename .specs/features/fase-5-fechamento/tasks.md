@@ -178,8 +178,8 @@ real (monorepo, Domain/Application/Infrastructure/Http), decisão, alternativas 
 - Skill: `create-adr`
 
 **Done when**:
-- [ ] Arquivo criado com seções contexto/decisão/alternativas/consequências
-- [ ] Cita pelo menos 2 caminhos de arquivo reais do código
+- [x] Arquivo criado com seções contexto/decisão/alternativas/consequências
+- [x] Cita pelo menos 2 caminhos de arquivo reais do código
 
 **Tests**: none
 **Gate**: quick
