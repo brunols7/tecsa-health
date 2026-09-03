@@ -393,11 +393,11 @@ tela/comando exato a mostrar.
 - Skill: NONE
 
 **Done when**:
-- [ ] `grep -rE "REDIS_|AWS_|MEMCACHED_|VITE_APP_NAME|BROADCAST_CONNECTION" api/config/ api/app/`
+- [x] `grep -rE "REDIS_|AWS_|MEMCACHED_|VITE_APP_NAME|BROADCAST_CONNECTION" api/config/ api/app/`
       confirma nenhuma referência antes da remoção
-- [ ] `grep -rE "REDIS_|AWS_|MEMCACHED_|VITE_APP_NAME|BROADCAST_CONNECTION" api/.env.example` não
+- [x] `grep -rE "REDIS_|AWS_|MEMCACHED_|VITE_APP_NAME|BROADCAST_CONNECTION" api/.env.example` não
       retorna nada depois
-- [ ] `composer test` continua verde (nenhuma variável removida quebrou config)
+- [x] `composer test` continua verde (nenhuma variável removida quebrou config)
 
 **Tests**: none
 **Gate**: quick
