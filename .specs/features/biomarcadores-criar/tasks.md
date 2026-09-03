@@ -258,14 +258,14 @@ chama `PatientService::createBiomarker()`, devolve 201 com header `Location` apo
 - Skill: NONE
 
 **Done when**:
-- [ ] 201 com `Location` e corpo (`id`, `code`, `label`, `value`, `unit`, `refMin`, `refMax`,
+- [x] 201 com `Location` e corpo (`id`, `code`, `label`, `value`, `unit`, `refMin`, `refMax`,
       `measuredAt`, `status`) no caminho feliz
-- [ ] 422 para: `label` vazio, `value` não numérico, `refMin >= refMax`, `value <= 0` — cada um com
+- [x] 422 para: `label` vazio, `value` não numérico, `refMin >= refMax`, `value <= 0` — cada um com
       seu próprio teste
-- [ ] 404 `PATIENT_NOT_FOUND` quando o paciente não existe
-- [ ] Controller não tem `if`, cálculo, nem acesso a Eloquent (checável por `check-layer-boundary.sh`)
-- [ ] Gate check passa: `cd api && composer test`
-- [ ] Contagem de testes: 6+ novos em `PatientControllerTest.php`, suíte total sem queda
+- [x] 404 `PATIENT_NOT_FOUND` quando o paciente não existe
+- [x] Controller não tem `if`, cálculo, nem acesso a Eloquent (checável por `check-layer-boundary.sh`)
+- [x] Gate check passa: `cd api && composer test`
+- [x] Contagem de testes: 6+ novos em `PatientControllerTest.php`, suíte total sem queda
 
 **Tests**: e2e
 **Gate**: full

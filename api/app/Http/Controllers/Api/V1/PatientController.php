@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Application\Patient\PatientService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateBiomarkerRequest;
 use App\Http\Requests\ListPatientsRequest;
 use App\Http\Requests\UpdateFollowUpRequest;
 use App\Http\Resources\BiomarkerResource;
@@ -60,5 +61,17 @@ final class PatientController extends Controller
         $patient = $this->patients->setNeedsFollowUp($id, $request->boolean('needsFollowUp'));
 
         return (new PatientResource($patient))->response();
+    }
+
+    #[DocResponse(422, description: 'Invalid body')]
+    #[DocResponse(404, description: 'Patient not found')]
+    public function createBiomarker(CreateBiomarkerRequest $request, string $id): JsonResponse
+    {
+        $biomarker = $this->patients->createBiomarker($id, $request->toData());
+
+        return (new BiomarkerResource($biomarker))
+            ->response()
+            ->setStatusCode(201)
+            ->header('Location', "/api/v1/patients/{$id}/biomarkers");
     }
 }

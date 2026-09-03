@@ -233,4 +233,134 @@ class PatientControllerTest extends TestCase
         $response->assertJsonPath('needsFollowUp', true);
         $response->assertJsonPath('name', 'Ana Silva');
     }
+
+    public function test_creates_a_biomarker_and_returns_201_with_location_and_body(): void
+    {
+        $brand = BrandModel::factory()->create();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+
+        $response = $this->postJson("/api/v1/patients/{$patient->id}/biomarkers", [
+            'label' => 'Ferro sérico',
+            'value' => 40,
+            'unit' => 'ng/mL',
+            'refMin' => 20,
+            'refMax' => 200,
+            'measuredAt' => '2026-01-15',
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertHeader('Location', "/api/v1/patients/{$patient->id}/biomarkers");
+        $response->assertJsonStructure(['id', 'code', 'label', 'value', 'unit', 'refMin', 'refMax', 'measuredAt', 'status']);
+        $response->assertJsonPath('code', 'ferro_serico');
+        $response->assertJsonPath('label', 'Ferro sérico');
+        $response->assertJsonPath('status', 'normal');
+    }
+
+    public function test_created_biomarker_persists_and_is_readable_via_list(): void
+    {
+        $brand = BrandModel::factory()->create();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+
+        $this->postJson("/api/v1/patients/{$patient->id}/biomarkers", [
+            'label' => 'Ferritina',
+            'value' => 40,
+            'unit' => 'ng/mL',
+            'refMin' => 20,
+            'refMax' => 200,
+            'measuredAt' => '2026-01-15',
+        ])->assertStatus(201);
+
+        $list = $this->getJson("/api/v1/patients/{$patient->id}/biomarkers");
+
+        $list->assertStatus(200);
+        $list->assertJsonCount(1);
+        $list->assertJsonPath('0.label', 'Ferritina');
+    }
+
+    public function test_create_biomarker_returns_422_when_label_is_empty(): void
+    {
+        $brand = BrandModel::factory()->create();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+
+        $response = $this->postJson("/api/v1/patients/{$patient->id}/biomarkers", [
+            'label' => '',
+            'value' => 40,
+            'unit' => 'ng/mL',
+            'refMin' => 20,
+            'refMax' => 200,
+            'measuredAt' => '2026-01-15',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('error.code', 'VALIDATION_ERROR');
+    }
+
+    public function test_create_biomarker_returns_422_when_value_is_not_numeric(): void
+    {
+        $brand = BrandModel::factory()->create();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+
+        $response = $this->postJson("/api/v1/patients/{$patient->id}/biomarkers", [
+            'label' => 'Ferritina',
+            'value' => 'not-a-number',
+            'unit' => 'ng/mL',
+            'refMin' => 20,
+            'refMax' => 200,
+            'measuredAt' => '2026-01-15',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('error.code', 'VALIDATION_ERROR');
+    }
+
+    public function test_create_biomarker_returns_422_when_ref_min_is_greater_than_or_equal_to_ref_max(): void
+    {
+        $brand = BrandModel::factory()->create();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+
+        $response = $this->postJson("/api/v1/patients/{$patient->id}/biomarkers", [
+            'label' => 'Ferritina',
+            'value' => 40,
+            'unit' => 'ng/mL',
+            'refMin' => 200,
+            'refMax' => 200,
+            'measuredAt' => '2026-01-15',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('error.code', 'VALIDATION_ERROR');
+    }
+
+    public function test_create_biomarker_returns_422_when_value_is_less_than_or_equal_to_zero(): void
+    {
+        $brand = BrandModel::factory()->create();
+        $patient = PatientModel::factory()->create(['brand_id' => $brand->id]);
+
+        $response = $this->postJson("/api/v1/patients/{$patient->id}/biomarkers", [
+            'label' => 'Ferritina',
+            'value' => 0,
+            'unit' => 'ng/mL',
+            'refMin' => 20,
+            'refMax' => 200,
+            'measuredAt' => '2026-01-15',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('error.code', 'VALIDATION_ERROR');
+    }
+
+    public function test_create_biomarker_returns_404_when_patient_does_not_exist(): void
+    {
+        $response = $this->postJson('/api/v1/patients/'.Uuid::uuid4()->toString().'/biomarkers', [
+            'label' => 'Ferritina',
+            'value' => 40,
+            'unit' => 'ng/mL',
+            'refMin' => 20,
+            'refMax' => 200,
+            'measuredAt' => '2026-01-15',
+        ]);
+
+        $response->assertStatus(404);
+        $response->assertJsonPath('error.code', 'PATIENT_NOT_FOUND');
+    }
 }
