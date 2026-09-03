@@ -290,11 +290,14 @@ aninhada `biomarkers/new` (Expo Router não permite arquivo e pasta coexistindo 
 - Skill: NONE
 
 **Done when**:
-- [ ] Arquivo e teste movidos via `git mv` (histórico preservado), zero linha de conteúdo alterada
-- [ ] `router.push('/patients/${id}')` (usado em `(tabs)/index.tsx:177`) continua resolvendo para a
+- [x] Arquivo e teste movidos via `git mv` (histórico preservado); único conteúdo alterado foi o
+      import auto-referente do teste (`'../[id]'` → `'../index'`), necessário porque o arquivo
+      importado mudou de nome — sem isso o módulo não resolve (verificado: teste falhava com
+      "Cannot find module '../[id]'" antes do ajuste)
+- [x] `router.push('/patients/${id}')` (usado em `(tabs)/index.tsx:177`) continua resolvendo para a
       mesma tela (URL não muda: pasta `[id]/index.tsx` responde no mesmo path que `[id].tsx`)
-- [ ] Suíte existente do detalhe do paciente continua 100% verde, sem nenhum teste novo
-- [ ] Gate check passa: `cd mobile && npm test`
+- [x] Suíte existente do detalhe do paciente continua 100% verde, sem nenhum teste novo
+- [x] Gate check passa: `cd mobile && npm test`
 
 **Tests**: unit (suíte existente, sem teste novo)
 **Gate**: quick
