@@ -74,7 +74,7 @@ const easProjectId = (config: ConfigContext['config']): string | undefined =>
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: build.displayName,
-  slug: brandId,
+  slug: 'nutri-care',
   scheme: brandId,
   icon: build.icon,
   ios: {

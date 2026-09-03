@@ -2,6 +2,19 @@
 
 ## Decisions
 
+- **AD-016** (status: active) — `mobile/app.config.ts`/`mobile/app.json`: `slug` do Expo é **fixo**
+  (`'nutri-care'`) para as duas marcas, não deriva de `brandId` como antes. Rationale: reportado ao
+  vivo pelo usuário — `eas build --profile development-vita-plus` falhava com "Slug for project
+  identified by extra.eas.projectId (nutri-care) does not match the slug field (vita-plus)". Causa
+  raiz: um projeto EAS tem um único `slug` fixo no lado do servidor, vinculado ao `projectId`
+  (`app.json extra.eas.projectId`); o primeiro build bem-sucedido (`nutri-care`) registrou o projeto
+  EAS com esse slug, e computar um `slug` diferente por marca (`brandId`) quebra a validação em
+  qualquer build de uma marca diferente da primeira. Isso contraria a própria intenção do projeto
+  (`CLAUDE.md` §5.3: "Dois binários, um core") — um projeto EAS só, diferenciado por `channel`
+  (`eas.json`), `bundleIdentifier`/`package` e `name`, nunca por `slug`. `scheme` continua variando
+  por marca (`brandId`) — isso não é validado pela EAS, só o deep-link local, então pode continuar
+  distinto sem conflito. Nenhuma mudança do lado da EAS foi necessária (fix local, sem tocar estado
+  remoto da conta do usuário).
 - **AD-015** (status: active) — Modelagem de ciclo de vida de paciente da Fase 6
   (`fase-6-melhorias-ux-backend`): `status` (`active`/`inactive`/`completed`) e exclusão
   (`deleted_at`, soft delete padrão do Eloquent) são mecanismos **independentes**, não um enum
