@@ -6,8 +6,7 @@ App core único e white-label servindo duas marcas (NutriCare e VitaPlus) a part
 
 - **Como rodar o projeto** — logo abaixo, nesta página.
 - **Arquitetura, biblioteca por biblioteca, o que ficou de fora e uso de IA** — mais abaixo, nesta mesma página.
-- **Decisões e a defesa de cada uma delas (ADRs)**, escritas em linguagem direta, não em jargão de
-  documento formal:
+- **Decisões e a defesa de cada uma delas (ADRs)**, escritas em linguagem direta, não em jargão de documento formal:
   - [`0001` — servidor embutido no Docker e biometria no lugar de HealthKit](./docs/adr/0001-servidor-http-embutido.md)
   - [`0002` — por que o app usa Gemini quando falta crédito na Anthropic](./docs/adr/0002-selecao-de-provedor-llm.md)
   - [`0003` — um repositório só, backend em camadas de verdade](./docs/adr/0003-estrutura-repo-camadas-backend.md)
@@ -15,8 +14,7 @@ App core único e white-label servindo duas marcas (NutriCare e VitaPlus) a part
   - [`0005` — status de acompanhamento separado de exclusão](./docs/adr/0005-ciclo-de-vida-paciente.md)
 - **README do backend** (arquitetura em camadas, testes, endpoints) — [`api/README.md`](./api/README.md)
 - **README do mobile** (estrutura core/brands, troca de marca, OTA) — [`mobile/README.md`](./mobile/README.md)
-- **Contrato da API (OpenAPI, gerado do próprio código)** — `http://localhost:9000/docs/api`, com o
-  backend no ar
+- **Contrato da API (OpenAPI, gerado do próprio código)** — `http://localhost:9000/docs/api`, com o backend no ar
 
 ## Como rodar
 
@@ -159,24 +157,11 @@ Uma linha por escolha da Stack Fixa (`CLAUDE.md` §3) — o porquê, não só o 
 Ver [`CLAUDE.md` §15](./CLAUDE.md#15-o-que-fica-de-fora-de-propósito) para a lista completa.
 Resumo do que foi cortado conscientemente e por quê:
 
-- **Autenticação real.** Existe um usuário semeado e um token fixo. O foco desta fase é
-  arquitetura (core multimarca, camadas do backend, offline), não um fluxo de login completo —
-  implementar OAuth/sessão de verdade não provaria nada a mais sobre as decisões que o desafio
-  avalia.
-- **Multi-tenancy no nível de banco.** As duas marcas compartilham schema, escopadas por
-  `brand_id`. Isolamento de banco por tenant é uma decisão de infraestrutura ortogonal ao que
-  este desafio pede — adicionaria complexidade operacional sem mudar nenhuma decisão de
-  arquitetura sendo avaliada.
-- **Sincronização bidirecional completa offline.** O que existe é cache de leitura
-  (`persistQueryClient`) mais fila de mutations otimistas com rollback. Sync bidirecional de
-  verdade (resolução de conflito, fila persistente entre sessões) é um projeto à parte.
-- **HealthKit.** Cortado por indisponibilidade de device iOS físico para demonstrar
-  honestamente — declarar suporte sem poder provar que funciona seria pior do que não ter.
-  `expo-local-authentication` cobre a exigência de capacidade nativa via biometria.
-- **CI/CD.** Os scripts de verificação (guard-rails de camada e de marca, testes, lint,
-  PHPStan) existem e rodam localmente, documentados neste README e nos READMEs de subprojeto.
-  Cabeamento em pipeline de CI é configuração de infraestrutura, não uma decisão arquitetural
-  nova — pode ser adicionado depois sem tocar código.
+- **Autenticação real.** Existe um usuário semeado e um token fixo. O foco desta fase é arquitetura (core multimarca, camadas do backend, offline), não um fluxo de login completo — implementar OAuth/sessão de verdade não provaria nada a mais sobre as decisões que o desafio avalia.
+- **Multi-tenancy no nível de banco.** As duas marcas compartilham schema, escopadas por `brand_id`. Isolamento de banco por tenant é uma decisão de infraestrutura ortogonal ao que este desafio pede — adicionaria complexidade operacional sem mudar nenhuma decisão de arquitetura sendo avaliada.
+- **Sincronização bidirecional completa offline.** O que existe é cache de leitura (`persistQueryClient`) mais fila de mutations otimistas com rollback. Sync bidirecional de verdade (resolução de conflito, fila persistente entre sessões) é um projeto à parte.
+- **HealthKit.** Cortado por indisponibilidade de device iOS físico para demonstrar honestamente — declarar suporte sem poder provar que funciona seria pior do que não ter. `expo-local-authentication` cobre a exigência de capacidade nativa via biometria.
+- **CI/CD.** Os scripts de verificação (guard-rails de camada e de marca, testes, lint, PHPStan) existem e rodam localmente, documentados neste README e nos READMEs de subprojeto. Cabeamento em pipeline de CI é configuração de infraestrutura, não uma decisão arquitetural nova — pode ser adicionado depois sem tocar código.
 
 ## Uso de IA
 
