@@ -267,10 +267,10 @@ variações de filtro).
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Sucesso invalida a lista de pacientes
-- [ ] Erro propaga para o chamador sem estado otimista para reverter
-- [ ] Teste cobrindo sucesso e erro
-- [ ] Gate check passes: `npm test`
+- [x] Sucesso invalida a lista de pacientes
+- [x] Erro propaga para o chamador sem estado otimista para reverter
+- [x] Teste cobrindo sucesso e erro
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick
