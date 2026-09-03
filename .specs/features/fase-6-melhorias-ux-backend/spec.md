@@ -262,9 +262,9 @@ LIMIT 20` mostra nomes brasileiros; `INSERT` manual com `goal='invalid'` falha p
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
 | UXBE-01 | P1: Criar paciente | Design | Implementing |
-| UXBE-02 | P1: Criar paciente | Design | Pending |
-| UXBE-03 | P1: Criar paciente | Design | Pending |
-| UXBE-04 | P1: Criar paciente | Design | Pending |
+| UXBE-02 | P1: Criar paciente | Design | Implementing |
+| UXBE-03 | P1: Criar paciente | Design | Implementing |
+| UXBE-04 | P1: Criar paciente | Design | Implementing |
 | UXBE-05 | P1: Criar paciente | Design | Implementing |
 | UXBE-06 | P1: Criar paciente | Design | Pending |
 | UXBE-31 | P1: Criar paciente | Design | Pending |

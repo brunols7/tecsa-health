@@ -548,14 +548,16 @@ lança `InvalidStatusTransition` se `false`, senão delega a `PatientRepository:
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `authorize()` retorna `true`
-- [ ] Regras cobrem os 4 campos exatamente como acima
-- [ ] Gate check passes: `composer test` (exercida via Feature test em T21)
+- [x] `authorize()` retorna `true`
+- [x] Regras cobrem os 4 campos exatamente como acima
+- [x] Gate check passes: `composer test` (exercida via Feature test em T21)
 
 **Tests**: none
 **Gate**: quick
 
 **Commit**: `feat(patient-http): add StorePatientRequest`
+
+**Status**: ✅ Complete
 
 ---
 
