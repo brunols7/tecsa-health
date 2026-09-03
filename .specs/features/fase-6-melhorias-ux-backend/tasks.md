@@ -615,14 +615,16 @@ exact file.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `authorize()` retorna `true`
-- [ ] Regra cobre `status` exatamente como acima
-- [ ] Gate check passes: `composer test` (exercida via Feature test em T21)
+- [x] `authorize()` retorna `true`
+- [x] Regra cobre `status` exatamente como acima
+- [x] Gate check passes: `composer test` (exercida via Feature test em T21)
 
 **Tests**: none
 **Gate**: quick
 
 **Commit**: `feat(patient-http): add UpdatePatientStatusRequest`
+
+**Status**: ✅ Complete
 
 ---
 
