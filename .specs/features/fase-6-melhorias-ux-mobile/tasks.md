@@ -101,10 +101,10 @@ T21 → T22 → T23.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `patientGoalSchema`/`patientStatusSchema` exportados e usados dentro de `patientSchema`
-- [ ] `.safeParse()` com `goal: 'valor-desconhecido'` falha
-- [ ] Teste unitário cobrindo enum válido/inválido para os dois campos
-- [ ] Gate check passes: `npm test`
+- [x] `patientGoalSchema`/`patientStatusSchema` exportados e usados dentro de `patientSchema`
+- [x] `.safeParse()` com `goal: 'valor-desconhecido'` falha
+- [x] Teste unitário cobrindo enum válido/inválido para os dois campos
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick

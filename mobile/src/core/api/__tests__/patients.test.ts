@@ -10,9 +10,10 @@ const validPatient = {
   id: 'patient-1',
   name: 'Maria Souza',
   birthDate: '1990-05-12',
-  goal: 'Perda de peso',
+  goal: 'lose_weight',
   status: 'active',
   needsFollowUp: false,
+  statusChangedAt: '2026-01-01T10:00:00Z',
   updatedAt: '2026-01-01T10:00:00Z',
 };
 
