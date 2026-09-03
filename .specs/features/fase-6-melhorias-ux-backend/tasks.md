@@ -706,14 +706,17 @@ envelope `409 INVALID_STATUS_TRANSITION` (mesmo padrão de `AiActionAlreadyResol
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] As 3 rotas novas respondem (roteadas para os métodos certos)
-- [ ] `InvalidStatusTransition` produz `409` com `code: INVALID_STATUS_TRANSITION`
-- [ ] Gate check passes: `composer test && vendor/bin/phpstan analyse`
+- [x] As 3 rotas novas respondem (roteadas para os métodos certos)
+- [x] `InvalidStatusTransition` produz `409` com `code: INVALID_STATUS_TRANSITION`
+- [x] Gate check passes: `composer test && vendor/bin/phpstan analyse`
 
 **Tests**: none
 **Gate**: full
 
 **Commit**: `feat(patient-http): register new patient routes and 409 handler mapping`
+
+**Status**: ✅ Complete — verified route wiring with `php artisan route:list --path=patients`
+(all 4 patient routes present, mapped to the expected controller methods).
 
 ---
 
