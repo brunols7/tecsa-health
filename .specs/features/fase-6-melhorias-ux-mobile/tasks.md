@@ -345,10 +345,10 @@ brand.id]`.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Sucesso atualiza o status exibido
-- [ ] Erro (incluindo `409`) mantém o status anterior visível, sem crash
-- [ ] Teste cobrindo sucesso e os dois tipos de erro (rede genérica e `409`)
-- [ ] Gate check passes: `npm test`
+- [x] Sucesso atualiza o status exibido
+- [x] Erro (incluindo `409`) mantém o status anterior visível, sem crash
+- [x] Teste cobrindo sucesso e os dois tipos de erro (rede genérica e `409`)
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick
