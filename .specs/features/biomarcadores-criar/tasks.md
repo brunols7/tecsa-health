@@ -347,11 +347,11 @@ BiomarkerStatus` espelhando `BiomarkerStatus::from()` do backend (`value < refMi
 - Skill: NONE
 
 **Done when**:
-- [ ] Testes cobrem as 5 bordas: abaixo, exatamente no mínimo, dentro, exatamente no máximo, acima
-- [ ] Resultado bate com os mesmos casos de `api/tests/Unit/BiomarkerStatusTest.php` (paridade
+- [x] Testes cobrem as 5 bordas: abaixo, exatamente no mínimo, dentro, exatamente no máximo, acima
+- [x] Resultado bate com os mesmos casos de `api/tests/Unit/BiomarkerStatusTest.php` (paridade
       explícita, comentada no teste — não no código de produção)
-- [ ] Gate check passa: `cd mobile && npm test`
-- [ ] Contagem de testes: 5+ novos em `biomarkerStatus.test.ts`
+- [x] Gate check passa: `cd mobile && npm test`
+- [x] Contagem de testes: 5+ novos em `biomarkerStatus.test.ts`
 
 **Tests**: unit
 **Gate**: quick
