@@ -295,9 +295,9 @@ como trocar de marca via `APP_BRAND`, como rodar testes/lint/`tsc`, como publica
 - Skill: NONE
 
 **Done when**:
-- [ ] `grep -i "Welcome to your Expo app" mobile/README.md` não retorna nada
-- [ ] Contém seções: estrutura core/brands, troca de marca, testes/lint, OTA
-- [ ] `mobile/package.json` diz `"version": "1.1.0"`
+- [x] `grep -i "Welcome to your Expo app" mobile/README.md` não retorna nada
+- [x] Contém seções: estrutura core/brands, troca de marca, testes/lint, OTA
+- [x] `mobile/package.json` diz `"version": "1.1.0"`
 
 **Tests**: none
 **Gate**: quick
