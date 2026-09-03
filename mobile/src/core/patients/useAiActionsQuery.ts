@@ -11,6 +11,6 @@ export function useAiActionsQuery(patientId: string): UseQueryResult<AiAction[]>
   return useQuery({
     queryKey: ['ai-actions', patientId],
     queryFn: () => fetchAiActions(patientId),
-    enabled: aiActionsEnabled,
+    enabled: aiActionsEnabled && Boolean(patientId),
   });
 }

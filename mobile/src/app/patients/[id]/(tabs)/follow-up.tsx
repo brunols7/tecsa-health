@@ -1,11 +1,11 @@
 import { ScrollView } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useGlobalSearchParams } from 'expo-router';
 
 import { useTheme } from '@/core/theme/useTheme';
 import { AiActionsSection } from '@/core/ui/AiActionsSection';
 
 export default function PatientFollowUpScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useGlobalSearchParams<{ id: string }>();
   const { spacing } = useTheme();
 
   return (

@@ -1,6 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useGlobalSearchParams } from 'expo-router';
 
 import { resolveBrand } from '@/brands';
 import { fetchAiActions } from '@/core/api/ai-actions';
@@ -13,13 +13,13 @@ import PatientFollowUpScreen from '../follow-up';
 jest.mock('@/core/api/ai-actions');
 jest.mock('@/core/flags/useFlag');
 jest.mock('expo-router', () => ({
-  useLocalSearchParams: jest.fn(),
+  useGlobalSearchParams: jest.fn(),
 }));
 
 const mockedFetchAiActions = fetchAiActions as jest.MockedFunction<typeof fetchAiActions>;
 const mockedUseFlag = useFlag as jest.MockedFunction<typeof useFlag>;
-const mockedUseLocalSearchParams = useLocalSearchParams as jest.MockedFunction<
-  typeof useLocalSearchParams
+const mockedUseGlobalSearchParams = useGlobalSearchParams as jest.MockedFunction<
+  typeof useGlobalSearchParams
 >;
 
 function renderScreen() {
@@ -36,15 +36,15 @@ function renderScreen() {
 
 describe('PatientFollowUpScreen', () => {
   beforeEach(() => {
-    mockedUseLocalSearchParams.mockReturnValue({ id: 'patient-1' } as unknown as ReturnType<
-      typeof useLocalSearchParams
+    mockedUseGlobalSearchParams.mockReturnValue({ id: 'patient-1' } as unknown as ReturnType<
+      typeof useGlobalSearchParams
     >);
     mockedUseFlag.mockReturnValue(true);
     mockedFetchAiActions.mockResolvedValue([]);
   });
 
   afterEach(() => {
-    mockedUseLocalSearchParams.mockReset();
+    mockedUseGlobalSearchParams.mockReset();
     mockedUseFlag.mockReset();
     mockedFetchAiActions.mockReset();
   });
