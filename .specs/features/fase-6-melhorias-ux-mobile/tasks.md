@@ -154,12 +154,12 @@ T21 → T22 → T23.
 - Skill: NONE
 
 **Done when**:
-- [ ] `calculateAge` correto em limite exato de aniversário (dia antes/depois do aniversário no ano
+- [x] `calculateAge` correto em limite exato de aniversário (dia antes/depois do aniversário no ano
       corrente)
-- [ ] `formatDateBR('2026-03-05')` → `'05/03/2026'`
-- [ ] Teste unitário cobrindo os 2 casos de `calculateAge` (antes/depois do aniversário) e o
+- [x] `formatDateBR('2026-03-05')` → `'05/03/2026'`
+- [x] Teste unitário cobrindo os 2 casos de `calculateAge` (antes/depois do aniversário) e o
       formato de `formatDateBR`
-- [ ] Gate check passes: `npm test`
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick
