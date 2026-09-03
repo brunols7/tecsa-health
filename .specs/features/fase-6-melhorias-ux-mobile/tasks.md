@@ -401,10 +401,10 @@ Expo Router.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Rota `/patients/:id` continua respondendo exatamente como antes (nenhuma mudança visual)
-- [ ] Teste movido continua passando sem alteração de asserção
-- [ ] Nenhum import quebrado em outros arquivos que referenciam o caminho antigo
-- [ ] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
+- [x] Rota `/patients/:id` continua respondendo exatamente como antes (nenhuma mudança visual)
+- [x] Teste movido continua passando sem alteração de asserção
+- [x] Nenhum import quebrado em outros arquivos que referenciam o caminho antigo
+- [x] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
 
 **Tests**: unit (teste movido, sem novo teste)
 **Gate**: full

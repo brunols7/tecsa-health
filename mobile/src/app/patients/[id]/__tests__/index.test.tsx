@@ -16,7 +16,7 @@ import { createTestQueryClient } from '@/core/offline/queryClient';
 import { useIsOffline } from '@/core/offline/network';
 import { BrandProvider } from '@/core/theme/BrandProvider';
 
-import PatientDetailScreen from '../[id]';
+import PatientDetailScreen from '../index';
 
 jest.mock('@/core/api/patients');
 jest.mock('@/core/api/ai-actions');
