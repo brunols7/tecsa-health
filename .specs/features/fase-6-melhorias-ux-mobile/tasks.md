@@ -667,9 +667,9 @@ com filtro (T11), `PatientStatusFilterSheet` (T19)
 - Skill: NONE
 
 **Done when**:
-- [ ] `version` atualizado
-- [ ] `npx expo config` (ou `app.config.ts` resolvido) reflete a versão nova
-- [ ] Gate check passes: `npm run pretest && npx tsc --noEmit`
+- [x] `version` atualizado
+- [x] `npx expo config` (ou `app.config.ts` resolvido) reflete a versão nova
+- [x] Gate check passes: `npm run pretest && npx tsc --noEmit`
 
 **Tests**: none
 **Gate**: build
