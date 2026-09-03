@@ -182,11 +182,11 @@ T21 → T22 → T23.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Renderiza o `label` recebido
-- [ ] Nenhum literal de cor/raio (tudo via `useTheme()`)
-- [ ] Teste renderizando com as duas marcas confirmando que os tokens aplicados diferem (mesmo
+- [x] Renderiza o `label` recebido
+- [x] Nenhum literal de cor/raio (tudo via `useTheme()`)
+- [x] Teste renderizando com as duas marcas confirmando que os tokens aplicados diferem (mesmo
       padrão do teste de fronteira de marca já usado em `src/brands/__tests__/index.test.ts`)
-- [ ] Gate check passes: `npm test`
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick
