@@ -39,8 +39,13 @@ function GatedContent() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="index" />
       <Stack.Screen name="patients/[id]" options={{ headerShown: true, title: '' }} />
+      <Stack.Screen name="patients/new" options={{ headerShown: true, title: 'Novo paciente' }} />
+      <Stack.Screen
+        name="patients/[id]/edit"
+        options={{ headerShown: true, title: 'Editar paciente' }}
+      />
     </Stack>
   );
 }
