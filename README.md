@@ -5,6 +5,23 @@ compartilhada, com uma fatia vertical do "app do nutricionista": carteira de pac
 biomarcadores e ações de acompanhamento geradas por IA. A arquitetura completa, as regras
 invioláveis e as decisões de stack estão documentadas em [`CLAUDE.md`](./CLAUDE.md).
 
+## Documentação — acesso rápido
+
+- **Como rodar o projeto** — logo abaixo, nesta página.
+- **Arquitetura, biblioteca por biblioteca, o que ficou de fora e uso de IA** — mais abaixo, nesta
+  mesma página.
+- **Decisões e a defesa de cada uma delas (ADRs)**, escritas em linguagem direta, não em jargão de
+  documento formal:
+  - [`0001` — servidor embutido no Docker e biometria no lugar de HealthKit](./docs/adr/0001-servidor-http-embutido.md)
+  - [`0002` — por que o app usa Gemini quando falta crédito na Anthropic](./docs/adr/0002-selecao-de-provedor-llm.md)
+  - [`0003` — um repositório só, backend em camadas de verdade](./docs/adr/0003-estrutura-repo-camadas-backend.md)
+  - [`0004` — a stack do mobile, peça por peça](./docs/adr/0004-stack-arquitetura-mobile.md)
+  - [`0005` — status de acompanhamento separado de exclusão](./docs/adr/0005-ciclo-de-vida-paciente.md)
+- **README do backend** (arquitetura em camadas, testes, endpoints) — [`api/README.md`](./api/README.md)
+- **README do mobile** (estrutura core/brands, troca de marca, OTA) — [`mobile/README.md`](./mobile/README.md)
+- **Contrato da API (OpenAPI, gerado do próprio código)** — `http://localhost:9000/docs/api`, com o
+  backend no ar
+
 ## Como rodar
 
 ### Pré-requisitos

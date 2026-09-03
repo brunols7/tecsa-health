@@ -1,89 +1,68 @@
-# ADR-0004: Stack mobile — TanStack Query, cache MMKV, cursor pagination, EAS Update
+# ADR-0004: A stack do mobile, e por que cada peça dela existe de verdade no projeto
 
-## Status
+**Status:** aceita e implementada.
 
-Aceita
+O desafio já fixa boa parte da stack mobile antes de qualquer código ser escrito — Expo Router,
+TanStack Query, Zustand, MMKV, FlashList, `expo-updates` — e não deixa muito espaço para trocar por
+outra coisa. Esta ADR não é uma lista de tecnologias escolhidas no vácuo; é o porquê de cada uma ter
+sido realmente necessária no projeto, tal como ele foi construído.
 
-## Contexto
+## TanStack Query para todo estado que vem do servidor
 
-`CLAUDE.md` §3 fixa a stack mobile antes de qualquer código ser escrito (Expo Router, TanStack
-Query, Zustand, MMKV, FlashList, `expo-updates`) e proíbe explicitamente qualquer alternativa fora
-dessa lista. Esta ADR registra por que cada peça foi de fato necessária no projeto real — não é uma
-lista de tecnologias escolhidas no vácuo, é o racional por trás de cada uma tal como usada.
+Toda tela que busca dado — carteira de pacientes, detalhe do paciente, biomarcadores, ações de IA,
+feature flags — usa um hook de query próprio construído sobre `useQuery`/`useMutation`. Nunca um
+`fetch` solto dentro de `useEffect`. Isso dá cache, revalidação, estado de loading/erro e mutations
+otimistas de graça, sem reinventar nada disso na mão.
 
-## Decisão
+## Cache MMKV para a carteira continuar legível offline
 
-**TanStack Query v5 (`@tanstack/react-query@^5.102.8`) para todo estado de servidor.** Toda tela que
-busca dado (carteira de pacientes, detalhe, biomarcadores, ações de IA, feature flags) usa um hook
-de query próprio (`mobile/src/core/patients/usePatientDetailQuery.ts`,
-`usePatientBiomarkersQuery.ts`, `useAiActionsQuery.ts`) construído sobre `useQuery`/`useMutation` —
-nunca `fetch` direto em `useEffect`.
+`persistQueryClient` liga o `QueryClient` único do projeto a um `Persister` sobre
+`react-native-mmkv`. Na prática, isso significa que a carteira de pacientes e qualquer detalhe de
+paciente já visitado continuam legíveis com o aparelho em modo avião — não é sincronização
+bidirecional completa (isso está fora de escopo, documentado no README), é cache de leitura: o que
+já foi buscado com sucesso uma vez fica disponível offline; o que nunca foi visitado, não.
 
-**Persistência de leitura via `persistQueryClient` + MMKV.** `mobile/src/core/offline/queryClient.ts`
-liga o `QueryClient` único do projeto a `persistQueryClient` com um `Persister` sobre
-`react-native-mmkv` (`mobile/src/core/offline/storage.ts:5-16`). A carteira de pacientes e o
-detalhe de um paciente já visitado ficam legíveis com o dispositivo em modo avião.
+## Paginação por cursor, não por página/offset
 
-**Paginação por cursor, não offset.** `mobile/src/core/api/patients.ts:12-18` — `fetchPatients`
-recebe `cursor: string | undefined` e devolve o próximo cursor no envelope paginado, nunca `page`/
-`offset`. O seed tem 5.000+ pacientes (`CLAUDE.md` §2.5); com scroll infinito sobre offset, um
-paciente inserido/removido durante a navegação desloca todos os índices seguintes, causando item
-duplicado ou pulado na próxima página — cursor não tem esse problema porque aponta para uma posição
-relativa a um registro específico, não a um índice absoluto.
+Com mais de 5.000 pacientes no seed e busca por nome ativa, paginação por offset tem um problema
+real aqui: qualquer paciente criado ou editado durante uma sessão de scroll desloca os índices de
+todo mundo que vem depois, causando item duplicado ou pulado na página seguinte. Cursor não sofre
+disso, porque aponta para a posição de um registro específico, não para um índice absoluto na
+lista. O trade-off é não conseguir pular direto para "página 40" — coisa que a UI de scroll
+infinito deste produto nunca pediu para começo de conversa.
 
-**`@shopify/flash-list` na carteira de pacientes.** `mobile/src/app/index.tsx:4,264-267` — `FlashList`
-com `keyExtractor` estável, nunca `FlatList`/`ScrollView.map()` sobre a lista completa (`CLAUDE.md`
-§2.5). A versão instalada (`flash-list@2.0.2`) removeu `estimatedItemSize` do contrato de props —
-registrado como `SPEC_DEVIATION` inline no próprio arquivo (`index.tsx:260-263`) porque
-`design.md`/`tasks.md` foram escritos contra a v1, que exigia essa prop.
+## FlashList na carteira, nunca FlatList
 
-**`expo-updates` + EAS Update para OTA, canal derivado de `app.config.ts`/`eas.json` por marca.**
-Ver detalhamento completo em `.specs/features/fase-4-release-ota-mobile/validation.md` — cada
-perfil de build (`mobile/eas.json`) fixa `channel` e `env.APP_BRAND`, sem `if` de marca em
-`mobile/src/core/**`.
+Uma lista de 5.000+ itens renderizada com `FlatList`/`ScrollView.map()` trava a rolagem — é
+basicamente o motivo de o desafio marcar "ausência de virtualização" como motivo de eliminação.
+`FlashList` está na lista de pacientes com `keyExtractor` estável. Vale uma nota honesta: a versão
+instalada (`flash-list@2.0.2`) removeu a prop `estimatedItemSize` que a v1 exigia — o código tem
+esse ajuste marcado como `SPEC_DEVIATION` no próprio arquivo, porque a documentação original do
+projeto foi escrita contra a v1.
 
-**Zustand foi aprovado na stack, mas não foi adotado — não surgiu estado de cliente que o
-justificasse.** `CLAUDE.md` §3 lista Zustand como a escolha para "estado de cliente" (ex.: um
-seletor de marca em runtime só para dev, `CLAUDE.md` §5.3). Esse seletor é opcional
-("pode existir") e não foi implementado nesta entrega; todo o restante do estado da aplicação é
-estado de servidor (TanStack Query) ou estado local de componente (`useState` em formulários,
-toggles). `grep -rn "zustand" mobile/src mobile/package.json` não retorna nenhum resultado — a
-biblioteca nunca foi instalada. Registrado aqui em vez de fingir um uso que não existe: não há
-Redux, Context-como-store-global, nem qualquer outro mecanismo concorrente escondido no lugar dela.
+## `expo-updates` + EAS Update para OTA
 
-## Por que não Redux Toolkit Query / SWR para estado de servidor
+Cada marca tem seu próprio canal de atualização, derivado do perfil de build (`eas.json`) — nunca
+um `if` de marca dentro do código compartilhado. É o mecanismo oficial do próprio Expo, então não
+depende de nenhum serviço de terceiro. Isso importa porque a alternativa mais conhecida no mercado,
+CodePush, foi descontinuada pela Microsoft — escolher `expo-updates` evita amarrar o projeto a algo
+que já não tem manutenção.
 
-RTK Query amarra o app a todo o ecossistema Redux (store, slices, middleware) para resolver um
-problema que TanStack Query resolve sozinho; SWR tem API mais enxuta mas sem a mesma profundidade de
-mutations otimistas com rollback nativo (`onMutate`/`onError`/`onSettled`) que `CLAUDE.md` §5.6
-exige para as mutations de escrita do projeto (marcar acompanhamento, aceitar/descartar ação de IA).
-`mobile/src/core/patients/useSetFollowUpMutation.ts` e as demais mutations do projeto usam esse
-padrão de três fases diretamente.
+## Zustand: aprovado, mas não usado — e isso é intencional, não esquecimento
 
-## Por que não offset na paginação da carteira
+Zustand está na lista de tecnologias aprovadas para "estado de cliente" (o exemplo típico seria um
+seletor de marca em runtime, só para desenvolvimento). Mas esse seletor é opcional e não foi
+implementado nesta entrega, e todo o resto do estado da aplicação já é coberto por TanStack Query
+(estado de servidor) ou por `useState` local em formulários e toggles (estado de componente). A
+biblioteca nunca chegou a ser instalada — é melhor registrar isso com clareza do que fingir um uso
+que não existe. Também não há Redux nem Context usado como store global escondido no lugar dela.
 
-Com 5.000+ pacientes e busca por nome ativa, o cenário mais comum de "página desloca" não é raro:
-qualquer criação/edição de paciente durante uma sessão de scroll já reordena o `LIMIT/OFFSET`
-subjacente. O cursor amarra a posição a `updated_at`+`id` do último item visto, imune a esse
-deslocamento — o trade-off aceito é não poder pular direto para "página 40", o que a UI de scroll
-infinito do produto nunca pediu.
+## O que isso significa na prática
 
-## Por que não CodePush para OTA
-
-CodePush (App Center) foi descontinuado pela Microsoft; `expo-updates` é o mecanismo nativo do Expo
-SDK já usado no resto do projeto, sem dependência de um serviço de terceiro desativado.
-
-## Consequências
-
-- Toda tela de dado segue o mesmo fluxo `schema zod → tipo inferido → fetch → parse → hook de
-  Query` (`CLAUDE.md` §5.4); um dado que falha o `.parse()` do zod nunca chega ao componente — ele
-  falha alto em vez de renderizar algo silenciosamente errado.
-- O cache MMKV persiste só o que já foi buscado com sucesso; um paciente nunca visitado continua
-  indisponível offline — é o "cache de leitura, não sincronização bidirecional completa" já
-  registrado como fora de escopo em `CLAUDE.md` §15.
-- Se um caso de estado de cliente genuíno aparecer no futuro (por exemplo, um filtro complexo de UI
-  que precise sobreviver a navegação entre telas sem ir para a URL), Zustand já está aprovado na
-  stack — não exige uma nova decisão de arquitetura, só a instalação do pacote.
-- `FlashList` v2 sem `estimatedItemSize` é mais simples de usar (auto-sizing), mas divergiu do que
-  `design.md` original previa — o `SPEC_DEVIATION` inline é o registro desse ajuste de versão real
-  vs. planejada.
+Toda tela de dado segue o mesmo caminho: um schema zod valida a resposta, um tipo é inferido dele,
+uma função de fetch busca o dado, o `.parse()` do zod confere a forma antes de qualquer coisa
+chegar ao componente. Um dado que não bate com o schema nunca renderiza silenciosamente errado —
+ele falha alto, o que é bem melhor do que descobrir um bug de contrato em produção. E se um caso de
+estado de cliente genuíno aparecer no futuro — um filtro complexo que precise sobreviver a
+navegação entre telas, por exemplo — Zustand já está aprovado na stack; adotá-lo não exigiria uma
+nova decisão de arquitetura, só instalar o pacote.
