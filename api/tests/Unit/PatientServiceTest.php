@@ -369,6 +369,54 @@ class PatientServiceTest extends TestCase
         $service->changeStatus('not-a-uuid', 'inactive');
     }
 
+    public function test_delete_delegates_to_the_repository_with_the_given_id(): void
+    {
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('delete')->once()->with('11111111-1111-1111-1111-111111111111');
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->assertNull($service->delete('11111111-1111-1111-1111-111111111111'));
+    }
+
+    public function test_delete_propagates_patient_not_found_from_the_repository(): void
+    {
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('delete')
+            ->with('22222222-2222-2222-2222-222222222222')
+            ->andThrow(new PatientNotFound('22222222-2222-2222-2222-222222222222'));
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(PatientNotFound::class);
+
+        $service->delete('22222222-2222-2222-2222-222222222222');
+    }
+
+    public function test_delete_throws_patient_not_found_when_id_is_not_a_well_formed_uuid(): void
+    {
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldNotReceive('delete');
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(PatientNotFound::class);
+
+        $service->delete('not-a-uuid');
+    }
+
     public function test_get_by_id_returns_the_patient_when_it_exists(): void
     {
         $patient = new Patient(

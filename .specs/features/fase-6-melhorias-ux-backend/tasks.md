@@ -519,15 +519,17 @@ lança `InvalidStatusTransition` se `false`, senão delega a `PatientRepository:
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] Sucesso: repositório chamado com o id certo
-- [ ] Id inválido, paciente inexistente, ou já excluído lançam `PatientNotFound`
-- [ ] Teste unitário cobrindo os 2 casos
-- [ ] Gate check passes: `composer test`
+- [x] Sucesso: repositório chamado com o id certo
+- [x] Id inválido, paciente inexistente, ou já excluído lançam `PatientNotFound`
+- [x] Teste unitário cobrindo os 2 casos
+- [x] Gate check passes: `composer test`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(patient-service): add delete method`
+
+**Status**: ✅ Complete
 
 ---
 

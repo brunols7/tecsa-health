@@ -116,6 +116,13 @@ final class PatientService
         return $this->patients->updateStatus($id, $to->value, Carbon::now()->toIso8601String());
     }
 
+    public function delete(string $id): void
+    {
+        $this->assertValidId($id);
+
+        $this->patients->delete($id);
+    }
+
     public function setNeedsFollowUp(string $id, bool $value): Patient
     {
         $this->assertValidId($id);

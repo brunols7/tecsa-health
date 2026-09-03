@@ -280,10 +280,10 @@ LIMIT 20` mostra nomes brasileiros; `INSERT` manual com `goal='invalid'` falha p
 | UXBE-16 | P3: Ciclo de vida | Design | Implementing |
 | UXBE-17 | P3: Ciclo de vida | Design | Pending |
 | UXBE-32 | P3: Ciclo de vida | Design | Implementing |
-| UXBE-18 | P4: Excluir (soft delete) | Design | Pending |
+| UXBE-18 | P4: Excluir (soft delete) | Design | Implementing |
 | UXBE-19 | P4: Excluir (soft delete) | Design | Pending |
 | UXBE-20 | P4: Excluir (soft delete) | Design | Pending |
-| UXBE-21 | P4: Excluir (soft delete) | Design | Pending |
+| UXBE-21 | P4: Excluir (soft delete) | Design | Implementing |
 | UXBE-22 | P5: Filtro por status | Design | Pending |
 | UXBE-23 | P5: Filtro por status | Design | Pending |
 | UXBE-24 | P5: Filtro por status | Design | Pending |
