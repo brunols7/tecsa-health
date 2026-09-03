@@ -373,11 +373,11 @@ da resposta com `biomarkerSchema`.
 - Skill: NONE
 
 **Done when**:
-- [ ] Chama `apiPost` com a URL e o corpo corretos
-- [ ] Faz `.parse()` da resposta antes de devolver (nunca `unknown` vazando)
-- [ ] Teste com `apiPost` mockado cobre sucesso e propagação de `ApiError`
-- [ ] Gate check passa: `cd mobile && npm test`
-- [ ] Contagem de testes: 2+ novos em `patients.test.ts`
+- [x] Chama `apiPost` com a URL e o corpo corretos
+- [x] Faz `.parse()` da resposta antes de devolver (nunca `unknown` vazando)
+- [x] Teste com `apiPost` mockado cobre sucesso e propagação de `ApiError`
+- [x] Gate check passa: `cd mobile && npm test`
+- [x] Contagem de testes: 2+ novos em `patients.test.ts`
 
 **Tests**: unit
 **Gate**: quick

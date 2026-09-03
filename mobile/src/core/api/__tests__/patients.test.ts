@@ -1,10 +1,12 @@
 import { ApiError } from '@/core/api/http';
 import {
+  createBiomarker,
   fetchPatientBiomarkers,
   fetchPatientDetail,
   fetchPatients,
   patchPatientFollowUp,
 } from '@/core/api/patients';
+import type { CreateBiomarkerInput } from '@/core/api/schemas/biomarker';
 
 const validPatient = {
   id: 'patient-1',
@@ -144,5 +146,46 @@ describe('patchPatientFollowUp', () => {
     }) as unknown as typeof fetch;
 
     await expect(patchPatientFollowUp('patient-1', true)).rejects.toBeInstanceOf(ApiError);
+  });
+});
+
+describe('createBiomarker', () => {
+  const originalFetch = global.fetch;
+  const validInput: CreateBiomarkerInput = {
+    label: 'Ferritina',
+    value: 40,
+    unit: 'ng/mL',
+    refMin: 20,
+    refMax: 200,
+    measuredAt: '2026-01-01',
+  };
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('envia o POST para a URL e corpo corretos e valida a resposta com biomarkerSchema', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => validBiomarker,
+    }) as unknown as typeof fetch;
+
+    const result = await createBiomarker('patient-1', validInput);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('/api/v1/patients/patient-1/biomarkers'),
+      expect.objectContaining({ method: 'POST', body: JSON.stringify(validInput) }),
+    );
+    expect(result).toEqual(validBiomarker);
+  });
+
+  it('propaga ApiError quando a criação falha (422)', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 422,
+      json: async () => ({ error: { code: 'VALIDATION_ERROR', message: 'Corpo inválido' } }),
+    }) as unknown as typeof fetch;
+
+    await expect(createBiomarker('patient-1', validInput)).rejects.toBeInstanceOf(ApiError);
   });
 });

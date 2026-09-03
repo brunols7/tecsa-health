@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { apiGet, apiPatch } from '@/core/api/http';
+import { apiGet, apiPatch, apiPost } from '@/core/api/http';
 import { biomarkerSchema } from '@/core/api/schemas/biomarker';
-import type { Biomarker } from '@/core/api/schemas/biomarker';
+import type { Biomarker, CreateBiomarkerInput } from '@/core/api/schemas/biomarker';
 import { patientPageSchema, patientSchema } from '@/core/api/schemas/patient';
 import type { Patient, PatientPage } from '@/core/api/schemas/patient';
 
@@ -36,4 +36,13 @@ export async function patchPatientFollowUp(id: string, needsFollowUp: boolean): 
   const raw = await apiPatch(`/api/v1/patients/${id}`, { needsFollowUp });
 
   return patientSchema.parse(raw);
+}
+
+export async function createBiomarker(
+  patientId: string,
+  input: CreateBiomarkerInput,
+): Promise<Biomarker> {
+  const raw = await apiPost(`/api/v1/patients/${patientId}/biomarkers`, input);
+
+  return biomarkerSchema.parse(raw);
 }
