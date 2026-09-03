@@ -127,12 +127,12 @@ T21 → T22 → T23.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `GOAL_LABELS` cobre os 4 valores, todos em português
-- [ ] `lifecycleActionLabel('inactive')` → `{label: 'Reativar', target: 'active'}`;
+- [x] `GOAL_LABELS` cobre os 4 valores, todos em português
+- [x] `lifecycleActionLabel('inactive')` → `{label: 'Reativar', target: 'active'}`;
       `lifecycleActionLabel('completed')` → `{label: 'Reabrir acompanhamento', target: 'active'}`;
       `lifecycleActionLabel('active')` → `null` (tela decide as 2 ações separadamente)
-- [ ] Teste unitário cobrindo os 4 rótulos de objetivo + os 3 casos de `lifecycleActionLabel`
-- [ ] Gate check passes: `npm test`
+- [x] Teste unitário cobrindo os 4 rótulos de objetivo + os 3 casos de `lifecycleActionLabel`
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick
