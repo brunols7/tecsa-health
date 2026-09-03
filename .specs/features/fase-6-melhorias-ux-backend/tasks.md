@@ -432,15 +432,17 @@ delega a `PatientRepository::insert()`.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] Sucesso: paciente criado com os dados corretos
-- [ ] `brand` inexistente lança `BrandNotFound`
-- [ ] Teste unitário com `PatientRepository`/`BrandRepository` mockados (Mockery) cobrindo os 2 casos
-- [ ] Gate check passes: `composer test`
+- [x] Sucesso: paciente criado com os dados corretos
+- [x] `brand` inexistente lança `BrandNotFound`
+- [x] Teste unitário com `PatientRepository`/`BrandRepository` mockados (Mockery) cobrindo os 2 casos
+- [x] Gate check passes: `composer test`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(patient-service): add create method`
+
+**Status**: ✅ Complete
 
 ---
 

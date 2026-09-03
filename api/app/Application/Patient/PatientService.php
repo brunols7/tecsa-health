@@ -45,6 +45,17 @@ final class PatientService
         return $this->patients->paginate($brand->id, $search, $cursor, $this->clampLimit($limit));
     }
 
+    public function create(string $name, string $birthDate, string $goal, string $brandSlug): Patient
+    {
+        $brand = $this->brands->findBySlug($brandSlug);
+
+        if ($brand === null) {
+            throw new BrandNotFound($brandSlug);
+        }
+
+        return $this->patients->insert($brand->id, $name, $birthDate, $goal);
+    }
+
     public function getById(string $id): Patient
     {
         $this->assertValidId($id);

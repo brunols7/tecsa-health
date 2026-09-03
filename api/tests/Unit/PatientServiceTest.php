@@ -123,6 +123,53 @@ class PatientServiceTest extends TestCase
         $service->listForBrandSlug('nutri-care', null, 'not-valid-base64-json', null);
     }
 
+    public function test_create_resolves_brand_and_inserts_patient(): void
+    {
+        $brand = new Brand(id: 'brand-1', slug: 'nutri-care');
+        $created = new Patient(
+            id: '11111111-1111-1111-1111-111111111111',
+            brandId: 'brand-1',
+            name: 'Ana Silva',
+            birthDate: '1990-01-01',
+            goal: 'lose_weight',
+            status: 'active',
+            needsFollowUp: false,
+            statusChangedAt: '2026-01-01T00:00:00+00:00',
+            updatedAt: '2026-01-01T00:00:00+00:00',
+        );
+
+        $brands = Mockery::mock(BrandRepository::class);
+        $brands->shouldReceive('findBySlug')->with('nutri-care')->andReturn($brand);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('insert')->with('brand-1', 'Ana Silva', '1990-01-01', 'lose_weight')->andReturn($created);
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $result = $service->create('Ana Silva', '1990-01-01', 'lose_weight', 'nutri-care');
+
+        $this->assertSame($created, $result);
+    }
+
+    public function test_create_throws_brand_not_found_when_slug_does_not_resolve(): void
+    {
+        $brands = Mockery::mock(BrandRepository::class);
+        $brands->shouldReceive('findBySlug')->with('unknown')->andReturn(null);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldNotReceive('insert');
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(BrandNotFound::class);
+
+        $service->create('Ana Silva', '1990-01-01', 'lose_weight', 'unknown');
+    }
+
     public function test_get_by_id_returns_the_patient_when_it_exists(): void
     {
         $patient = new Patient(
