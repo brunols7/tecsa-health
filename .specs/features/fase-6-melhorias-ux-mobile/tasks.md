@@ -293,10 +293,10 @@ brand.id]`.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Sucesso atualiza o cache do detalhe
-- [ ] Erro propaga sem reverter estado otimista (não existe)
-- [ ] Teste cobrindo sucesso e erro
-- [ ] Gate check passes: `npm test`
+- [x] Sucesso atualiza o cache do detalhe
+- [x] Erro propaga sem reverter estado otimista (não existe)
+- [x] Teste cobrindo sucesso e erro
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick
