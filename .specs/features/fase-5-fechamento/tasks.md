@@ -248,9 +248,9 @@ biometria (`expo-local-authentication`) no lugar de HealthKit — mesma ADR, tem
 - Skill: `create-adr`
 
 **Done when**:
-- [ ] Seção nova adicionada sem remover o conteúdo original sobre servidor embutido
-- [ ] Cita `mobile/src/core/auth/useBiometricGate.ts` como implementação real
-- [ ] `docs/adr/*.md | wc -l` → 5
+- [x] Seção nova adicionada sem remover o conteúdo original sobre servidor embutido
+- [x] Cita `mobile/src/core/auth/useBiometricGate.ts` como implementação real
+- [x] `docs/adr/*.md | wc -l` → 5
 
 **Tests**: none
 **Gate**: quick
