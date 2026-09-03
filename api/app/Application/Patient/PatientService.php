@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Application\Patient;
 
 use App\Domain\Biomarker\Biomarker;
+use App\Domain\Biomarker\BiomarkerCode;
 use App\Domain\Biomarker\BiomarkerRepository;
+use App\Domain\Biomarker\BiomarkerStatus;
+use App\Domain\Biomarker\CreateBiomarkerData;
 use App\Domain\Brand\BrandRepository;
 use App\Domain\FeatureFlag\Exceptions\BrandNotFound;
 use App\Domain\Patient\Exceptions\PatientNotFound;
@@ -13,6 +16,7 @@ use App\Domain\Patient\Patient;
 use App\Domain\Patient\PatientCursor;
 use App\Domain\Patient\PatientPage;
 use App\Domain\Patient\PatientRepository;
+use Ramsey\Uuid\Uuid;
 
 final class PatientService
 {
@@ -70,6 +74,32 @@ final class PatientService
         }
 
         return $this->biomarkers->listForPatient($patientId);
+    }
+
+    public function createBiomarker(string $patientId, CreateBiomarkerData $data): Biomarker
+    {
+        $this->assertValidId($patientId);
+
+        if ($this->patients->findById($patientId) === null) {
+            throw new PatientNotFound($patientId);
+        }
+
+        $biomarker = new Biomarker(
+            id: Uuid::uuid4()->toString(),
+            patientId: $patientId,
+            code: BiomarkerCode::fromLabel($data->label),
+            label: $data->label,
+            value: $data->value,
+            unit: $data->unit,
+            refMin: $data->refMin,
+            refMax: $data->refMax,
+            measuredAt: $data->measuredAt,
+            status: BiomarkerStatus::from($data->value, $data->refMin, $data->refMax),
+        );
+
+        $this->biomarkers->save($biomarker);
+
+        return $biomarker;
     }
 
     public function setNeedsFollowUp(string $id, bool $value): Patient

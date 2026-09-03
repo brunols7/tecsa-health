@@ -8,6 +8,7 @@ use App\Application\Patient\PatientService;
 use App\Domain\Biomarker\Biomarker;
 use App\Domain\Biomarker\BiomarkerRepository;
 use App\Domain\Biomarker\BiomarkerStatus;
+use App\Domain\Biomarker\CreateBiomarkerData;
 use App\Domain\Brand\Brand;
 use App\Domain\Brand\BrandRepository;
 use App\Domain\FeatureFlag\Exceptions\BrandNotFound;
@@ -314,5 +315,119 @@ class PatientServiceTest extends TestCase
         $this->expectException(PatientNotFound::class);
 
         $service->setNeedsFollowUp('not-a-uuid', true);
+    }
+
+    public function test_create_biomarker_generates_id_code_and_status_then_saves_once(): void
+    {
+        $patient = new Patient(
+            id: '11111111-1111-1111-1111-111111111111',
+            brandId: 'brand-1',
+            name: 'Ana Silva',
+            birthDate: '1990-01-01',
+            goal: 'lose_weight',
+            status: 'active',
+            needsFollowUp: false,
+            updatedAt: '2026-01-01T00:00:00+00:00',
+        );
+
+        $data = new CreateBiomarkerData(
+            label: 'Ferro sérico',
+            value: 40.0,
+            unit: 'ng/mL',
+            refMin: 20.0,
+            refMax: 200.0,
+            measuredAt: '2026-01-15',
+        );
+
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with('11111111-1111-1111-1111-111111111111')->andReturn($patient);
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+        $biomarkers->shouldReceive('save')
+            ->once()
+            ->with(Mockery::on(function (Biomarker $biomarker) {
+                return $biomarker->patientId === '11111111-1111-1111-1111-111111111111'
+                    && $biomarker->code === 'ferro_serico'
+                    && $biomarker->label === 'Ferro sérico'
+                    && $biomarker->value === 40.0
+                    && $biomarker->unit === 'ng/mL'
+                    && $biomarker->refMin === 20.0
+                    && $biomarker->refMax === 200.0
+                    && $biomarker->measuredAt === '2026-01-15'
+                    && $biomarker->status === BiomarkerStatus::Normal
+                    && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $biomarker->id) === 1;
+            }));
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $result = $service->createBiomarker('11111111-1111-1111-1111-111111111111', $data);
+
+        $this->assertSame('ferro_serico', $result->code);
+        $this->assertSame(BiomarkerStatus::Normal, $result->status);
+    }
+
+    public function test_create_biomarker_derives_status_from_value_never_from_client_input(): void
+    {
+        $patient = new Patient(
+            id: '11111111-1111-1111-1111-111111111111',
+            brandId: 'brand-1',
+            name: 'Ana Silva',
+            birthDate: '1990-01-01',
+            goal: 'lose_weight',
+            status: 'active',
+            needsFollowUp: false,
+            updatedAt: '2026-01-01T00:00:00+00:00',
+        );
+
+        $data = new CreateBiomarkerData(
+            label: 'TSH',
+            value: 250.0,
+            unit: 'mIU/L',
+            refMin: 20.0,
+            refMax: 200.0,
+            measuredAt: '2026-01-15',
+        );
+
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with('11111111-1111-1111-1111-111111111111')->andReturn($patient);
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+        $biomarkers->shouldReceive('save')->once();
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $result = $service->createBiomarker('11111111-1111-1111-1111-111111111111', $data);
+
+        $this->assertSame(BiomarkerStatus::High, $result->status);
+    }
+
+    public function test_create_biomarker_throws_patient_not_found_before_saving(): void
+    {
+        $data = new CreateBiomarkerData(
+            label: 'TSH',
+            value: 2.0,
+            unit: 'mIU/L',
+            refMin: 0.4,
+            refMax: 4.0,
+            measuredAt: '2026-01-15',
+        );
+
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('findById')->with('22222222-2222-2222-2222-222222222222')->andReturn(null);
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+        $biomarkers->shouldNotReceive('save');
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(PatientNotFound::class);
+
+        $service->createBiomarker('22222222-2222-2222-2222-222222222222', $data);
     }
 }

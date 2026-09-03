@@ -205,12 +205,12 @@ monta a entidade `Biomarker`, chama `$this->biomarkers->save()`, devolve a entid
 - Skill: NONE
 
 **Done when**:
-- [ ] `createBiomarker()` lança `PatientNotFound` quando `patientId` não existe, sem chamar `save()`
-- [ ] Caminho feliz gera `id` (uuid v4 válido), `code` (via `BiomarkerCode`), `status` (via
+- [x] `createBiomarker()` lança `PatientNotFound` quando `patientId` não existe, sem chamar `save()`
+- [x] Caminho feliz gera `id` (uuid v4 válido), `code` (via `BiomarkerCode`), `status` (via
       `BiomarkerStatus::from()`) e chama `save()` exatamente uma vez com a entidade correta
-- [ ] `status` nunca é lido de `CreateBiomarkerData` — só calculado
-- [ ] Gate check passa: `cd api && php artisan test --testsuite=Unit`
-- [ ] Contagem de testes: 3+ novos em `PatientServiceTest.php` (fake/mock de repositório, sem banco)
+- [x] `status` nunca é lido de `CreateBiomarkerData` — só calculado
+- [x] Gate check passa: `cd api && php artisan test --testsuite=Unit`
+- [x] Contagem de testes: 3+ novos em `PatientServiceTest.php` (fake/mock de repositório, sem banco)
 
 **Tests**: unit
 **Gate**: quick
