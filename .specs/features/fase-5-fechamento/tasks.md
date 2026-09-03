@@ -319,8 +319,8 @@ linha por escolha da Stack Fixa do `CLAUDE.md` §3, o "porquê").
 - Skill: NONE
 
 **Done when**:
-- [ ] README raiz tem um bloco mermaid de arquitetura
-- [ ] README raiz tem uma tabela com pelo menos 10 linhas de justificativa de biblioteca
+- [x] README raiz tem um bloco mermaid de arquitetura
+- [x] README raiz tem uma tabela com pelo menos 10 linhas de justificativa de biblioteca
 
 **Tests**: none
 **Gate**: quick

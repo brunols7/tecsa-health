@@ -115,6 +115,64 @@ npx tsc --noEmit                          # checagem de tipos estrita
 o guard-rail à parte antes de testar, mas os comandos acima funcionam isolados quando você quer
 depurar só uma das etapas.
 
+## Arquitetura
+
+Visão macro: dois binários mobile (um por marca) contra o mesmo core, falando com uma única API
+Laravel em camadas, que persiste em Postgres e delega geração de sugestões a um provedor de LLM
+externo. A marca é injetada num único ponto — a raiz do app mobile — e nunca desce para o
+backend, que não tem conceito de marca além do `brand_id` usado pra escopar dado.
+
+```mermaid
+graph TD
+    subgraph Mobile["App mobile (Expo/React Native)"]
+        NC["Build NutriCare\nAPP_BRAND=nutri-care"]
+        VP["Build VitaPlus\nAPP_BRAND=vita-plus"]
+        Core["core/ — zero conhecimento de marca\nTanStack Query, Zustand, MMKV"]
+        NC --> Core
+        VP --> Core
+    end
+
+    Core -->|HTTP + zod .parse| API["API Laravel :9000\nHttp → Application → Domain\n← Infrastructure"]
+    API -->|Eloquent| DB[(Postgres 16)]
+    API -->|Http:: adapter, resposta validada| LLM["Provedor LLM\nAnthropic ou Gemini"]
+    Core -.persistQueryClient/MMKV.-> Cache[(Cache local\nleitura offline)]
+
+    OTA["EAS Update\ncanal por marca"] -.bundle JS.-> NC
+    OTA -.bundle JS.-> VP
+```
+
+A marca entra no mobile em um único lugar (`mobile/src/app/_layout.tsx`, via `APP_BRAND` →
+`resolveBrand()` → `BrandProvider`); dali pra baixo, todo o `core/` consome só `useTheme()`/
+`useFlag()`. O backend nunca fala com o provedor de LLM a partir do app — toda chamada sai do
+adapter em `api/app/Infrastructure/Llm/`, atrás da interface `LlmClient` do Domain.
+
+## Por que cada biblioteca
+
+Uma linha por escolha da Stack Fixa (`CLAUDE.md` §3) — o porquê, não só o quê.
+
+| Camada | Escolha | Por que |
+|---|---|---|
+| Runtime mobile | Expo SDK 57 + TypeScript | Build gerenciado, OTA de primeira classe via `expo-updates`, sem precisar manter projeto nativo à mão para o escopo deste desafio |
+| Navegação | Expo Router | Roteamento por arquivo já integrado ao Expo, evita configurar `React Navigation` manualmente para as mesmas rotas |
+| Estado de servidor | TanStack Query v5 | Cache, invalidação e mutation otimista prontos; `persistQueryClient` cobre offline sem escrever uma camada de sync própria |
+| Estado de cliente | Zustand | Store mínima para o pouco estado que não é servidor (ex.: seletor de marca em dev); Redux seria peso morto para esse volume de estado |
+| Persistência | MMKV via `persistQueryClient` | Leitura/escrita síncrona e rápida no device; dispensa um banco embutido (SQLite/WatermelonDB) que o escopo não precisa |
+| Lista | `@shopify/flash-list` | Virtualização real para a carteira de 5.000+ pacientes — `FlatList`/`ScrollView` degradam nesse volume |
+| Validação/contratos | zod | Schema e tipo (`z.infer`) numa fonte só; substitui o contrato compartilhado que se perde ao trocar o backend de TypeScript para PHP |
+| Formulários | react-hook-form | Menos re-render que estado manual campo a campo, integra direto com os schemas zod já existentes |
+| OTA | `expo-updates` + EAS Update | CodePush foi descontinuado (App Center); é a alternativa mantida oficialmente pela Expo |
+| Biometria | `expo-local-authentication` | Gate de acesso à carteira sem precisar de módulo nativo customizado |
+| Ícones | `lucide-react-native` | Um pacote de ícones consistente para as duas marcas, evita glifo Unicode/emoji solto como ícone |
+| Linguagem backend | PHP 8.2+ com `strict_types` | Tipagem estrita nos dois lados é regra inviolável do projeto (`CLAUDE.md` §2.3) |
+| Framework backend | Laravel 11 | Eloquent, FormRequest, API Resources e Service Container prontos, sem reconstruir infraestrutura básica de API |
+| Banco | PostgreSQL 16 | Suporta índice composto e UUID nativamente; volume de 5.000+ pacientes e paginação cursor pedem um banco relacional real, não SQLite |
+| Validação backend | FormRequest, um por endpoint de escrita | Mantém `$request->validated()` explícito no controller, impede campo não previsto de chegar ao Service |
+| Serialização | API Resources | Formato de resposta desacoplado do Model Eloquent, controle explícito do que sai da API |
+| Contrato API↔mobile | OpenAPI via `dedoc/scramble` | Backend deixou de ser TypeScript, então o contrato não é mais compartilhado por código; Scramble lê Resources/FormRequests automaticamente e fica sempre sincronizado com o código real |
+| Testes backend | Pest | Sintaxe mais enxuta que PHPUnit puro para o volume de teste deste projeto, roda sobre a mesma infraestrutura do PHPUnit |
+| Análise estática | PHPStan/Larastan nível 6+ | Pega classe de erro que teste não cobre (tipo incompatível, retorno nulo não tratado) antes do runtime |
+| Infra local | Docker Compose, servidor embutido (`php artisan serve`) | Reprodutibilidade do ambiente pesa mais que fidelidade de produção nesta fase — ver `docs/adr/0001-servidor-http-embutido.md` |
+
 ## O que fica de fora, de propósito
 
 Ver [`CLAUDE.md` §15](./CLAUDE.md#15-o-que-fica-de-fora-de-propósito).
