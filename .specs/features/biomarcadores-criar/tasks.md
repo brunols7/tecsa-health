@@ -400,13 +400,13 @@ em cache; `onError` restaura o snapshot; `onSettled` invalida
 - Skill: NONE
 
 **Done when**:
-- [ ] Teste confirma que o cache já reflete o item otimista **antes** da promise de
+- [x] Teste confirma que o cache já reflete o item otimista **antes** da promise de
       `createBiomarker` resolver (mesmo padrão de asserção de
       `useSetFollowUpMutation.test.tsx`/`useDecideAiActionMutation.test.tsx`)
-- [ ] Teste confirma rollback exato para o snapshot anterior quando a mutation falha
-- [ ] Teste confirma que `invalidateQueries` é chamado com a `queryKey` certa após sucesso
-- [ ] Gate check passa: `cd mobile && npm test`
-- [ ] Contagem de testes: 3+ novos em `useCreateBiomarkerMutation.test.tsx`
+- [x] Teste confirma rollback exato para o snapshot anterior quando a mutation falha
+- [x] Teste confirma que `invalidateQueries` é chamado com a `queryKey` certa após sucesso
+- [x] Gate check passa: `cd mobile && npm test`
+- [x] Contagem de testes: 3+ novos em `useCreateBiomarkerMutation.test.tsx`
 
 **Tests**: unit
 **Gate**: quick
