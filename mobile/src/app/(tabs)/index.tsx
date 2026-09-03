@@ -3,15 +3,26 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
+import { Filter, Plus } from 'lucide-react-native';
 
 import type { Patient } from '@/core/api/schemas/patient';
+import { calculateAge } from '@/core/patients/date';
+import { GOAL_LABELS } from '@/core/patients/labels';
 import { useDebouncedValue } from '@/core/patients/useDebouncedValue';
+import type { PatientStatusFilter } from '@/core/patients/usePatientsQuery';
 import { usePatientsQuery } from '@/core/patients/usePatientsQuery';
 import { useTheme } from '@/core/theme/useTheme';
+import { Badge } from '@/core/ui/Badge';
 import { OfflineBanner } from '@/core/ui/OfflineBanner';
+import { PatientStatusFilterSheet } from '@/core/ui/PatientStatusFilterSheet';
 import { QueryStateView } from '@/core/ui/QueryStateView';
 
 const ERROR_MESSAGE = 'Não foi possível carregar a carteira de pacientes.';
+
+const FILTER_LABELS: Record<PatientStatusFilter, string> = {
+  active: 'Ativos',
+  inactive_completed: 'Inativos e concluídos',
+};
 
 function PatientCard({ patient, onPress }: { patient: Patient; onPress: () => void }) {
   const { colors, radii, typography, spacing } = useTheme();
@@ -38,15 +49,19 @@ function PatientCard({ patient, onPress }: { patient: Patient; onPress: () => vo
       >
         {patient.name}
       </Text>
-      <Text
-        style={{
-          color: colors.textSecondary,
-          fontFamily: typography.fontFamily.regular,
-          fontSize: typography.scale.sm,
-        }}
-      >
-        {patient.goal}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing(2) }}>
+        <Badge testID={`patient-goal-badge-${patient.id}`} label={GOAL_LABELS[patient.goal]} />
+        <Text
+          testID={`patient-age-${patient.id}`}
+          style={{
+            color: colors.textSecondary,
+            fontFamily: typography.fontFamily.regular,
+            fontSize: typography.scale.sm,
+          }}
+        >
+          {calculateAge(patient.birthDate)} anos
+        </Text>
+      </View>
       {patient.needsFollowUp ? (
         <View
           style={{
@@ -97,6 +112,7 @@ function PatientsEmptyState() {
 
   return (
     <View
+      testID="patients-empty-default"
       style={{
         flex: 1,
         alignItems: 'center',
@@ -118,12 +134,42 @@ function PatientsEmptyState() {
   );
 }
 
+function PatientsFilteredEmptyState() {
+  const { colors, typography, spacing, copy } = useTheme();
+
+  return (
+    <View
+      testID="patients-empty-filtered"
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: spacing(6),
+        backgroundColor: colors.surfaceMuted,
+      }}
+    >
+      <Text
+        style={{
+          color: colors.textSecondary,
+          fontFamily: typography.fontFamily.medium,
+          fontSize: typography.scale.md,
+          textAlign: 'center',
+        }}
+      >
+        {copy.emptyFilteredPatients}
+      </Text>
+    </View>
+  );
+}
+
 export default function PatientsScreen() {
-  const { colors, radii, typography, spacing } = useTheme();
+  const { colors, radii, typography, spacing, copy } = useTheme();
   const router = useRouter();
   const [searchText, setSearchText] = useState('');
   const debouncedSearch = useDebouncedValue(searchText, 300);
-  const query = usePatientsQuery(debouncedSearch, 'active');
+  const [statusFilter, setStatusFilter] = useState<PatientStatusFilter>('active');
+  const [filterSheetVisible, setFilterSheetVisible] = useState(false);
+  const query = usePatientsQuery(debouncedSearch, statusFilter);
 
   const patients = useMemo(
     () => query.data?.pages.flatMap((page) => page.data) ?? [],
@@ -135,7 +181,53 @@ export default function PatientsScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <OfflineBanner />
-      <View style={{ paddingHorizontal: spacing(4), paddingTop: spacing(4), paddingBottom: spacing(2) }}>
+      <View style={{ paddingHorizontal: spacing(4), paddingTop: spacing(4), paddingBottom: spacing(2), gap: spacing(2) }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flex: 1 }}>
+            <Text
+              style={{
+                color: colors.textPrimary,
+                fontFamily: typography.fontFamily.bold,
+                fontSize: typography.scale.lg,
+              }}
+            >
+              {copy.patientsTitle}
+            </Text>
+            <Text
+              testID="patients-active-filter-indicator"
+              style={{
+                color: colors.textSecondary,
+                fontFamily: typography.fontFamily.regular,
+                fontSize: typography.scale.sm,
+              }}
+            >
+              {FILTER_LABELS[statusFilter]}
+            </Text>
+          </View>
+          <Pressable
+            testID="patients-filter-button"
+            onPress={() => setFilterSheetVisible(true)}
+            style={{
+              padding: spacing(2),
+              borderRadius: radii.pill,
+              backgroundColor: colors.surface,
+              marginRight: spacing(2),
+            }}
+          >
+            <Filter color={colors.textPrimary} size={20} />
+          </Pressable>
+          <Pressable
+            testID="patients-create-button"
+            onPress={() => router.push('/patients/new')}
+            style={{
+              padding: spacing(2),
+              borderRadius: radii.pill,
+              backgroundColor: colors.accent,
+            }}
+          >
+            <Plus color={colors.accentContrast} size={20} />
+          </Pressable>
+        </View>
         <TextInput
           testID="patients-search-input"
           value={searchText}
@@ -158,7 +250,9 @@ export default function PatientsScreen() {
         isEmpty={isEmpty}
         onRetry={() => query.refetch()}
         skeleton={<PatientsSkeleton />}
-        emptyState={<PatientsEmptyState />}
+        emptyState={
+          statusFilter === 'inactive_completed' ? <PatientsFilteredEmptyState /> : <PatientsEmptyState />
+        }
         errorMessage={ERROR_MESSAGE}
         data={patients}
       >
@@ -186,6 +280,12 @@ export default function PatientsScreen() {
           />
         )}
       </QueryStateView>
+      <PatientStatusFilterSheet
+        visible={filterSheetVisible}
+        current={statusFilter}
+        onSelect={setStatusFilter}
+        onClose={() => setFilterSheetVisible(false)}
+      />
     </SafeAreaView>
   );
 }

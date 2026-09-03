@@ -639,13 +639,13 @@ com filtro (T11), `PatientStatusFilterSheet` (T19)
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Filtro "Ativos" (default) e "Inativos e concluídos" alternam a lista corretamente
-- [ ] Empty state do filtro "Inativos e concluídos" é visualmente distinto do empty state padrão
-- [ ] Botão "+" navega para `patients/new`
-- [ ] `PatientCard` mostra badge de objetivo + idade, nenhum texto cru em inglês
-- [ ] Teste atualizado cobrindo: troca de filtro, empty state distinto, navegação do botão "+",
+- [x] Filtro "Ativos" (default) e "Inativos e concluídos" alternam a lista corretamente
+- [x] Empty state do filtro "Inativos e concluídos" é visualmente distinto do empty state padrão
+- [x] Botão "+" navega para `patients/new`
+- [x] `PatientCard` mostra badge de objetivo + idade, nenhum texto cru em inglês
+- [x] Teste atualizado cobrindo: troca de filtro, empty state distinto, navegação do botão "+",
       teste de marca dupla já existente continua passando
-- [ ] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
+- [x] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
 
 **Tests**: unit
 **Gate**: full

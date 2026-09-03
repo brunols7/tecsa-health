@@ -89,7 +89,7 @@ describe('PatientsScreen', () => {
     expect(refetch).toHaveBeenCalledTimes(1);
   });
 
-  it('exibe o estado vazio quando a primeira página vem sem pacientes', async () => {
+  it('exibe o estado vazio padrão quando o filtro "Ativos" não retorna pacientes', async () => {
     mockedUsePatientsQuery.mockReturnValue(
       makeQueryResult({
         status: 'success',
@@ -98,13 +98,39 @@ describe('PatientsScreen', () => {
     );
 
     const brand = resolveBrand('nutri-care');
-    const { getByText } = await render(
+    const { getByText, getByTestId, queryByTestId } = await render(
       <BrandProvider brand={brand}>
         <PatientsScreen />
       </BrandProvider>,
     );
 
     expect(getByText(brand.copy.emptyPatients)).toBeTruthy();
+    expect(getByTestId('patients-empty-default')).toBeTruthy();
+    expect(queryByTestId('patients-empty-filtered')).toBeNull();
+  });
+
+  it('exibe um estado vazio distinto quando o filtro "Inativos e concluídos" não retorna pacientes', async () => {
+    mockedUsePatientsQuery.mockReturnValue(
+      makeQueryResult({
+        status: 'success',
+        data: { pages: [{ data: [], nextCursor: null }], pageParams: [undefined] },
+      }),
+    );
+
+    const brand = resolveBrand('nutri-care');
+    const { getByTestId, getByText, queryByTestId } = await render(
+      <BrandProvider brand={brand}>
+        <PatientsScreen />
+      </BrandProvider>,
+    );
+
+    await fireEvent.press(getByTestId('patients-filter-button'));
+    await fireEvent.press(getByTestId('patient-status-filter-option-inactive_completed'));
+
+    expect(getByTestId('patients-empty-filtered')).toBeTruthy();
+    expect(getByText(brand.copy.emptyFilteredPatients)).toBeTruthy();
+    expect(queryByTestId('patients-empty-default')).toBeNull();
+    expect(brand.copy.emptyFilteredPatients).not.toBe(brand.copy.emptyPatients);
   });
 
   it('exibe os pacientes retornados quando a query tem sucesso e navega ao tocar um card', async () => {
@@ -127,10 +153,49 @@ describe('PatientsScreen', () => {
     expect(getByText('Paciente 1')).toBeTruthy();
     expect(getByText('Paciente 2')).toBeTruthy();
     expect(getByText('Acompanhamento')).toBeTruthy();
+    expect(getByTestId('patient-goal-badge-1')).toBeTruthy();
+    expect(getByTestId('patient-age-1')).toBeTruthy();
 
     await fireEvent.press(getByTestId('patient-card-1'));
 
     expect(push).toHaveBeenCalledWith('/patients/1');
+  });
+
+  it('troca de filtro e busca com o novo statusFilter', async () => {
+    mockedUsePatientsQuery.mockReturnValue(
+      makeQueryResult({
+        status: 'success',
+        data: { pages: [{ data: [makePatient('1')], nextCursor: null }], pageParams: [undefined] },
+      }),
+    );
+
+    const { getByTestId, getByText } = await renderScreen();
+
+    expect(getByText('Ativos')).toBeTruthy();
+    expect(mockedUsePatientsQuery).toHaveBeenLastCalledWith('', 'active');
+
+    await fireEvent.press(getByTestId('patients-filter-button'));
+    await fireEvent.press(getByTestId('patient-status-filter-option-inactive_completed'));
+
+    expect(getByText('Inativos e concluídos')).toBeTruthy();
+    expect(mockedUsePatientsQuery).toHaveBeenLastCalledWith('', 'inactive_completed');
+  });
+
+  it('o botão "+" navega para a tela de criar paciente', async () => {
+    const push = jest.fn();
+    mockedUseRouter.mockReturnValue({ push } as unknown as ReturnType<typeof useRouter>);
+    mockedUsePatientsQuery.mockReturnValue(
+      makeQueryResult({
+        status: 'success',
+        data: { pages: [{ data: [makePatient('1')], nextCursor: null }], pageParams: [undefined] },
+      }),
+    );
+
+    const { getByTestId } = await renderScreen();
+
+    await fireEvent.press(getByTestId('patients-create-button'));
+
+    expect(push).toHaveBeenCalledWith('/patients/new');
   });
 
   it('busca a próxima página quando onEndReached dispara e hasNextPage é true', async () => {
@@ -206,5 +271,35 @@ describe('PatientsScreen', () => {
     expect(mockedUsePatientsQuery).toHaveBeenLastCalledWith('maria', 'active');
 
     jest.useRealTimers();
+  });
+
+  it('renderiza a mesma tela com as duas marcas e aplica tokens diferentes', async () => {
+    mockedUsePatientsQuery.mockReturnValue(
+      makeQueryResult({
+        status: 'success',
+        data: { pages: [{ data: [makePatient('1')], nextCursor: null }], pageParams: [undefined] },
+      }),
+    );
+
+    const nutriCare = resolveBrand('nutri-care');
+    const vitaPlus = resolveBrand('vita-plus');
+
+    const nutriCareRender = await render(
+      <BrandProvider brand={nutriCare}>
+        <PatientsScreen />
+      </BrandProvider>,
+    );
+    expect(nutriCareRender.getByText(nutriCare.copy.patientsTitle)).toBeTruthy();
+    await nutriCareRender.unmount();
+
+    const vitaPlusRender = await render(
+      <BrandProvider brand={vitaPlus}>
+        <PatientsScreen />
+      </BrandProvider>,
+    );
+    expect(vitaPlusRender.getByText(vitaPlus.copy.patientsTitle)).toBeTruthy();
+    await vitaPlusRender.unmount();
+
+    expect(nutriCare.copy.patientsTitle).not.toBe(vitaPlus.copy.patientsTitle);
   });
 });
