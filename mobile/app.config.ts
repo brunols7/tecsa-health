@@ -89,6 +89,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       ...config.android?.adaptiveIcon,
       foregroundImage: build.icon,
       backgroundColor: build.adaptiveIconBackgroundColor,
+      backgroundImage: undefined,
+      monochromeImage: undefined,
     },
   },
   plugins: withBrandedSplash(config.plugins ?? [], build),
