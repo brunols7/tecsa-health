@@ -175,4 +175,68 @@ Uma linha por escolha da Stack Fixa (`CLAUDE.md` §3) — o porquê, não só o 
 
 ## O que fica de fora, de propósito
 
-Ver [`CLAUDE.md` §15](./CLAUDE.md#15-o-que-fica-de-fora-de-propósito).
+Ver [`CLAUDE.md` §15](./CLAUDE.md#15-o-que-fica-de-fora-de-propósito) para a lista completa.
+Resumo do que foi cortado conscientemente e por quê:
+
+- **Autenticação real.** Existe um usuário semeado e um token fixo. O foco desta fase é
+  arquitetura (core multimarca, camadas do backend, offline), não um fluxo de login completo —
+  implementar OAuth/sessão de verdade não provaria nada a mais sobre as decisões que o desafio
+  avalia.
+- **Multi-tenancy no nível de banco.** As duas marcas compartilham schema, escopadas por
+  `brand_id`. Isolamento de banco por tenant é uma decisão de infraestrutura ortogonal ao que
+  este desafio pede — adicionaria complexidade operacional sem mudar nenhuma decisão de
+  arquitetura sendo avaliada.
+- **Sincronização bidirecional completa offline.** O que existe é cache de leitura
+  (`persistQueryClient`) mais fila de mutations otimistas com rollback. Sync bidirecional de
+  verdade (resolução de conflito, fila persistente entre sessões) é um projeto à parte.
+- **HealthKit.** Cortado por indisponibilidade de device iOS físico para demonstrar
+  honestamente — declarar suporte sem poder provar que funciona seria pior do que não ter.
+  `expo-local-authentication` cobre a exigência de capacidade nativa via biometria.
+- **CI/CD.** Os scripts de verificação (guard-rails de camada e de marca, testes, lint,
+  PHPStan) existem e rodam localmente, documentados neste README e nos READMEs de subprojeto.
+  Cabeamento em pipeline de CI é configuração de infraestrutura, não uma decisão arquitetural
+  nova — pode ser adicionado depois sem tocar código.
+
+## Uso de IA
+
+Este projeto foi construído com o Claude Code, usando um fluxo próprio de desenvolvimento
+guiado por spec (`tlc-spec-driven`, skill deste mesmo repositório em
+`.claude/skills/tlc-spec-driven/`), não "gerar código a partir de um prompt solto". O fluxo tem
+quatro fases — **Specify → Design → Tasks → Execute** — aplicadas com profundidade proporcional
+ao tamanho da feature: uma mudança de 3 arquivos vira um plano inline, uma feature grande (ex.:
+carteira de pacientes, ações de IA) ganha `spec.md` com critérios de aceite em notação EARS,
+`design.md` com arquitetura e `tasks.md` com tarefas atômicas e dependências explícitas.
+
+Cada tarefa vira exatamente um commit atômico, com teste derivado do critério de aceite da spec
+(não da implementação) e um gate determinístico (suíte de teste, não autoavaliação do modelo)
+antes de poder ser marcada como concluída. Features maiores foram executadas por sub-agentes de
+batch — um agente por lote de ~7 tarefas, cada lote cobrindo fases inteiras e nunca dividindo uma
+fase no meio — reportando de volta um resumo compacto (tarefas feitas, hashes de commit,
+contagem de teste, desvios) para o agente orquestrador.
+
+Depois da última tarefa de cada feature, um **Verifier independente** roda automaticamente —
+um sub-agente fresco, sem o contexto do autor, que não herda o modelo mental de quem
+implementou. Ele faz duas coisas: (1) uma checagem "spec-anchored" — confirma que cada asserção
+de teste bate com o resultado exato que a spec define, não só que existe uma asserção; (2) um
+sensor de discriminação — injeta mutações de comportamento (ex.: inverter uma condição, remover
+um filtro de cache cross-patient) num scratch isolado e confirma que a suíte de teste mata cada
+mutante, descartando o scratch depois. O resultado vira `validation.md` com verdict PASS/FAIL,
+evidência `file:line` por critério de aceite, e resultado do sensor. Um FAIL gera fix tasks
+dentro da mesma feature, num ciclo corrigir→re-verificar limitado a 3 iterações antes de escalar
+para revisão humana — isso aconteceu de fato durante o projeto (ex.: `fase-3-acoes-ia-backend`
+teve 1 mutante sobrevivente na primeira rodada, corrigido e re-verificado PASS na segunda;
+`fase-0-fundacao` teve um FAIL real antes de fechar).
+
+Toda decisão de projeto — inclusive as que vieram de troca com o Claude Code durante o
+desenvolvimento, não só as do usuário — fica registrada em `.specs/STATE.md` sob um log
+numerado (`AD-001`..`AD-015`), com rationale e, quando aplicável, a evidência que motivou a
+decisão. Esta própria fase de fechamento (Fase 5, que reescreveu este README, gerou as ADRs
+temáticas e re-verificou três features que nunca tinham passado por um Verifier) seguiu o mesmo
+fluxo: spec própria em `.specs/features/fase-5-fechamento/`, execução tarefa por tarefa, commits
+atômicos.
+
+Isso não significa que o código saiu perfeito de primeira — o histórico de `validation.md` e o
+log de decisões documentam gaps reais encontrados (mutante sobrevivente, cobertura insuficiente
+de um edge case, divergência entre script de guard-rail e spec) e corrigidos antes de fechar
+cada feature. O valor do fluxo não é "a IA acertou tudo", é ter um gate verificável e evidência
+registrada em vez de confiar na palavra do agente que escreveu o código.

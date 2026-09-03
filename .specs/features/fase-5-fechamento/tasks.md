@@ -344,8 +344,8 @@ assistido.
 - Skill: NONE
 
 **Done when**:
-- [ ] Seção "O que ficou de fora" tem pelo menos os 5 itens de `CLAUDE.md` §15, inline (não só link)
-- [ ] Seção "Uso de IA" descreve o fluxo real (spec-driven, sub-agentes, Verifier) sem alegações
+- [x] Seção "O que ficou de fora" tem pelo menos os 5 itens de `CLAUDE.md` §15, inline (não só link)
+- [x] Seção "Uso de IA" descreve o fluxo real (spec-driven, sub-agentes, Verifier) sem alegações
       genéricas tipo "usei IA para produtividade"
 
 **Tests**: none
