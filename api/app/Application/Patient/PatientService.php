@@ -83,6 +83,16 @@ final class PatientService
         return $this->biomarkers->listForPatient($patientId);
     }
 
+    /**
+     * @param  array<string, mixed>  $fields
+     */
+    public function update(string $id, array $fields): Patient
+    {
+        $this->assertValidId($id);
+
+        return $this->patients->update($id, $fields);
+    }
+
     public function setNeedsFollowUp(string $id, bool $value): Patient
     {
         $this->assertValidId($id);

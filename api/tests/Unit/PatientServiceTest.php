@@ -170,6 +170,70 @@ class PatientServiceTest extends TestCase
         $service->create('Ana Silva', '1990-01-01', 'lose_weight', 'unknown');
     }
 
+    public function test_update_delegates_only_the_given_fields_to_the_repository(): void
+    {
+        $updated = new Patient(
+            id: '11111111-1111-1111-1111-111111111111',
+            brandId: 'brand-1',
+            name: 'Updated Name',
+            birthDate: '1990-01-01',
+            goal: 'lose_weight',
+            status: 'active',
+            needsFollowUp: false,
+            statusChangedAt: '2026-01-01T00:00:00+00:00',
+            updatedAt: '2026-01-02T00:00:00+00:00',
+        );
+
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('update')
+            ->with('11111111-1111-1111-1111-111111111111', ['name' => 'Updated Name'])
+            ->andReturn($updated);
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $result = $service->update('11111111-1111-1111-1111-111111111111', ['name' => 'Updated Name']);
+
+        $this->assertSame($updated, $result);
+    }
+
+    public function test_update_throws_patient_not_found_when_repository_reports_no_patient(): void
+    {
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldReceive('update')
+            ->with('22222222-2222-2222-2222-222222222222', ['name' => 'X'])
+            ->andThrow(new PatientNotFound('22222222-2222-2222-2222-222222222222'));
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(PatientNotFound::class);
+
+        $service->update('22222222-2222-2222-2222-222222222222', ['name' => 'X']);
+    }
+
+    public function test_update_throws_patient_not_found_when_id_is_not_a_well_formed_uuid(): void
+    {
+        $brands = Mockery::mock(BrandRepository::class);
+
+        $patients = Mockery::mock(PatientRepository::class);
+        $patients->shouldNotReceive('update');
+
+        $biomarkers = Mockery::mock(BiomarkerRepository::class);
+
+        $service = new PatientService($brands, $patients, $biomarkers);
+
+        $this->expectException(PatientNotFound::class);
+
+        $service->update('not-a-uuid', ['name' => 'X']);
+    }
+
     public function test_get_by_id_returns_the_patient_when_it_exists(): void
     {
         $patient = new Patient(

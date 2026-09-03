@@ -460,15 +460,17 @@ delega a `PatientRepository::update()`.
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] Sucesso: só os campos de `$fields` são repassados ao repositório
-- [ ] Id inválido ou paciente inexistente lança `PatientNotFound`
-- [ ] Teste unitário cobrindo os 2 casos
-- [ ] Gate check passes: `composer test`
+- [x] Sucesso: só os campos de `$fields` são repassados ao repositório
+- [x] Id inválido ou paciente inexistente lança `PatientNotFound`
+- [x] Teste unitário cobrindo os 2 casos
+- [x] Gate check passes: `composer test`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(patient-service): add update method`
+
+**Status**: ✅ Complete
 
 ---
 
