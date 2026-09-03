@@ -429,13 +429,13 @@ UXMOB-38
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] `status='active'` renderiza "Marcar como inativo" + "Concluir acompanhamento"
-- [ ] `status='inactive'` renderiza só "Reativar" + "Inativo desde {data}"
-- [ ] `status='completed'` renderiza só "Reabrir acompanhamento" + "Concluído em {data}"
-- [ ] Toque num botão chama `onChangeStatus` com o `target` certo; botão desabilitado quando
+- [x] `status='active'` renderiza "Marcar como inativo" + "Concluir acompanhamento"
+- [x] `status='inactive'` renderiza só "Reativar" + "Inativo desde {data}"
+- [x] `status='completed'` renderiza só "Reabrir acompanhamento" + "Concluído em {data}"
+- [x] Toque num botão chama `onChangeStatus` com o `target` certo; botão desabilitado quando
       `pending=true`
-- [ ] Teste cobrindo os 3 status (renderização certa + toque disparando `onChangeStatus`)
-- [ ] Gate check passes: `npm test`
+- [x] Teste cobrindo os 3 status (renderização certa + toque disparando `onChangeStatus`)
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick
