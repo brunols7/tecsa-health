@@ -554,11 +554,11 @@ seletor
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Envio com sucesso navega para o detalhe do paciente novo
-- [ ] Erro `422` mapeado por campo
-- [ ] Erro de rede preserva os dados digitados
-- [ ] Teste cobrindo sucesso, erro de validação, erro de rede
-- [ ] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
+- [x] Envio com sucesso navega para o detalhe do paciente novo
+- [x] Erro `422` mapeado por campo
+- [x] Erro de rede preserva os dados digitados
+- [x] Teste cobrindo sucesso, erro de validação, erro de rede
+- [x] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
 
 **Tests**: unit
 **Gate**: full

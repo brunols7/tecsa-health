@@ -37,6 +37,26 @@ describe('apiGet', () => {
 
     await expect(apiGet('/api/v1/feature-flags')).rejects.toThrow('Network request failed');
   });
+
+  it('lança ApiError com details por campo quando a resposta 422 traz erros de validação', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 422,
+      json: async () => ({
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Corpo inválido',
+          details: { name: ['O campo nome é obrigatório.'] },
+        },
+      }),
+    }) as unknown as typeof fetch;
+
+    await expect(apiGet('/api/v1/patients')).rejects.toMatchObject({
+      status: 422,
+      code: 'VALIDATION_ERROR',
+      details: { name: ['O campo nome é obrigatório.'] },
+    });
+  });
 });
 
 describe('apiPatch', () => {
