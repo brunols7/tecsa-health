@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Domain\Patient\PatientGoal;
 use App\Infrastructure\Persistence\Eloquent\Models\Biomarker;
 use App\Infrastructure\Persistence\Eloquent\Models\Patient;
 use Database\Seeders\BrandSeeder;
 use Database\Seeders\PatientSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use ReflectionClass;
 use Tests\TestCase;
 
 class PatientSeederTest extends TestCase
@@ -70,5 +72,23 @@ class PatientSeederTest extends TestCase
             ->exists();
 
         $this->assertTrue($outOfRange, 'Expected at least one biomarker outside [ref_min, ref_max].');
+    }
+
+    public function test_every_generated_goal_is_within_the_patient_goal_enum(): void
+    {
+        (new PatientSeeder)->run(self::SEED_COUNT);
+
+        $goals = Patient::query()->distinct()->pluck('goal');
+
+        foreach ($goals as $goal) {
+            $this->assertContains($goal, PatientGoal::values());
+        }
+    }
+
+    public function test_default_seed_count_is_at_least_five_thousand(): void
+    {
+        $defaultCount = (new ReflectionClass(PatientSeeder::class))->getConstant('DEFAULT_COUNT');
+
+        $this->assertGreaterThanOrEqual(5000, $defaultCount);
     }
 }

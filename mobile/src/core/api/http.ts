@@ -1,12 +1,14 @@
 export class ApiError extends Error {
   readonly status: number;
   readonly code?: string;
+  readonly details?: Record<string, string[]>;
 
-  constructor(message: string, status: number, code?: string) {
+  constructor(message: string, status: number, code?: string, details?: Record<string, string[]>) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.code = code;
+    this.details = details;
   }
 }
 
@@ -14,6 +16,7 @@ type ErrorEnvelope = {
   error?: {
     code?: string;
     message?: string;
+    details?: Record<string, string[]>;
   };
 };
 
@@ -41,11 +44,13 @@ async function handleErrorResponse(response: Response): Promise<never> {
   const body: unknown = await response.json().catch(() => undefined);
   const code = isErrorEnvelope(body) ? body.error?.code : undefined;
   const message = isErrorEnvelope(body) ? body.error?.message : undefined;
+  const details = isErrorEnvelope(body) ? body.error?.details : undefined;
 
   throw new ApiError(
     message ?? `Requisição falhou com status ${response.status}`,
     response.status,
     code,
+    details,
   );
 }
 

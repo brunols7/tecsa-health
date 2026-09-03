@@ -11,6 +11,8 @@ use App\Domain\AiAction\Exceptions\LlmUnavailable;
 use App\Domain\AiAction\Exceptions\PatientNoBiomarkers;
 use App\Domain\FeatureFlag\Exceptions\BrandNotFound;
 use App\Domain\Patient\Exceptions\InvalidCursor;
+use App\Domain\Patient\Exceptions\InvalidStatusFilter;
+use App\Domain\Patient\Exceptions\InvalidStatusTransition;
 use App\Domain\Patient\Exceptions\PatientNotFound;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -33,6 +35,10 @@ final class Handler
             return $this->envelope('INVALID_CURSOR', $e->getMessage(), [], 400);
         }
 
+        if ($e instanceof InvalidStatusFilter) {
+            return $this->envelope('INVALID_STATUS_FILTER', $e->getMessage(), [], 400);
+        }
+
         if ($e instanceof AiDisabled) {
             return $this->envelope('AI_DISABLED', $e->getMessage(), [], 503);
         }
@@ -51,6 +57,10 @@ final class Handler
 
         if ($e instanceof AiActionAlreadyResolved) {
             return $this->envelope('AI_ACTION_ALREADY_RESOLVED', $e->getMessage(), [], 409);
+        }
+
+        if ($e instanceof InvalidStatusTransition) {
+            return $this->envelope('INVALID_STATUS_TRANSITION', $e->getMessage(), [], 409);
         }
 
         if ($e instanceof ValidationException) {

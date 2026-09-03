@@ -2,6 +2,20 @@
 
 ## Decisions
 
+- **AD-015** (status: active) — Modelagem de ciclo de vida de paciente da Fase 6
+  (`fase-6-melhorias-ux-backend`): `status` (`active`/`inactive`/`completed`) e exclusão
+  (`deleted_at`, soft delete padrão do Eloquent) são mecanismos **independentes**, não um enum
+  único. `status` cobre só o ciclo de vida do acompanhamento, com 4 transições válidas
+  (`active⇄inactive`, `active⇄completed`, nunca `inactive⇄completed` direto); exclusão esconde o
+  paciente de toda leitura via global scope automático, sem filtro manual. Rationale: pedido
+  explícito do usuário nesta sessão ("deveria ter estados de acompanhamento... os inativos e
+  concluídos aparecem em uma filtragem à parte... excluídos não aparecem") — misturar os dois no
+  mesmo enum obrigaria filtro manual em toda query em vez de usar o mecanismo já pronto do
+  framework. **Pendência registrada aqui para não se perder**: o usuário pediu explicitamente
+  ("Simm anote") que esta modelagem vire uma ADR formal na Fase 5 (`docs/adr/`), junto das demais
+  decisões consolidadas por tema (CLAUDE.md §14.11) — não esquecer de incluir ao escrever as ADRs
+  finais. Detalhe completo em
+  `.specs/features/fase-6-melhorias-ux-backend/{spec.md,context.md,design.md}`.
 - **AD-014** (status: active) — `DomainServiceProvider::register()` binda `LlmClient` por uma
   closure condicional: `AnthropicClient` quando `ANTHROPIC_API_KEY` está preenchida, senão
   `GeminiClient` (novo adapter, `Infrastructure/Llm/GeminiClient.php`). Seleção acontece uma única
@@ -135,7 +149,32 @@
 
 ## Handoff
 
-- **Current**: `fase-3-acoes-ia-mobile` **executada e verificada PASS** nesta sessão, na branch
+- **Current**: `fase-6-melhorias-ux-backend` e `fase-6-melhorias-ux-mobile` **especificadas
+  integralmente nesta sessão** (Specify + Discuss + Design + Tasks, via `tlc-spec-driven`) —
+  `spec.md`/`context.md`/`design.md`/`tasks.md` das duas escritos e validados limpos por
+  `validate_spec.py`/`validate_tasks.py` (0 erros nas duas; alguns warnings de granularidade/"Tests:
+  none" já justificados inline nos próprios documentos). **Execute ainda não rodou** — nenhum código
+  desta fase foi implementado; usuário pediu explicitamente para completar toda a documentação antes
+  de revisar e autorizar o início do código ("Pode fazer a spec completa sem pedir para seguir por
+  fases, completa ela, depois eu reviso e aviso para desenvolver"). `main`/branch atual
+  (`feat/fase-4-release-ota-mobile`) não tocados por código — só arquivos em `.specs/`.
+  Escopo desta fase, refinado a partir do item vago "Fase 6 (TO-REFINE)" do
+  `docs/plano-de-desenvolvimento.md`: CRUD completo de paciente (criar/editar/soft-delete), ciclo de
+  vida de acompanhamento (`active`/`inactive`/`completed`, com `status_changed_at` e reativação com
+  rótulo de botão diferente por origem), filtro de status na lista, objetivo (`goal`) como badge
+  traduzido, seed com nomes `pt_BR`, idade e datas em `dd/MM/yyyy` (sugestão aceita pelo usuário),
+  empty states revisados, e publicação OTA nos canais de development já existentes (Fase 4).
+  Decisões de produto fechadas com o usuário via `AskUserQuestion` em duas rodadas mais uma troca
+  livre sobre o modelo de ciclo de vida — todas registradas nas tabelas "Assumptions & Open
+  Questions" dos dois `spec.md` e nos dois `context.md`. Decisão de projeto que sai desta feature:
+  **AD-015** (ver acima) — modelagem de status separado de soft delete, com pendência explícita de
+  virar ADR formal na Fase 5.
+  **Próximo passo**: usuário revisa as duas specs/design/tasks e avisa quando autorizar o Execute.
+  Sequência de Execute já estabelecida no projeto: backend completo e verificado antes de começar o
+  mobile (a feature mobile literalmente depende dos 4 endpoints novos do backend). Ao iniciar,
+  seguir a oferta de sub-agentes de batch do skill (backend tem 22 tasks → ~3 batches sugeridos no
+  próprio `tasks.md`; mobile tem 23 tasks → ~3-4 batches).
+- **Feature (histórico)**: `fase-3-acoes-ia-mobile` **executada e verificada PASS** nesta sessão, na branch
   `feat/ia-acoes`. Todas as 9 tasks (T1-T9) implementadas via 2 sub-agentes de batch (Batch A =
   Fase 1+2 = T1-T6, Batch B = Fase 3 = T7-T9), cada task com seu próprio commit atômico. Batch A:
   `13a8628`..`cab0f77` (`aiActionSchema`, `apiPost`, `core/api/ai-actions.ts`, `useAiActionsQuery`,

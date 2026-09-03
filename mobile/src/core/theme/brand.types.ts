@@ -51,6 +51,8 @@ export type Brand = {
     patientsTitle: string;
     emptyPatients: string;
     aiDisclaimer: string;
+    emptyBiomarkers: string;
+    emptyFilteredPatients: string;
   };
   defaults: FeatureFlags;
 };
