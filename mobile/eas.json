@@ -1,0 +1,20 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development-nutri-care": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "nutri-care-development",
+      "env": { "APP_BRAND": "nutri-care" }
+    },
+    "development-vita-plus": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "vita-plus-development",
+      "env": { "APP_BRAND": "vita-plus" }
+    }
+  }
+}
