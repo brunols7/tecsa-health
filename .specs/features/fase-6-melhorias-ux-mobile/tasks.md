@@ -581,11 +581,11 @@ seletor
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Formulário abre pré-preenchido com os dados atuais
-- [ ] Envio só dos campos alterados; sucesso navega de volta ao detalhe atualizado
-- [ ] Erro `404` (paciente excluído por outra sessão) mostra mensagem e navega para a lista
-- [ ] Teste cobrindo pré-preenchimento, sucesso, erro `422`, erro `404`
-- [ ] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
+- [x] Formulário abre pré-preenchido com os dados atuais
+- [x] Envio só dos campos alterados; sucesso navega de volta ao detalhe atualizado
+- [x] Erro `404` (paciente excluído por outra sessão) mostra mensagem e navega para a lista
+- [x] Teste cobrindo pré-preenchimento, sucesso, erro `422`, erro `404`
+- [x] Gate check passes: `npm run pretest && npm test && npx tsc --noEmit`
 
 **Tests**: unit
 **Gate**: full
