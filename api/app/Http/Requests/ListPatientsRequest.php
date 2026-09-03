@@ -23,6 +23,7 @@ final class ListPatientsRequest extends FormRequest
             'search' => ['nullable', 'string', 'max:255'],
             'cursor' => ['nullable', 'string'],
             'limit' => ['nullable', 'integer', 'min:1'],
+            'status' => ['nullable', 'string'],
         ];
     }
 }

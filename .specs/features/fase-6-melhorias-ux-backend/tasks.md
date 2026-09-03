@@ -739,12 +739,12 @@ quando `null`; repassa a `PatientRepository::paginate()` (já pronto desde T8).
 - Skill: `laravel-specialist`
 
 **Done when**:
-- [ ] `GET /patients` sem `status` filtra por `active`
-- [ ] `GET /patients?status=inactive,completed` devolve só esses dois
-- [ ] `GET /patients?status=active,inactive,completed` devolve os três
-- [ ] `GET /patients?status=invalido` responde `400`
-- [ ] Paciente excluído nunca aparece, independentemente de `status`
-- [ ] Gate check passes: `composer test && vendor/bin/phpstan analyse`
+- [x] `GET /patients` sem `status` filtra por `active`
+- [x] `GET /patients?status=inactive,completed` devolve só esses dois
+- [x] `GET /patients?status=active,inactive,completed` devolve os três
+- [x] `GET /patients?status=invalido` responde `400`
+- [x] Paciente excluído nunca aparece, independentemente de `status`
+- [x] Gate check passes: `composer test && vendor/bin/phpstan analyse`
 
 **Tests**: none (lógica de filtro já testada em T8/integration; esta task é o fio elétrico
 Controller→Service→Repository — coberta pelos testes de e2e de T22, que são o ponto onde o
@@ -752,6 +752,24 @@ comportamento fica testável de ponta a ponta, ver "Resolving compilation depend
 **Gate**: full
 
 **Commit**: `feat(patient-http): add status filter to GET /patients`
+
+**Status**: ✅ Complete — deviation: design.md suggested validating the comma-separated `status`
+value with a custom Laravel validation rule inside `ListPatientsRequest`. A rule failure there
+would render through the framework's default `ValidationException` path, which this project's
+`Handler` already maps to `422` (`VALIDATION_ERROR`) — the exact status the spec explicitly says NOT
+to use for this case (P5 AC4 requires `400`, "parâmetro malformado" per CLAUDE.md §6.3, distinct
+from body validation). Implemented instead with the same mechanism the codebase already uses for the
+structurally identical "malformed query parameter" case (`cursor`): `ListPatientsRequest` only
+checks `status` is a nullable string; `PatientService::listForBrandSlug()` parses the comma-separated
+list and throws a new `Domain\Patient\Exceptions\InvalidStatusFilter` (mirrors `InvalidCursor`) on
+any value outside `PatientStatus::values()`; `Handler` maps it to `400 INVALID_STATUS_FILTER`,
+following the exact pattern already used for `InvalidCursor` → `400 INVALID_CURSOR`. This added one
+file not listed in this task's original `Where` (`app/Domain/Patient/Exceptions/InvalidStatusFilter.php`)
+and one line to `app/Exceptions/Handler.php` beyond T20's edit — both are the direct, minimal
+consequence of matching the spec's exact required status code with the codebase's own established
+pattern, not new scope. Existing `PatientServiceTest` mocks for `paginate()` were updated to include
+the new 5th `$statuses` argument the Service now always passes (`['active']` default), consistent
+with the note in the Batch B kickoff about T21 owning the 5th-arg wiring.
 
 ---
 

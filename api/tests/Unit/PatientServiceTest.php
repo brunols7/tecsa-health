@@ -32,7 +32,7 @@ class PatientServiceTest extends TestCase
         $brands->shouldReceive('findBySlug')->with('nutri-care')->andReturn($brand);
 
         $patients = Mockery::mock(PatientRepository::class);
-        $patients->shouldReceive('paginate')->with('brand-1', null, null, 50)->andReturn($page);
+        $patients->shouldReceive('paginate')->with('brand-1', null, null, 50, ['active'])->andReturn($page);
 
         $biomarkers = Mockery::mock(BiomarkerRepository::class);
 
@@ -52,7 +52,7 @@ class PatientServiceTest extends TestCase
         $brands->shouldReceive('findBySlug')->with('nutri-care')->andReturn($brand);
 
         $patients = Mockery::mock(PatientRepository::class);
-        $patients->shouldReceive('paginate')->with('brand-1', null, null, 100)->andReturn($page);
+        $patients->shouldReceive('paginate')->with('brand-1', null, null, 100, ['active'])->andReturn($page);
 
         $biomarkers = Mockery::mock(BiomarkerRepository::class);
 
@@ -93,7 +93,7 @@ class PatientServiceTest extends TestCase
         $patients->shouldReceive('paginate')
             ->with('brand-1', null, Mockery::on(function (PatientCursor $cursor) {
                 return $cursor->name === 'Ana' && $cursor->id === 'patient-1';
-            }), 50)
+            }), 50, ['active'])
             ->andReturn($page);
 
         $biomarkers = Mockery::mock(BiomarkerRepository::class);

@@ -34,6 +34,7 @@ final class PatientController extends Controller
             $request->validated('search'),
             $request->validated('cursor'),
             $limit !== null ? (int) $limit : null,
+            $request->validated('status'),
         );
 
         return (new PatientPageResource($page))->response();

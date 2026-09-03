@@ -8,6 +8,7 @@ use App\Domain\Biomarker\Biomarker;
 use App\Domain\Biomarker\BiomarkerRepository;
 use App\Domain\Brand\BrandRepository;
 use App\Domain\FeatureFlag\Exceptions\BrandNotFound;
+use App\Domain\Patient\Exceptions\InvalidStatusFilter;
 use App\Domain\Patient\Exceptions\InvalidStatusTransition;
 use App\Domain\Patient\Exceptions\PatientNotFound;
 use App\Domain\Patient\Patient;
@@ -36,6 +37,7 @@ final class PatientService
         ?string $search,
         ?string $rawCursor,
         ?int $limit,
+        ?string $rawStatuses = null,
     ): PatientPage {
         $brand = $this->brands->findBySlug($brandSlug);
 
@@ -45,7 +47,13 @@ final class PatientService
 
         $cursor = $rawCursor !== null ? PatientCursor::decode($rawCursor) : null;
 
-        return $this->patients->paginate($brand->id, $search, $cursor, $this->clampLimit($limit));
+        return $this->patients->paginate(
+            $brand->id,
+            $search,
+            $cursor,
+            $this->clampLimit($limit),
+            $this->resolveStatuses($rawStatuses),
+        );
     }
 
     public function create(string $name, string $birthDate, string $goal, string $brandSlug): Patient
@@ -135,6 +143,26 @@ final class PatientService
         if (preg_match(self::UUID_PATTERN, $id) !== 1) {
             throw new PatientNotFound($id);
         }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function resolveStatuses(?string $rawStatuses): array
+    {
+        if ($rawStatuses === null) {
+            return ['active'];
+        }
+
+        $values = array_map('trim', explode(',', $rawStatuses));
+
+        foreach ($values as $value) {
+            if (PatientStatus::tryFrom($value) === null) {
+                throw new InvalidStatusFilter($value);
+            }
+        }
+
+        return $values;
     }
 
     private function clampLimit(?int $limit): int

@@ -284,11 +284,11 @@ LIMIT 20` mostra nomes brasileiros; `INSERT` manual com `goal='invalid'` falha p
 | UXBE-19 | P4: Excluir (soft delete) | Design | Pending |
 | UXBE-20 | P4: Excluir (soft delete) | Design | Pending |
 | UXBE-21 | P4: Excluir (soft delete) | Design | Implementing |
-| UXBE-22 | P5: Filtro por status | Design | Pending |
-| UXBE-23 | P5: Filtro por status | Design | Pending |
-| UXBE-24 | P5: Filtro por status | Design | Pending |
-| UXBE-25 | P5: Filtro por status | Design | Pending |
-| UXBE-26 | P5: Filtro por status | Design | Pending |
+| UXBE-22 | P5: Filtro por status | Design | Implementing |
+| UXBE-23 | P5: Filtro por status | Design | Implementing |
+| UXBE-24 | P5: Filtro por status | Design | Implementing |
+| UXBE-25 | P5: Filtro por status | Design | Implementing |
+| UXBE-26 | P5: Filtro por status | Design | Implementing |
 | UXBE-27 | P6: Seed pt_BR + enums | Design | Pending |
 | UXBE-28 | P6: Seed pt_BR + enums | Design | Pending |
 | UXBE-29 | P6: Seed pt_BR + enums | Design | Pending |

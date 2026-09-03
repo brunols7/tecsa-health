@@ -11,6 +11,7 @@ use App\Domain\AiAction\Exceptions\LlmUnavailable;
 use App\Domain\AiAction\Exceptions\PatientNoBiomarkers;
 use App\Domain\FeatureFlag\Exceptions\BrandNotFound;
 use App\Domain\Patient\Exceptions\InvalidCursor;
+use App\Domain\Patient\Exceptions\InvalidStatusFilter;
 use App\Domain\Patient\Exceptions\InvalidStatusTransition;
 use App\Domain\Patient\Exceptions\PatientNotFound;
 use Illuminate\Http\JsonResponse;
@@ -32,6 +33,10 @@ final class Handler
 
         if ($e instanceof InvalidCursor) {
             return $this->envelope('INVALID_CURSOR', $e->getMessage(), [], 400);
+        }
+
+        if ($e instanceof InvalidStatusFilter) {
+            return $this->envelope('INVALID_STATUS_FILTER', $e->getMessage(), [], 400);
         }
 
         if ($e instanceof AiDisabled) {
