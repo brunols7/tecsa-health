@@ -78,7 +78,7 @@ describe('TabLayout', () => {
     const { queryByText } = await render(<TabLayout />);
 
     expect(queryByText('Screen:index')).toBeTruthy();
-    expect(queryByText('Screen:patients/[id]')).toBeTruthy();
+    expect(queryByText('Screen:patients/new')).toBeTruthy();
   });
 
   it('mantém o aviso de segurança visível e só libera a navegação principal após o usuário confirmar', async () => {
