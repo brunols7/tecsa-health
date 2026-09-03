@@ -431,16 +431,16 @@ caso de erro. Adiciona `react-hook-form` e `@hookform/resolvers` como dependênc
 - Skill: NONE
 
 **Done when**:
-- [ ] Submeter com `label` vazio, `value` não numérico, ou `refMin >= refMax` bloqueia o envio e
+- [x] Submeter com `label` vazio, `value` não numérico, ou `refMin >= refMax` bloqueia o envio e
       mostra a mensagem no campo, sem chamar `mutation.mutate` (verificável via mock não chamado)
-- [ ] Selo de status muda ao digitar `value`/`refMin`/`refMax` (testa os três estados)
-- [ ] Botão de submit fica desabilitado enquanto `mutation.isPending`
-- [ ] Em erro da mutation, o formulário permanece montado com os valores digitados e mostra erro
+- [x] Selo de status muda ao digitar `value`/`refMin`/`refMax` (testa os três estados)
+- [x] Botão de submit fica desabilitado enquanto `mutation.isPending`
+- [x] Em erro da mutation, o formulário permanece montado com os valores digitados e mostra erro
       inline com ação de tentar de novo — sem chamar `onSuccess`
-- [ ] Em sucesso, `onSuccess` é chamado
-- [ ] Nenhum literal de cor/raio/fonte — tudo via `useTheme()`
-- [ ] Gate check passa: `cd mobile && npm run pretest && npm test`
-- [ ] Contagem de testes: 6+ novos em `BiomarkerForm.test.tsx`
+- [x] Em sucesso, `onSuccess` é chamado
+- [x] Nenhum literal de cor/raio/fonte — tudo via `useTheme()`
+- [x] Gate check passa: `cd mobile && npm run pretest && npm test`
+- [x] Contagem de testes: 6+ novos em `BiomarkerForm.test.tsx`
 
 **Tests**: unit
 **Gate**: full
