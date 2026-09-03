@@ -150,9 +150,9 @@ solto (`CLAUDE.md` §2.3/§6.1).
 - Skill: NONE
 
 **Done when**:
-- [ ] Classe `final readonly class CreateBiomarkerData` com os 6 campos tipados
-- [ ] Zero import de `Illuminate\`
-- [ ] Gate check passa: `cd api && composer stan` (nível 6, sem `mixed`)
+- [x] Classe `final readonly class CreateBiomarkerData` com os 6 campos tipados
+- [x] Zero import de `Illuminate\`
+- [x] Gate check passa: `cd api && composer stan` (nível 6, sem `mixed`)
 
 **Tests**: none
 **Gate**: build
