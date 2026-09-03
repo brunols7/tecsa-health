@@ -319,10 +319,10 @@ brand.id]`.
 - Skill: `react-native-expert`
 
 **Done when**:
-- [ ] Sucesso remove o paciente do cache de lista
-- [ ] Erro propaga para o chamador mostrar mensagem de "tentar excluir de novo"
-- [ ] Teste cobrindo sucesso e erro
-- [ ] Gate check passes: `npm test`
+- [x] Sucesso remove o paciente do cache de lista
+- [x] Erro propaga para o chamador mostrar mensagem de "tentar excluir de novo"
+- [x] Teste cobrindo sucesso e erro
+- [x] Gate check passes: `npm test`
 
 **Tests**: unit
 **Gate**: quick
