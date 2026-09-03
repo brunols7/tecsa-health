@@ -4,3 +4,6 @@ docs/plano-de-desenvolvimento.md
 # Bookkeeping local de ferramentas (Claude Code) — não é conteúdo do projeto
 .agents/
 .claude/worktrees/
+
+# Anotações pessoais do usuário, não fazem parte do repositório público
+docs-internal/

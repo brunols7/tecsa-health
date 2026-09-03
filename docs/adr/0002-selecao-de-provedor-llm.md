@@ -1,76 +1,58 @@
-# ADR-0002: Selecionar provedor de LLM (Anthropic ou Gemini) por presença de env var no boot
+# ADR-0002: Por que o app usa Gemini quando não há crédito na Anthropic
 
-## Status
+**Status:** aceita e implementada.
 
-Aceita
+No início, `LlmClient` (a interface que o resto do backend usa para pedir sugestões de IA) estava
+ligada direto ao `AnthropicClient`. Sem crédito pago disponível na conta Anthropic usada para este
+projeto, `ANTHROPIC_API_KEY` ficou vazia, e toda tentativa de gerar uma ação de IA falhava com
+`502 AI_UNAVAILABLE` — um erro de autenticação da própria Anthropic, não um bug do projeto.
 
-## Contexto
+O enunciado do desafio é claro que o provedor de LLM pode ser "Anthropic, OpenAI ou equivalente" —
+o que importa é ter geração de ações via LLM com contrato validado, não uma marca específica de
+IA. Isso abriu a porta para usar o free tier do Google Gemini sem violar nenhum requisito.
 
-`LlmClient` (`app/Domain/AiAction/LlmClient.php`) era bindado direto em `AnthropicClient` no
-`DomainServiceProvider`. Sem crédito pago disponível na Anthropic, `ANTHROPIC_API_KEY` ficou vazia
-no ambiente do projeto, e toda chamada de geração (`POST /patients/:id/ai-actions`) falhava com
-`502 AI_UNAVAILABLE` (`http status 401` da própria Anthropic).
+## O que decidimos
 
-`docs/requisitos-do-produto.md` (fonte de verdade suprema do projeto, linha 20) autoriza
-explicitamente "IA: API de LLM (Anthropic, OpenAI ou equivalente)" — a exigência é ter geração de
-ações via LLM com contrato validado, não um provedor específico. O free tier do Google Gemini
-resolve o problema de custo sem violar esse requisito.
+Escolher o provedor **uma única vez, na inicialização da aplicação**, com base em qual chave de API
+está preenchida no ambiente — não tentar um provedor a cada chamada e cair para o outro só se falhar.
 
-Três formas de resolver isso foram consideradas:
+Na prática: `DomainServiceProvider::register()` liga `LlmClient` a uma closure que resolve
+`AnthropicClient` quando `ANTHROPIC_API_KEY` está preenchida, e `GeminiClient` quando não está. O
+`GeminiClient` (`app/Infrastructure/Llm/GeminiClient.php`) implementa exatamente a mesma interface
+que o `AnthropicClient` — mesma validação de schema na resposta, mesmas exceções de domínio
+(`LlmTimeout`, `LlmInvalidResponse`). Isso significa que nada acima dessa camada precisou mudar: o
+`AiActionService`, o retry em resposta inválida, o cache por hash de biomarcadores, o app mobile —
+tudo continua funcionando sem saber (nem precisar saber) qual dos dois provedores está por trás.
+É exatamente o tipo de situação para o qual a inversão de dependência existe.
 
-1. **Fallback em runtime** — tentar Anthropic a cada chamada e cair para Gemini só se a chamada
-   falhar.
-2. **Seleção única no boot** — decidir uma vez, na inicialização do container de dependências, qual
-   implementação usar, por presença de `ANTHROPIC_API_KEY`.
-3. **Ollama local** — rodar um modelo local via Ollama, eliminando a dependência de qualquer API
-   paga.
+## Por que não um fallback em tempo real
 
-## Decisão
+Tentar a Anthropic e só cair para o Gemini quando a chamada falhasse pareceria mais "robusto", mas
+custaria uma chamada HTTP extra (e uma tentativa de autenticação fadada ao erro, já que a chave
+está vazia) em todo request, para resolver um problema que não é esse. O cenário real aqui é "eu
+tenho uma chave configurada ou não tenho" — decidido no momento do deploy, não "a chave existe mas o
+provedor está fora do ar agora". Fallback em tempo real faz sentido para tolerar uma falha
+passageira de um provedor pago em produção; não faz sentido para alternar entre "grátis por
+enquanto" e "pago quando tiver crédito".
 
-Seleção única no boot (opção 2). `DomainServiceProvider::register()` binda `LlmClient` com uma
-closure: `AnthropicClient` quando `ANTHROPIC_API_KEY` está preenchida (via `filled()`, que trata
-`null`, string vazia e string só com espaços como não preenchida), `GeminiClient` caso contrário. O
-binding continua `bind()`, não `singleton()` — o container reavalia a decisão a cada resolução, o
-que também é o que torna a troca de provedor testável sem reiniciar a aplicação entre os dois
-branches.
+## Por que não um modelo rodando localmente (Ollama)
 
-`GeminiClient` (`app/Infrastructure/Llm/GeminiClient.php`) implementa a mesma interface
-`LlmClient` que `AnthropicClient`, com a mesma validação de schema (`risk_level`/`summary`/
-`actions[1..5]`) e as mesmas duas exceptions de domínio (`LlmTimeout`, `LlmInvalidResponse`) — o
-retry de resposta inválida em `AiActionService` continua funcionando sem mudança nenhuma, porque
-ele depende só da interface, nunca da implementação concreta.
+Eliminaria o custo por completo, mas trocaria uma dependência de API por uma dependência de
+infraestrutura — memória, CPU/GPU, imagem de modelo — que o ambiente deste projeto (um único
+container de API, via Docker Compose simples) não foi pensado para sustentar. Isso também iria
+contra a decisão já tomada na ADR-0001 de manter a infraestrutura o mais simples possível nesta
+fase. Não está descartado para sempre — se o projeto um dia migrar para um ambiente com mais
+capacidade de cômputo local, vale reconsiderar.
 
-### Por que não fallback em runtime
+## O que isso significa na prática
 
-Tentar Anthropic e cair para Gemini só quando a chamada falha custaria uma chamada HTTP a mais
-(e potencialmente uma tentativa de autenticação fadada ao erro, com `ANTHROPIC_API_KEY` vazia) em
-todo request, sem necessidade real: o cenário concreto do projeto é "tenho uma chave ou não tenho",
-decidido no deploy, não "a chave existe mas o provedor está fora do ar nesta chamada específica".
-Fallback em runtime é a escolha certa para tolerância a falha transitória de um provedor pago em
-produção — não para uma alternância determinística entre "grátis agora" e "pago depois".
-
-### Por que não Ollama local
-
-Rodar um modelo local elimina custo por completo, mas troca a dependência de uma API por uma
-dependência de infraestrutura (memória, CPU/GPU, imagem de modelo) que o ambiente de avaliação
-deste projeto (Docker Compose simples, container único de API) não foi desenhado para sustentar —
-contraria a decisão já registrada em ADR-0001 de manter a superfície de infraestrutura mínima nesta
-fase. Fica descartada, não fora de cogitação para sempre: se o projeto migrar para um ambiente com
-mais capacidade de cômputo local, vale revisitar.
-
-## Consequências
-
-- Nenhuma camada acima de `Infrastructure/Llm` muda: `AiActionService`, `AiActionController`, o
-  cache por hash do snapshot de biomarcadores e o app mobile continuam idênticos — é exatamente o
-  caso de uso que a inversão de dependência do CLAUDE.md §6.2 existe para resolver.
-- Trocar de provedor em produção (por exemplo, ao obter crédito pago na Anthropic) é só preencher
-  `ANTHROPIC_API_KEY` no `.env` e reiniciar o container — nenhum deploy de código novo.
-- Com as duas chaves preenchidas, Anthropic sempre vence — não existe hoje um jeito de forçar
-  Gemini nesse caso. Se isso virar uma necessidade real (por exemplo, comparar qualidade dos dois
-  provedores lado a lado), esta decisão precisa ser revisitada.
-- Sem nenhuma das duas chaves preenchidas, o sistema binda `GeminiClient` e a primeira chamada real
-  falha por autenticação — mapeado para `502 AI_UNAVAILABLE` pelo caminho de erro já existente.
-  Comportamento idêntico ao que o sistema já tinha com `AnthropicClient` sem chave: falha explícita,
-  não mascarada.
-- Um terceiro provedor exigiria revisitar esta decisão — a closure do `DomainServiceProvider` foi
-  desenhada para dois branches, não para uma cadeia de prioridade arbitrária.
+- Trocar de provedor em produção — por exemplo, ao conseguir crédito pago na Anthropic — é só
+  preencher `ANTHROPIC_API_KEY` no `.env` e reiniciar o container. Nenhum deploy de código novo.
+- Com as duas chaves preenchidas ao mesmo tempo, a Anthropic sempre ganha a prioridade. Hoje não
+  existe um jeito de forçar o Gemini nesse cenário — se um dia for preciso comparar os dois
+  provedores lado a lado, essa parte da decisão precisaria mudar.
+- Sem nenhuma das duas chaves, o sistema ainda tenta o Gemini e falha por autenticação na primeira
+  chamada real — cai no mesmo caminho de erro já existente (`502 AI_UNAVAILABLE`). O comportamento é
+  uma falha explícita, nunca uma resposta mascarada como se tivesse funcionado.
+- Um terceiro provedor exigiria repensar essa parte — a closure foi desenhada para escolher entre
+  dois candidatos, não para uma cadeia de prioridade com N opções.

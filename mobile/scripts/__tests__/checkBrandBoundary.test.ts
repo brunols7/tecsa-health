@@ -54,6 +54,23 @@ describe('fronteira de marca em src/core', () => {
     }
   });
 
+  it('import bare de brands (sem sufixo /*) em core/ é pego pelo ESLint (no-restricted-imports)', () => {
+    const fixtureDir = mkdtempSync(join(CORE_DIR, '__fixture-bare-import-'));
+    const fixtureFile = join(fixtureDir, 'bad-bare-import.ts');
+    writeFileSync(
+      fixtureFile,
+      "import { resolveBrand } from '@/brands';\n\nexport const x = resolveBrand('nutri-care');\n",
+    );
+
+    try {
+      const result = runLint();
+      expect(result.status).not.toBe(0);
+      expect(result.output).toContain('no-restricted-imports');
+    } finally {
+      rmSync(fixtureDir, { recursive: true, force: true });
+    }
+  });
+
   it('nome de marca em comentário dentro de core/ é pego pelo script de grep', () => {
     const fixtureDir = mkdtempSync(join(CORE_DIR, '__fixture-comment-'));
     const fixtureFile = join(fixtureDir, 'leaky-comment.ts');

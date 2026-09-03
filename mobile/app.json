@@ -1,14 +1,18 @@
 {
   "expo": {
     "name": "mobile",
-    "slug": "mobile",
+    "slug": "nutri-care",
     "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "mobile",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./src/brands/nutri-care/assets/logo.png",
+      "bundleIdentifier": "health.tecsa.nutricare",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
