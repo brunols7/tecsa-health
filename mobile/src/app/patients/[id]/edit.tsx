@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
@@ -76,79 +76,74 @@ export default function EditPatientScreen() {
 
   return (
     <SafeAreaView testID="patient-edit-screen" style={{ flex: 1, backgroundColor: colors.background }}>
-      <View style={{ padding: spacing(4), gap: spacing(4) }}>
-        <Text
-          style={{
-            color: colors.textPrimary,
-            fontFamily: typography.fontFamily.bold,
-            fontSize: typography.scale.lg,
-          }}
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView
+          contentContainerStyle={{ padding: spacing(4), gap: spacing(4) }}
+          keyboardShouldPersistTaps="handled"
         >
-          Editar paciente
-        </Text>
-
-        {patientQuery.status === 'pending' ? (
-          <Text
-            testID="patient-edit-loading"
-            style={{ color: colors.textSecondary, fontFamily: typography.fontFamily.regular, fontSize: typography.scale.md }}
-          >
-            {LOADING_MESSAGE}
-          </Text>
-        ) : null}
-
-        {patientQuery.status === 'error' ? (
-          <View style={{ gap: spacing(3) }}>
+          {patientQuery.status === 'pending' ? (
             <Text
-              testID="patient-edit-load-error"
-              style={{ color: colors.danger, fontFamily: typography.fontFamily.regular, fontSize: typography.scale.md }}
+              testID="patient-edit-loading"
+              style={{ color: colors.textSecondary, fontFamily: typography.fontFamily.regular, fontSize: typography.scale.md }}
             >
-              {ERROR_MESSAGE}
+              {LOADING_MESSAGE}
             </Text>
-            <Pressable
-              testID="patient-edit-retry"
-              onPress={() => patientQuery.refetch()}
-              style={{ backgroundColor: colors.accent, borderRadius: radii.md, paddingVertical: spacing(3), alignItems: 'center' }}
-            >
-              <Text style={{ color: colors.accentContrast, fontFamily: typography.fontFamily.medium, fontSize: typography.scale.md }}>
-                Tentar novamente
-              </Text>
-            </Pressable>
-          </View>
-        ) : null}
+          ) : null}
 
-        {patientQuery.status === 'success' && patientQuery.data ? (
-          <>
-            {formError ? (
+          {patientQuery.status === 'error' ? (
+            <View style={{ gap: spacing(3) }}>
               <Text
-                testID="patient-edit-form-error"
-                style={{ color: colors.danger, fontFamily: typography.fontFamily.regular, fontSize: typography.scale.sm }}
+                testID="patient-edit-load-error"
+                style={{ color: colors.danger, fontFamily: typography.fontFamily.regular, fontSize: typography.scale.md }}
               >
-                {formError}
+                {ERROR_MESSAGE}
               </Text>
-            ) : null}
-            <PatientForm
-              mode="edit"
-              initialValues={{
-                name: patientQuery.data.name,
-                birthDate: patientQuery.data.birthDate,
-                goal: patientQuery.data.goal,
-              }}
-              onSubmit={(values) =>
-                handleSubmit(
-                  {
-                    name: patientQuery.data!.name,
-                    birthDate: patientQuery.data!.birthDate,
-                    goal: patientQuery.data!.goal,
-                  },
-                  values,
-                )
-              }
-              submitting={mutation.isPending}
-              fieldErrors={fieldErrors}
-            />
-          </>
-        ) : null}
-      </View>
+              <Pressable
+                testID="patient-edit-retry"
+                onPress={() => patientQuery.refetch()}
+                style={{ backgroundColor: colors.accent, borderRadius: radii.md, paddingVertical: spacing(3), alignItems: 'center' }}
+              >
+                <Text style={{ color: colors.accentContrast, fontFamily: typography.fontFamily.medium, fontSize: typography.scale.md }}>
+                  Tentar novamente
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
+
+          {patientQuery.status === 'success' && patientQuery.data ? (
+            <>
+              {formError ? (
+                <Text
+                  testID="patient-edit-form-error"
+                  style={{ color: colors.danger, fontFamily: typography.fontFamily.regular, fontSize: typography.scale.sm }}
+                >
+                  {formError}
+                </Text>
+              ) : null}
+              <PatientForm
+                mode="edit"
+                initialValues={{
+                  name: patientQuery.data.name,
+                  birthDate: patientQuery.data.birthDate,
+                  goal: patientQuery.data.goal,
+                }}
+                onSubmit={(values) =>
+                  handleSubmit(
+                    {
+                      name: patientQuery.data!.name,
+                      birthDate: patientQuery.data!.birthDate,
+                      goal: patientQuery.data!.goal,
+                    },
+                    values,
+                  )
+                }
+                submitting={mutation.isPending}
+                fieldErrors={fieldErrors}
+              />
+            </>
+          ) : null}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

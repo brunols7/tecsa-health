@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
@@ -47,31 +47,27 @@ export default function NewPatientScreen() {
 
   return (
     <SafeAreaView testID="patient-new-screen" style={{ flex: 1, backgroundColor: colors.background }}>
-      <View style={{ padding: spacing(4), gap: spacing(4) }}>
-        <Text
-          style={{
-            color: colors.textPrimary,
-            fontFamily: typography.fontFamily.bold,
-            fontSize: typography.scale.lg,
-          }}
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView
+          contentContainerStyle={{ padding: spacing(4), gap: spacing(4) }}
+          keyboardShouldPersistTaps="handled"
         >
-          Novo paciente
-        </Text>
-        {networkError ? (
-          <Text
-            testID="patient-new-error"
-            style={{ color: colors.danger, fontFamily: typography.fontFamily.regular, fontSize: typography.scale.sm }}
-          >
-            {NETWORK_ERROR_MESSAGE}
-          </Text>
-        ) : null}
-        <PatientForm
-          mode="create"
-          onSubmit={handleSubmit}
-          submitting={mutation.isPending}
-          fieldErrors={fieldErrors}
-        />
-      </View>
+          {networkError ? (
+            <Text
+              testID="patient-new-error"
+              style={{ color: colors.danger, fontFamily: typography.fontFamily.regular, fontSize: typography.scale.sm }}
+            >
+              {NETWORK_ERROR_MESSAGE}
+            </Text>
+          ) : null}
+          <PatientForm
+            mode="create"
+            onSubmit={handleSubmit}
+            submitting={mutation.isPending}
+            fieldErrors={fieldErrors}
+          />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
