@@ -11,10 +11,8 @@
   explícito do usuário nesta sessão ("deveria ter estados de acompanhamento... os inativos e
   concluídos aparecem em uma filtragem à parte... excluídos não aparecem") — misturar os dois no
   mesmo enum obrigaria filtro manual em toda query em vez de usar o mecanismo já pronto do
-  framework. **Pendência registrada aqui para não se perder**: o usuário pediu explicitamente
-  ("Simm anote") que esta modelagem vire uma ADR formal na Fase 5 (`docs/adr/`), junto das demais
-  decisões consolidadas por tema (CLAUDE.md §14.11) — não esquecer de incluir ao escrever as ADRs
-  finais. Detalhe completo em
+  framework. **Formalizada em `docs/adr/0005-ciclo-de-vida-paciente.md`** (Fase 5, T6) — a
+  pendência do usuário ("Simm anote") de virar ADR formal está resolvida. Detalhe completo em
   `.specs/features/fase-6-melhorias-ux-backend/{spec.md,context.md,design.md}`.
 - **AD-014** (status: active) — `DomainServiceProvider::register()` binda `LlmClient` por uma
   closure condicional: `AnthropicClient` quando `ANTHROPIC_API_KEY` está preenchida, senão

@@ -223,9 +223,9 @@ real (monorepo, Domain/Application/Infrastructure/Http), decisão, alternativas 
 - Skill: `create-adr`
 
 **Done when**:
-- [ ] Arquivo criado, decisão consistente com o que já está implementado em
+- [x] Arquivo criado, decisão consistente com o que já está implementado em
       `fase-6-melhorias-ux-backend` (sem contradizer o código)
-- [ ] AD-015 em `.specs/STATE.md` atualizada para apontar para este ADR (status → "formalizada em
+- [x] AD-015 em `.specs/STATE.md` atualizada para apontar para este ADR (status → "formalizada em
       docs/adr/0005")
 
 **Tests**: none
