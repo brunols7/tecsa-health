@@ -232,10 +232,10 @@ monta a entidade `Biomarker`, chama `$this->biomarkers->save()`, devolve a entid
 - Skill: NONE
 
 **Done when**:
-- [ ] `rules()` cobre os 6 campos com os bounds da tabela de Assumptions do `spec.md`
-- [ ] `toData()` mapeia `$this->validated()` para `CreateBiomarkerData` sem lógica de negócio
-- [ ] `composer stan` limpo (sem `mixed` desnecessário)
-- [ ] Gate check passa: `cd api && composer stan`
+- [x] `rules()` cobre os 6 campos com os bounds da tabela de Assumptions do `spec.md`
+- [x] `toData()` mapeia `$this->validated()` para `CreateBiomarkerData` sem lógica de negócio
+- [x] `composer stan` limpo (sem `mixed` desnecessário)
+- [x] Gate check passa: `cd api && composer stan`
 
 **Tests**: none
 **Gate**: build
