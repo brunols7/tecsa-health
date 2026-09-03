@@ -641,13 +641,15 @@ exact file.
 - Skill: NONE
 
 **Done when**:
-- [ ] Campo presente na saída, mesma posição do design.md
-- [ ] Gate check passes: `composer test` (exercida via `assertJsonStructure` em T21)
+- [x] Campo presente na saída, mesma posição do design.md
+- [x] Gate check passes: `composer test` (exercida via `assertJsonStructure` em T21)
 
 **Tests**: none
 **Gate**: quick
 
 **Commit**: `feat(patient-http): expose statusChangedAt in PatientResource`
+
+**Status**: ✅ Complete
 
 ---
 

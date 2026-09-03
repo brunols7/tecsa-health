@@ -292,7 +292,7 @@ LIMIT 20` mostra nomes brasileiros; `INSERT` manual com `goal='invalid'` falha p
 | UXBE-27 | P6: Seed pt_BR + enums | Design | Pending |
 | UXBE-28 | P6: Seed pt_BR + enums | Design | Pending |
 | UXBE-29 | P6: Seed pt_BR + enums | Design | Pending |
-| UXBE-30 | P6: Seed pt_BR + enums | Design | Pending |
+| UXBE-30 | P6: Seed pt_BR + enums | Design | Implementing |
 
 **ID format:** `UXBE-[NUMBER]` (Fase 6, Melhorias UX, Backend)
 
